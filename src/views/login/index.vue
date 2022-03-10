@@ -101,7 +101,6 @@ export default {
     }
   },
   mounted() {
-    console.log('[ 111 ] >', 111)
   },
   methods: {
     itemChange(event) {
