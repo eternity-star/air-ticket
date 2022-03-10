@@ -100,7 +100,9 @@ export default {
       visible: false,
     }
   },
-  mounted() {},
+  mounted() {
+    console.log('[ 111 ] >', 111)
+  },
   methods: {
     itemChange(event) {
       console.log('[ event ] >', event)
