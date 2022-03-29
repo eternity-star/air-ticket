@@ -3,7 +3,7 @@
     <div class="login-top">登录</div>
     <a-form-model ref="ruleForm" :model="form" :rules="rules">
       <a-form-model-item>
-        <a-input v-model="form.loginName" placeholder="用户名">
+        <a-input v-model="form.loginName" placeholder="手机号码或身份证">
           <a-icon
             slot="prefix"
             type="user"
@@ -53,7 +53,7 @@
         :label-col="labelCol"
         :wrapper-col="wrapperCol"
       >
-        <a-form-model-item prop="name" label="用户名">
+        <a-form-model-item prop="name" label="姓名">
           <a-input style="width: 100%" v-model="registerForm.name" />
         </a-form-model-item>
         <a-form-model-item prop="mobile" label="手机号">
@@ -83,7 +83,9 @@ export default {
       rules: {
         name: [{ required: true, message: '请填写用户名', trigger: 'blur' }],
         mobile: [{ required: true, message: '请填写手机号', trigger: 'blur' }],
-        idCard: [{ required: true, message: '请填写身份证号', trigger: 'blur' }],
+        idCard: [
+          { required: true, message: '请填写身份证号', trigger: 'blur' },
+        ],
         password: [{ required: true, message: '请填写密码', trigger: 'blur' }],
       },
       form: {
@@ -100,21 +102,38 @@ export default {
       visible: false,
     }
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     itemChange(event) {
       console.log('[ event ] >', event)
     },
     registerOk() {
-      this.$message.success('注册成功')
-      
-      this.visible = false
-      this.registerForm = {
-        name: '',
-        mobile: '',
-        password: '',
+      const params = {
+        id:
+          'US' +
+          new Date().getTime() +
+          String(Math.round(Math.random() * 10000)),
+        name: this.registerForm.name,
+        password: this.registerForm.password,
+        mobile: this.registerForm.mobile,
+        idCard: this.registerForm.idCard,
+        level: 1,
       }
+      this.axios.post('/api/Air/registerUser', params).then(({ data }) => {
+        console.log('[ data ] >', data)
+        if (data.msg === '请求成功') {
+          this.$message.success('注册成功')
+          this.visible = false
+          this.registerForm = {
+            name: '',
+            mobile: '',
+            idCard: '',
+            password: '',
+          }
+        } else {
+          this.$message.error(data.msg)
+        }
+      })
     },
     registerCancel() {
       this.$message.error('取消注册')
@@ -122,6 +141,7 @@ export default {
       this.registerForm = {
         name: '',
         mobile: '',
+        idCard: '',
         password: '',
       }
     },
@@ -130,45 +150,42 @@ export default {
         this.$message.error('请填写用户名和密码')
         return
       }
-      if (
-        this.user === 1 &&
-        this.form.loginName === '111' &&
-        this.form.password === '111'
-      ) {
-        this.$router.push({
-          name: 'user',
-          query: {
-            mark: 'owner',
-          },
-        })
-        this.$message.success('登录成功')
-      } else if (
-        this.user === 2 &&
-        this.form.loginName === '222' &&
-        this.form.password === '222'
-      ) {
-        this.$router.push({
-          name: 'company',
-          query: {
-            mark: 'owner',
-          },
-        })
-        this.$message.success('登录成功')
-      } else if (
-        this.user === 3 &&
-        this.form.loginName === '333' &&
-        this.form.password === '333'
-      ) {
-        // this.$router.push({
-        //   name: 'user',
-        //   query: {
-        //     mark: 'owner',
-        //   },
-        // })
-        this.$message.success('登录成功')
-      } else {
-        this.$message.error('用户名或密码不正确')
+      const params = {
+        loginName: this.form.loginName,
+        password: this.form.password,
+        level: parseInt(this.user),
       }
+      this.axios.post('/api/Air/getUser', params).then(({ data }) => {
+        console.log('[ data ] >', data)
+        if (data.msg === '请求成功') {
+          this.$message.success('登录成功')
+          window.sessionStorage.setItem('user', JSON.stringify(data.data[0]))
+          if (this.user === 1) {
+            this.$router.push({
+              name: 'user',
+              query: {
+                mark: 'owner',
+              },
+            })
+          } else if (this.user === 2) {
+            this.$router.push({
+              name: 'company',
+              query: {
+                mark: 'owner',
+              },
+            })
+          } else if (this.user === 3) {
+            // this.$router.push({
+            //   name: 'user',
+            //   query: {
+            //     mark: 'owner',
+            //   },
+            // })
+          }
+        } else {
+          this.$message.error(data.msg)
+        }
+      })
     },
     registerClick() {
       this.visible = true

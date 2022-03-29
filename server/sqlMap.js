@@ -12,7 +12,8 @@ const sqlMap = {
     selectCity: 'SELECT city_id, city FROM air_location WHERE province_id = ?'  //查询城市
   },
   User: {
-    insertUser: 'insert into user(id, name, password, mobile, idCard) values(?,?,?,?,?)' //插入用户信息
+    insertUser: 'insert into user(id, name, password, mobile, idCard, level) values(?,?,?,?,?,?)', //插入用户信息
+    selectUser: 'SELECT id,name,mobile,idCard,level FROM user where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
   },
 }
 

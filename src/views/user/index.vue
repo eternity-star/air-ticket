@@ -46,6 +46,7 @@ export default {
   },
   mounted() {
     console.log('[ 111 ] >', 111)
+    console.log('[ window.sessionStorage.getItem("user") ] >', JSON.parse(window.sessionStorage.getItem("user")))
     // http://localhost:3000
     this.axios.get("/api/Air/getAll").then(res => {
       console.log('[ res111 ] >', res.data)
@@ -76,6 +77,7 @@ export default {
         this.$message.loading('哈利波特骑着扫帚飞')
       } else if (type === 5) {
         this.$message.error('你xx')
+        window.sessionStorage.clear()
         this.$router.push('/')
       } else {
         this.hackReset = false

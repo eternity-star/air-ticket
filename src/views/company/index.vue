@@ -965,6 +965,7 @@ export default {
     },
     logout() {
       this.$message.error('退出登录')
+      window.sessionStorage.clear()
       this.$router.push('/')
     },
     recharge() {

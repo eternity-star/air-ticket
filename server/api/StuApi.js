@@ -15,12 +15,71 @@ const jsonWrite = function (res, ret) {
     res.json(
       ret
     )
+    console.log(111);
   }
 }
 
 function paramsChange (params) {
-  
+
 }
+
+/**
+ * 用户相关
+ */
+
+// 接口：注册用户
+router.post('/registerUser', (req, res) => {
+  const sql = $sql.User.insertUser
+  const params = req.body
+  console.log('接口：注册用户', params)
+  conn.query(sql, [params.id, params.name, params.password, params.mobile, params.idCard, params.level], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '注册失败，请重新确认信息正确'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：查询用户信息
+router.post('/getUser', (req, res) => {
+  const sql = $sql.User.selectUser
+  const params = req.body
+  console.log('接口：查询用户', params)
+  conn.query(sql, [params.loginName, params.loginName, params.password, params.level], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+      if (result.length === 0) {
+        returnData.msg = '用户名或密码错误'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+
+
 
 // 接口：查询全部
 router.get('/getAll', (req, res) => {
@@ -73,22 +132,7 @@ router.post('/getCity', (req, res) => {
   })
 })
 
-// 接口：注册用户
-router.post('/registerUser', (req, res) => {
-  const sql = $sql.User.insertUser
-  const params = req.body
-  console.log('接口：注册用户', params)
-  conn.query(sql, [params], function (err, result) {
-    if (err) {
-      console.log(err)
-      this.$message.error(err)
-      return
-    }
-    if (result) {
-      jsonWrite(res, result)
-    }
-  })
-})
+
 
 
 
