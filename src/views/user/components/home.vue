@@ -728,6 +728,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import url('../../current.less');
 .user-center {
   width: 100%;
   /* margin: 0 auto; */

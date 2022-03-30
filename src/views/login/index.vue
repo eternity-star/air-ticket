@@ -155,7 +155,7 @@ export default {
         password: this.form.password,
         level: parseInt(this.user),
       }
-      this.axios.post('/api/Air/getUser', params).then(({ data }) => {
+      this.axios.post('/api/Air/login', params).then(({ data }) => {
         console.log('[ data ] >', data)
         if (data.msg === '请求成功') {
           this.$message.success('登录成功')
@@ -195,6 +195,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import url('../current.less');
 .login {
   margin: 0 auto;
   position: relative;

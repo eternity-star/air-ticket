@@ -13,7 +13,9 @@ const sqlMap = {
   },
   User: {
     insertUser: 'insert into user(id, name, password, mobile, idCard, level) values(?,?,?,?,?,?)', //插入用户信息
-    selectUser: 'SELECT id,name,mobile,idCard,level FROM user where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
+    login: 'SELECT id,name,mobile,idCard,level,sex FROM user where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
+    updateUser: 'UPDATE user SET name = ?, sex = ?, idCard = ?, mobile = ? WHERE id = ?',
+    selectUser: 'SELECT id,name,mobile,idCard,level,sex FROM user where id = ?'
   },
 }
 

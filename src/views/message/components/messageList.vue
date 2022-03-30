@@ -97,6 +97,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import url('../../current.less');
 /deep/ .ant-list-item-action {
   margin-top: 25px;
 }

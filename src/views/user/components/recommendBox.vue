@@ -55,6 +55,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import url('../../current.less');
 .recommend-box {
   margin: 2px 0 2px 0;
   padding: 2px 10px 2px 10px;

@@ -24,7 +24,7 @@
       </div>
     </a-affix>
     <home v-if="currentIndex === 1" />
-    <my-info v-else-if="currentIndex !== 1 && currentIndex !== 5 && hackReset == true" :currentClick="currentClick"/>
+    <my-info v-else-if="currentIndex !== 1 && currentIndex !== 5 && hackReset == true" :currentClick="currentClick" ref="myInfo"/>
   </div>
 </template>
 
@@ -48,9 +48,6 @@ export default {
     console.log('[ 111 ] >', 111)
     console.log('[ window.sessionStorage.getItem("user") ] >', JSON.parse(window.sessionStorage.getItem("user")))
     // http://localhost:3000
-    this.axios.get("/api/Air/getAll").then(res => {
-      console.log('[ res111 ] >', res.data)
-    })
     const params = {
       key: '1'
     }
@@ -120,6 +117,7 @@ export default {
 </script>
 
 <style scoped>
+@import url('../current.less');
 /* .user {
   
 } */

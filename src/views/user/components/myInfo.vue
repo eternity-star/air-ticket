@@ -302,6 +302,7 @@
 <script>
 import suggestion from '../../suggestion/index.vue'
 import message from '../../message/index.vue'
+import { getUser } from '@/common/api/index'
 export default {
   name: 'myInfo',
   props: {
@@ -324,7 +325,7 @@ export default {
       },
       form: {
         name: '', //姓名
-        sex: 1, //性别
+        sex: '', //性别
         idCard: '', //身份证
         mobile: '', //手机号
       },
@@ -541,6 +542,7 @@ export default {
     if (this.mark === 'owner') {
       this.uploadVisible = true
     }
+    this.init()
   },
   watch: {
     currentClick: {
@@ -559,6 +561,16 @@ export default {
   },
   mounted() {},
   methods: {
+    // 初始化个人信息
+    async init() {
+      let infoData = JSON.parse(window.sessionStorage.getItem('user'))
+      this.form = {
+        name: infoData.name, //姓名
+        sex: infoData?.sex, //性别
+        idCard: infoData.idCard, //身份证
+        mobile: infoData.mobile, //手机号
+      }
+    },
     // 提交投诉与建议
     suggestEvent(params) {
       console.log('[ params ] >', params)
@@ -569,7 +581,42 @@ export default {
     },
     // 更新信息
     updateInfo() {
-      this.$message.success('更新成功')
+      console.log(
+        '[ JSON.parse(window.sessionStorage.getItem("user")).id ] >',
+        JSON.parse(window.sessionStorage.getItem('user')).id
+      )
+      let id = JSON.parse(window.sessionStorage.getItem('user')).id
+      const params = {
+        name: this.form.name, //姓名
+        sex: this.form?.sex, //性别
+        idCard: this.form.idCard, //身份证
+        mobile: this.form.mobile, //手机号
+        id,
+      }
+      this.axios.post('/api/Air/updateUser', params).then(({ data }) => {
+        console.log('[ data ] >', data)
+        if (data.msg === '请求成功') {
+          console.log('[ getUser() ] >', getUser())
+          this.axios.post('/api/Air/getUser', { id }).then(({ data }) => {
+            console.log(
+              '%c [ data.data[0] ]-10',
+              'font-size:13px; background:pink; color:#bf2c9f;',
+              data.data[0]
+            )
+            if (data.msg === '请求成功') {
+              window.sessionStorage.setItem(
+                'user',
+                JSON.stringify(data.data[0])
+              )
+            } else {
+              this.$message.error('已被使用，请重新填写')
+            }
+          })
+          this.$message.success('更新成功')
+        } else {
+          this.$message.error(data.msg)
+        }
+      })
     },
     recharge() {
       this.wallet += parseInt(this.payAmount)
@@ -584,6 +631,9 @@ export default {
     },
     typeClick(event) {
       this.currentIndex = parseInt(event.key)
+      if (this.currentIndex === 1) {
+        this.init()
+      }
       console.log(
         '%c [ this.currentIndex ]-131',
         'font-size:13px; background:pink; color:#bf2c9f;',
@@ -664,6 +714,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import url('../../current.less');
 #components-layout-demo-custom-trigger {
   height: calc(100vh - 50px);
 }

@@ -51,11 +51,11 @@ router.post('/registerUser', (req, res) => {
   })
 })
 
-// 接口：查询用户信息
-router.post('/getUser', (req, res) => {
-  const sql = $sql.User.selectUser
+// 接口：登录
+router.post('/login', (req, res) => {
+  const sql = $sql.User.login
   const params = req.body
-  console.log('接口：查询用户', params)
+  console.log('接口：登录', params)
   conn.query(sql, [params.loginName, params.loginName, params.password, params.level], function (err, result) {
     let returnData = {}
     if (err) {
@@ -78,25 +78,55 @@ router.post('/getUser', (req, res) => {
   })
 })
 
-
-
-
-// 接口：查询全部
-router.get('/getAll', (req, res) => {
-  const sql = $sql.Stu.show
+// 接口：更新用户信息
+router.post('/updateUser', (req, res) => {
+  const sql = $sql.User.updateUser
   const params = req.body
-  console.log('接口：查询全部', params)
-  conn.query(sql, function (err, result) {
+  console.log('接口：更新用户', params)
+  conn.query(sql, [params.name, params.sex, params.idCard, params.mobile, params.id], function (err, result) {
+    let returnData = {}
     if (err) {
       console.log(err)
-      this.$message.error(err)
-      return
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
     }
     if (result) {
-      jsonWrite(res, result)
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
     }
+    jsonWrite(res, returnData)
   })
 })
+
+// 接口：获取当前用户信息
+router.post('/getUser', (req, res) => {
+  const sql = $sql.User.selectUser
+  const params = req.body
+  console.log('接口：获取当前用户信息', params)
+  conn.query(sql, [params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+
 
 // 接口：查询省份
 router.get('/getProvince', (req, res) => {
@@ -104,14 +134,21 @@ router.get('/getProvince', (req, res) => {
   const params = req.body
   console.log('接口：查询省份', params)
   conn.query(sql, function (err, result) {
+    let returnData = {}
     if (err) {
       console.log(err)
-      this.$message.error(err)
-      return
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
     }
     if (result) {
-      jsonWrite(res, result)
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
     }
+    jsonWrite(res, returnData)
   })
 })
 
@@ -121,14 +158,21 @@ router.post('/getCity', (req, res) => {
   const params = req.body
   console.log('接口：查询省份下的城市', params)
   conn.query(sql, [params.province_id], function (err, result) {
+    let returnData = {}
     if (err) {
       console.log(err)
-      this.$message.error(err)
-      return
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
     }
     if (result) {
-      jsonWrite(res, result)
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
     }
+    jsonWrite(res, returnData)
   })
 })
 

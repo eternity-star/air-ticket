@@ -79,6 +79,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import url('../current.less');
 .suggestion {
   margin-left: 25%;
 }
