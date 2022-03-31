@@ -114,9 +114,6 @@
                     v-model="it.round_time"
                     :allowClear="true"
                     :disabledDate="rangeDisabledDate"
-                    :show-time="{
-                      hideDisabledOptions: true,
-                    }"
                     :placeholder="['出行时间', '返程时间']"
                     format="YYYY-MM-DD"
                     @change="timeChange"
@@ -338,6 +335,7 @@
                   v-for="(item, index) in recommendData"
                   :key="index"
                   :infoData="item"
+                  @click.native="recommendTicketClick(item)"
                 />
               </div>
             </div>
@@ -479,21 +477,25 @@ export default {
         '成人',
       ], //乘客类型
       cabinTypeList: ['经济舱', '商务/头等舱'],
-      deadline: 1646386200000,
+      deadline: 1648891800000,
       recommendData: [
         {
+          id: 0,
           index: 0,
           title: 'Ant Design Title 1',
         },
         {
+          id: 1,
           index: 1,
           title: 'Ant Design Title 2',
         },
         {
+          id: 2,
           index: 2,
           title: 'Ant Design Title 3',
         },
         {
+          id: 3,
           index: 3,
           title: 'Ant Design Title 4',
         },
@@ -552,14 +554,16 @@ export default {
   methods: {
     getProvince() {
       this.axios.get('/api/Air/getProvince').then(({data}) => {
-        if (data.length) {
-          this.cityList = data.map((it) => {
+        if (data.msg === '请求成功') {
+          this.cityList = data.data.map((it) => {
             return {
               value: it.province_id,
               label: it.province,
               isLeaf: false,
             }
           })
+        } else {
+          this.$message.error(data.msg)
         }
         // if (this.form.trip_start.length) {
         //   let targetOption = this.provinceList.find(
@@ -576,13 +580,15 @@ export default {
       console.log('[ params ] >', params)
       this.axios.post('/api/Air/getCity', params).then(({ data }) => {
         console.log('[ data ] >', data)
-        if (data.length) {
-          targetOption.children = data.map((it) => {
+        if (data.msg === '请求成功') {
+          targetOption.children = data.data.map((it) => {
             return {
               value: it.city_id,
               label: it.city,
             }
           })
+        } else {
+          this.$message.error(data.msg)
         }
         this.cityList = [...this.cityList]
       })
@@ -682,6 +688,16 @@ export default {
       this.form.passengers = this.oldPassengers
       this.passengersVisible = false
     },
+    recommendTicketClick(airline) {
+      this.$emit('ticketSearch', airline, this.form.trip)
+      // this.$router.push({
+      //   name: 'searchTicket',
+      //   query: {
+      //     id: airline.id,
+      //     roundShow: parseInt(this.form.trip)
+      //   }
+      // })
+    },
     passengersClick() {
       this.oldPassengers = this.form.passengers
       this.passengersVisible = true
@@ -704,10 +720,10 @@ export default {
       return result
     },
     disabledDate(time) {
-      return time.valueOf() <= new Date().valueOf()
+      return time < this.$moment().subtract(1, "days")
     },
     rangeDisabledDate(current) {
-      return current && current <= this.$moment().endOf('day')
+      return current && current <= this.$moment().startOf('day')
     },
     disabledRangeTime(type) {
       if (type === 'start') {

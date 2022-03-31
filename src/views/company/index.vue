@@ -380,21 +380,21 @@
               >
               <template slot="operation" slot-scope="text, record">
                 <div>
-                  <!-- <a-popconfirm
-                    title="确定退票吗？"
+                  <a-popconfirm
+                    title="确定取消航班吗？"
                     ok-text="确定"
                     cancel-text="取消"
                     @confirm="returnTicket"
                   >
-                    <a-button type="primary" style="margin-right: 5px"
-                      >退票</a-button
+                    <a-button type="danger" style="margin-right: 5px"
+                      >取消</a-button
                     >
-                  </a-popconfirm> -->
+                  </a-popconfirm>
                   <a-button
-                    type="danger"
+                    type="primary"
                     style="margin-left: 5px"
                     @click="returnVisible = true"
-                    >修改</a-button
+                    >详情</a-button
                   >
                 </div>
               </template>
@@ -546,7 +546,7 @@
 </template>
 
 <script>
-import { randomWord } from "@/common/utils"
+import { randomWord } from '@/common/utils'
 function getBase64(img, callback) {
   const reader = new FileReader()
   reader.addEventListener('load', () => callback(reader.result))
@@ -701,8 +701,9 @@ export default {
           departure_time: '2022-02-08 09:51:55', //出发时间
           destination_time: '2022-02-08 11:51:55', //到达时间
           ticketCount: 600, //机票数量
-          businessCabinCount: 100, //商务舱数量
-          economyCabinCount: 500, //商务舱数量
+          bookedCount: 500, //已订机票
+          // businessCabinCount: 100, //商务舱数量
+          // economyCabinCount: 500, //商务舱数量
         },
         {
           key: '2',
@@ -712,8 +713,9 @@ export default {
           departure_time: '2022-02-28 15:56:55', //出发时间
           destination_time: '2022-02-08 18:51:55', //到达时间
           ticketCount: 1500, //机票数量
-          businessCabinCount: 150, //商务舱数量
-          economyCabinCount: 1350, //商务舱数量
+          bookedCount: 500, //已订机票
+          // businessCabinCount: 150, //商务舱数量
+          // economyCabinCount: 1350, //商务舱数量
         },
         {
           key: '3',
@@ -723,8 +725,9 @@ export default {
           departure_time: '2022-03-01 22:51:55', //出发时间
           destination_time: '2022-03-02 01:51:55', //到达时间
           ticketCount: 300, //机票数量
-          businessCabinCount: 20, //商务舱数量
-          economyCabinCount: 280, //商务舱数量
+          bookedCount: 500, //已订机票
+          // businessCabinCount: 20, //商务舱数量
+          // economyCabinCount: 280, //商务舱数量
         },
       ],
       orderColumns: [
@@ -783,14 +786,23 @@ export default {
           width: '10%',
         },
         {
-          title: '商务舱数量',
-          dataIndex: 'businessCabinCount',
-          key: 'businessCabinCount',
+          title: '已订机票',
+          dataIndex: 'bookedCount',
+          key: 'bookedCount',
           ellipsis: true,
           align: 'center',
-          scopedSlots: { customRender: 'businessCabinCount' },
+          scopedSlots: { customRender: 'bookedCount' },
           width: '10%',
         },
+        // {
+        //   title: '商务舱数量',
+        //   dataIndex: 'businessCabinCount',
+        //   key: 'businessCabinCount',
+        //   ellipsis: true,
+        //   align: 'center',
+        //   scopedSlots: { customRender: 'businessCabinCount' },
+        //   width: '10%',
+        // },
         // {
         //   title: '商务舱单价',
         //   dataIndex: 'businessCabinPrice',
@@ -800,15 +812,15 @@ export default {
         //   scopedSlots: { customRender: 'businessCabinPrice' },
         //   width: '10%',
         // },
-        {
-          title: '经济舱数量',
-          dataIndex: 'economyCabinCount',
-          key: 'economyCabinCount',
-          ellipsis: true,
-          align: 'center',
-          scopedSlots: { customRender: 'economyCabinCount' },
-          width: '10%',
-        },
+        // {
+        //   title: '经济舱数量',
+        //   dataIndex: 'economyCabinCount',
+        //   key: 'economyCabinCount',
+        //   ellipsis: true,
+        //   align: 'center',
+        //   scopedSlots: { customRender: 'economyCabinCount' },
+        //   width: '10%',
+        // },
         // {
         //   title: '经济舱单价',
         //   dataIndex: 'economyCabinPrice',
@@ -825,7 +837,7 @@ export default {
           ellipsis: true,
           align: 'center',
           scopedSlots: { customRender: 'operation' },
-          width: '10%',
+          width: '20%',
         },
       ],
       cityList: [
@@ -842,10 +854,16 @@ export default {
   created() {
     console.log('[ this.$moment() ] >', this.$moment().valueOf())
     console.log('[ <= new Date().valueOf() ] >', new Date().valueOf())
-    console.log('[ String(Math.round(Math.random())) ] >', String(Math.round(Math.random())))
+    console.log(
+      '[ String(Math.round(Math.random())) ] >',
+      String(Math.round(Math.random()))
+    )
     console.log('[ new Date().getTime() ] >', new Date().getTime())
     console.log('[ new Date().valueOf() ] >', new Date().valueOf())
-    console.log('[ String(Math.round(Math.random())) ] >', Math.random()*100000)
+    console.log(
+      '[ String(Math.round(Math.random())) ] >',
+      Math.random() * 100000
+    )
   },
   watch: {
     currentClick: {
@@ -883,7 +901,10 @@ export default {
   },
   mounted() {
     console.log('[ randomWord ] >', randomWord(true, 8, 8))
-    console.log('[ new Date().getTime() + String(Math.round(Math.random() * 10000)) ] >', new Date().getTime() + String(Math.round(Math.random() * 10000)))
+    console.log(
+      '[ new Date().getTime() + String(Math.round(Math.random() * 10000)) ] >',
+      new Date().getTime() + String(Math.round(Math.random() * 10000))
+    )
   },
   methods: {
     ticketCountChange() {
@@ -988,7 +1009,7 @@ export default {
       )
     },
     disabledDate(time) {
-      return time.valueOf() <= new Date().valueOf()
+      return time < this.$moment().subtract(1, 'days')
     },
     /**
      * 图片相关函数
@@ -1022,7 +1043,7 @@ export default {
      * 我的订单相关函数
      */
     returnTicket() {
-      this.$message.success('退票成功')
+      this.$message.success('取消航班成功')
     },
   },
 }
