@@ -1,5 +1,137 @@
 <template>
-  <div class="suggestion">
+  <div class="search-ticket">
+    <div class="back-header">
+      <span style="cursor: pointer" @click="$router.go(-1)"
+        ><a-icon type="left" />返回</span
+      >
+    </div>
+    <div class="show-ticket">
+      <a-steps :current="currentIndex" @change="onChange">
+        <a-step title="搜索">
+          <span slot="icon"><a-icon type="search" /></span>
+        </a-step>
+        <a-step title="去程航班">
+          <!-- <span slot="subTitle">Left 00:00:08</span> -->
+          <span slot="icon"
+            ><img
+              src="../../assets/image/飞机_起飞.png"
+              alt="飞机_起飞"
+              width="40px"
+              height="40px"
+          /></span>
+        </a-step>
+        <!-- 要根据是否是往返航班来判断是否显示改步骤  roundShow-->
+        <a-step title="返程航班" v-if="roundShow">
+          <span slot="icon"
+            ><img
+              src="../../assets/image/飞机_降落.png"
+              alt="飞机_降落"
+              width="40px"
+              height="40px"
+          /></span>
+          <!-- <span slot="icon"><img src="../../assets/image/飞机_降落.png" alt="飞机_降落" width="40px" height="40px"></span> -->
+        </a-step>
+        <a-step title="旅客" description="This is a description.">
+          <span slot="icon"><a-icon type="team" /></span>
+        </a-step>
+        <a-step title="其他选项" description="This is a description.">
+          <span slot="icon"><a-icon type="team" /></span>
+        </a-step>
+        <a-step title="付款" description="This is a description.">
+          <span slot="icon"><a-icon type="team" /></span>
+        </a-step>
+      </a-steps>
+
+      <!-- 去程航班 -->
+      <div v-if="currentIndex === 1">
+        <div class="mart10">
+          <span style="font-size: 20px; font-weight: bold">筛选条件: </span>
+          <span class="marl10" style="font-size: 16px">
+            时间：
+            <a-date-picker
+              :allowClear="false"
+              inputReadOnly
+              show-time
+              :disabled-date="disabledDate"
+              format="YYYY-MM-DD HH:mm:ss"
+              placeholder="请选择"
+            />
+          </span>
+          <span class="marl10">
+            <a-select
+              @change="conditionChange"
+              :defaultValue="{key: 0, label: '起飞早-晚'}"
+              :show-arrow="true"
+              :dropdownMatchSelectWidth="false"
+              style="width: 10%"
+              :default-active-first-option="true"
+              :not-found-content="null"
+              labelInValue
+            >
+              <a-select-option
+                v-for="(item, index) in conditionList"
+                :key="index"
+                :value="index"
+              >
+                {{ item }}
+              </a-select-option>
+            </a-select>
+          </span>
+        </div>
+        <div class="mart10">
+          <span style="font-size: 20px">航班({{airlineLength}})</span>
+          <ticket-list />
+        </div>
+      </div>
+
+      <!-- 返程航班 -->
+      <div v-if="roundShow && currentIndex === 2">
+        <span>
+          时间：
+          <a-date-picker
+            :allowClear="false"
+            inputReadOnly
+            show-time
+            :disabled-date="disabledDate"
+            format="YYYY-MM-DD HH:mm:ss"
+            placeholder="请选择"
+          />
+        </span>
+        <div>
+          <span>筛选条件</span>
+        </div>
+      </div>
+
+      <!-- 旅客 -->
+      <div
+        v-if="
+          (!roundShow && currentIndex === 2) ||
+          (roundShow && currentIndex === 3)
+        "
+      >
+        旅客信息
+      </div>
+
+      <!-- 其他选项 -->
+      <div
+        v-if="
+          (!roundShow && currentIndex === 3) ||
+          (roundShow && currentIndex === 4)
+        "
+      >
+        座舱位置选择信息等
+      </div>
+
+      <!-- 付款 -->
+      <div
+        v-if="
+          (!roundShow && currentIndex === 4) ||
+          (roundShow && currentIndex === 5)
+        "
+      >
+        付款
+      </div>
+    </div>
     <a-form-model
       :model="form"
       :rules="rules"
@@ -41,7 +173,21 @@
 </template>
 
 <script>
+import ticketList from './components/ticketList.vue'
 export default {
+  props: {
+    id: {
+      type: String,
+      default: ''
+    },
+    roundShow: {
+      type: Boolean,
+      default: false
+    },
+  },
+  components: {
+    ticketList,
+  },
   data() {
     return {
       labelCol: { span: 8 },
@@ -54,9 +200,28 @@ export default {
         suggest: '', // 建议
         complaint: '', // 投诉
       },
+      currentIndex: 1, // 导航栏的index
+      haveCurrentIndex: 0, // 进行到哪一步了
+      airlineLength: 6,
+      conditionList: [
+        '起飞早-晚',
+        '起飞晚-早',
+        '到达早-晚',
+        '到达晚-早',
+        '耗时短-长',
+        '耗时长-短',
+        '价格高-低',
+        '价格低-高',
+      ],
     }
   },
-  mounted() {},
+  mounted() {
+    console.log(
+      '[ this.$route.query.roundShow ] >',
+      this.$route.query.roundShow
+    )
+    console.log('[ this.roundShow ] >', this.roundShow)
+  },
   methods: {
     /**
      * 目前存在三个问题：1、航班、城市等数据从哪里来，没有数据无法实现用户浏览订票功能；2、用户界面首页会有推荐航班，推荐规则是什么；3、查询机票时有单程、往返、多程等行程，涉及到多人时的逻辑。针对第一个问题，可以适量的制造假数据，而后用以做后续的操作功能。针对第二个问题，通过先前制造的数据，获取到达目的地最多的5个城市作为热门城市，进而将前往该城市目的地的机票信息推荐到首页。针对第三个问题，涉及单程、往返、多程的规则如下：单程时的查询订票规则，单个乘客或多位乘客时，选择一个航班作为乘客的航程，在确认乘客信息时，在选择每个乘客的座舱等级以及希望坐的座位。往返时的查询订票规则，可拆分成两个行程，去程航班和返程航班，相当于分为两个单程航班，在使用单程航班的规则。多程时的查询订票规则，也是分成多个单行程来处理，但有对应的条件，上一个行程的时间要比下一个行程时间早，否则不允许查询。
@@ -72,6 +237,15 @@ export default {
      *                    第二步在确认乘客信息时，在分别选择乘客们往返航班对应的座位等信息
      *                多程时的查询订票规则，也是分成多个单行程来处理，但有对应的条件，上一个行程的时间要比下一个行程时间早，否则不允许查询
      */
+    onChange(current) {
+      console.log('[ current ] >', current)
+      if (current <= this.currentIndex) {
+        this.currentIndex = current
+      }
+    },
+    conditionChange(val) {
+      console.log('[ val ] >', val)
+    },
     typeChange() {
       this.resetClick()
     },
@@ -88,13 +262,32 @@ export default {
       this.form.suggest = ''
       this.form.complaint = ''
     },
+    disabledDate(time) {
+      return time < this.$moment().subtract(1, 'days')
+    },
   },
 }
 </script>
 
 <style lang="less" scoped>
 @import url('../current.less');
-.suggestion {
-  margin-left: 25%;
+.search-ticket {
+  padding: 10px 10px;
+  .back-header {
+    height: 45px;
+    line-height: 45px;
+    .handle-item {
+      font-weight: 400;
+      color: #000000;
+    }
+    .disable-item {
+      font-weight: 400;
+      color: rgba(74, 69, 62, 0.5);
+    }
+  }
+  .show-ticket {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
 }
 </style>

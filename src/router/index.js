@@ -19,6 +19,11 @@ const routes = [
     name: 'company',
     component: () => import("@/views/company/index.vue")
   },
+  {
+    path: '/searchTicket',
+    name: 'searchTicket',
+    component: () => import("@/views/searchTicket/index.vue")
+  },
 ]
 
 const router = new VueRouter({

@@ -23,14 +23,20 @@
         >
       </div>
     </a-affix>
-    <home v-if="currentIndex === 1" />
-    <my-info v-else-if="currentIndex !== 1 && currentIndex !== 5 && hackReset == true" :currentClick="currentClick" ref="myInfo"/>
+    <home v-if="currentIndex === 1 && !searchShow" @ticketSearch="ticketSearch" />
+    <my-info
+      v-else-if="currentIndex !== 1 && currentIndex !== 5 && hackReset == true & !searchShow"
+      :currentClick="currentClick"
+      ref="myInfo"
+    />
+    <search-ticket v-if="searchShow" />
   </div>
 </template>
 
 <script>
 import home from './components/home.vue'
 import myInfo from './components/myInfo.vue'
+import searchTicket from '../searchTicket/index.vue'
 export default {
   name: 'user',
   data() {
@@ -38,38 +44,49 @@ export default {
       currentIndex: 1,
       currentClick: 1,
       hackReset: false,
+      searchShow: false,
     }
   },
   components: {
     home,
     myInfo,
+    searchTicket,
   },
   mounted() {
     console.log('[ 111 ] >', 111)
-    console.log('[ window.sessionStorage.getItem("user") ] >', JSON.parse(window.sessionStorage.getItem("user")))
+    console.log(
+      '[ window.sessionStorage.getItem("user") ] >',
+      JSON.parse(window.sessionStorage.getItem('user'))
+    )
     // http://localhost:3000
     const params = {
-      key: '1'
+      key: '1',
     }
-    this.axios.post(
-      '/api/Air/searchAir',
-      {
-        id: '-1'
-      }
-    ).then(res => {
-      console.log('[ res222 ] >', res)
-    }).catch(err => {
-      console.log('[ err ] >', err)
-    })
-    
+    this.axios
+      .post('/api/Air/searchAir', {
+        id: '-1',
+      })
+      .then((res) => {
+        console.log('[ res222 ] >', res)
+      })
+      .catch((err) => {
+        console.log('[ err ] >', err)
+      })
   },
   watch: {},
   methods: {
+    ticketSearch(airline, trip) {
+      console.log('[ airline ] >', airline)
+      this.ticketId = airline.id
+      this.roundShow = parseInt(trip) === 2
+      this.searchShow = true
+    },
     /**
      * 导航栏点击事件
      */
     barClick(type) {
       this.currentIndex = type
+      this.searchShow = false
       if (type === 1) {
         this.$message.loading('哈利波特骑着扫帚飞')
       } else if (type === 5) {
