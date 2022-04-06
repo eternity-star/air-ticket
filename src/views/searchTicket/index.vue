@@ -1,7 +1,7 @@
 <template>
   <div class="search-ticket">
     <div class="back-header">
-      <span style="cursor: pointer" @click="$router.go(-1)"
+      <span style="cursor: pointer" @click="backClick"
         ><a-icon type="left" />返回</span
       >
     </div>
@@ -265,6 +265,9 @@ export default {
     disabledDate(time) {
       return time < this.$moment().subtract(1, 'days')
     },
+    backClick() {
+      this.$emit("update:searchShow", false);
+    }
   },
 }
 </script>

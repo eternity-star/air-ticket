@@ -477,7 +477,7 @@ export default {
         '成人',
       ], //乘客类型
       cabinTypeList: ['经济舱', '商务/头等舱'],
-      deadline: 1648891800000,
+      deadline: 1649410200000,
       recommendData: [
         {
           id: 0,

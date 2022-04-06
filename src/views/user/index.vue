@@ -29,7 +29,7 @@
       :currentClick="currentClick"
       ref="myInfo"
     />
-    <search-ticket v-if="searchShow" />
+    <search-ticket v-if="searchShow" :searchShow.sync="searchShow"/>
   </div>
 </template>
 
