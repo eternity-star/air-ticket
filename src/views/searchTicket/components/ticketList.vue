@@ -30,13 +30,16 @@
           <span>￥<span style="font-size: 30px">3084</span></span>
           <span class="text-red">该价格剩余5个座位！</span>
         </div>
-        <div class="operation">
+        <div class="operation" v-if="!changeShow">
           <div class="book" v-if="bookShow" @click="book">
             订票 <a-icon type="down" />
           </div>
           <div class="cancel" v-else @click="bookShow = true">
             收起 <a-icon type="up" />
           </div>
+        </div>
+        <div v-else class="operation" @click="change">
+          <div class="change">变更</div>
         </div>
       </div>
       <div class="show" v-if="!bookShow">
@@ -63,6 +66,12 @@
 
 <script>
 export default {
+  props: {
+    changeShow: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       ticketList: [1, 2, 3, 4, 5],
@@ -75,6 +84,11 @@ export default {
     },
     prebook() {
       console.log('[ 111 ] >', 111)
+      this.$emit('prebook', 1)
+    },
+    change() {
+      console.log('[ 333 ] >', 333)
+      this.$emit('change', 2)
     },
   },
 }
@@ -164,6 +178,22 @@ export default {
       }
       .cancel:hover {
         background-color: #ff9b1e;
+      }
+      .change {
+        width: 80px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        border-radius: 5px;
+        cursor: pointer;
+        position: absolute;
+        top: 30%;
+        transform: translateY(-50%);
+        color: #00a1de;
+        font-size: 18px;
+      }
+      .change:hover {
+        background-color: #edefef;
       }
     }
   }
