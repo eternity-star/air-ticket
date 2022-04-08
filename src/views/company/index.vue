@@ -1,42 +1,42 @@
 <template>
   <div class="myInfo">
     <a-layout id="components-layout-demo-custom-trigger">
-      <a-layout-sider v-model="collapsed" :trigger="null" collapsible>
-        <div class="logo" v-if="!collapsed">公司后台管理</div>
-        <div v-else style="text-align: center; margin-top: 30px">
-          <a-icon
-            type="crown"
-            theme="filled"
-            style="color: #ffffff; font-size: 20px"
-          />
+      <a-layout-sider v-model="collapsed"
+                      :trigger="null"
+                      collapsible>
+        <div class="logo"
+             v-if="!collapsed">公司后台管理</div>
+        <div v-else
+             style="text-align: center; margin-top: 30px">
+          <a-icon type="crown"
+                  theme="filled"
+                  style="color: #ffffff; font-size: 20px" />
         </div>
-        <a-menu
-          theme="dark"
-          mode="inline"
-          :default-selected-keys="defaultIndex"
-          @click="typeClick"
-        >
+        <a-menu theme="dark"
+                mode="inline"
+                :default-selected-keys="defaultIndex"
+                @click="typeClick">
           <a-menu-item key="1">
             <a-icon type="home" />
             <span>系统首页</span>
           </a-menu-item>
           <a-sub-menu key="sub1">
-            <span slot="title"
-              ><a-icon type="unordered-list" /><span>航班管理</span></span
-            >
+            <span slot="title">
+              <a-icon type="unordered-list" /><span>航班管理</span>
+            </span>
             <a-menu-item key="2"> 添加航班 </a-menu-item>
             <a-menu-item key="3"> 航班管理 </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub2">
-            <span slot="title"
-              ><a-icon type="wallet" /><span>资金管理</span></span
-            >
+            <span slot="title">
+              <a-icon type="wallet" /><span>资金管理</span>
+            </span>
             <a-menu-item key="4"> 收益管理 </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub3">
-            <span slot="title"
-              ><a-icon type="menu" /><span>乘客管理</span></span
-            >
+            <span slot="title">
+              <a-icon type="menu" /><span>乘客管理</span>
+            </span>
             <a-menu-item key="5"> 添加航班 </a-menu-item>
             <a-menu-item key="6"> 航班管理 </a-menu-item>
           </a-sub-menu>
@@ -44,30 +44,26 @@
       </a-layout-sider>
       <a-layout>
         <a-layout-header style="background: #fff; padding: 0">
-          <a-icon
-            class="trigger"
-            :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-            @click="() => (collapsed = !collapsed)"
-          />
+          <a-icon class="trigger"
+                  :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+                  @click="() => (collapsed = !collapsed)" />
           <span>航空公司</span>
           <div style="float: right; margin-right: 20px; cursor: pointer">
             <a-dropdown :trigger="['click']">
-              <a-avatar
-                size="large"
-                icon="user"
-                @click="(e) => e.preventDefault()"
-              />
+              <a-avatar size="large"
+                        icon="user"
+                        @click="(e) => e.preventDefault()" />
               <a-menu slot="overlay">
                 <a-menu-item key="0">
-                  <div
-                    style="width: 170px; font-size: 14px"
-                    @click="changePassword"
-                  >
-                    <a-icon type="lock" theme="filled" /> 修改密码
+                  <div style="width: 170px; font-size: 14px"
+                       @click="changePassword">
+                    <a-icon type="lock"
+                            theme="filled" /> 修改密码
                   </div>
                 </a-menu-item>
                 <a-menu-item key="1">
-                  <div style="width: 170px; font-size: 14px" @click="logout">
+                  <div style="width: 170px; font-size: 14px"
+                       @click="logout">
                     <a-icon type="logout" /> 退出登录
                   </div>
                 </a-menu-item>
@@ -76,122 +72,104 @@
             </a-dropdown>
           </div>
         </a-layout-header>
-        <a-layout-content
-          :style="{
+        <a-layout-content :style="{
             margin: '24px 16px',
             padding: '24px',
             background: '#fff',
             minHeight: '280px',
-          }"
-        >
-          <div class="myCompanyInfo" v-if="currentIndex === 1">
-            <a-form-model
-              :model="infoForm"
-              :rules="rules"
-              :label-col="labelCol"
-              :wrapper-col="wrapperCol"
-            >
-              <a-form-model-item prop="name" label="公司名称">
-                <a-input
-                  v-model="infoForm.name"
-                  :disabled="disabled"
-                  placeholder="请输入"
-                  style="width: 75%"
-                />
+          }">
+          <div class="myCompanyInfo"
+               v-if="currentIndex === 1">
+            <a-form-model :model="infoForm"
+                          :rules="rules"
+                          :label-col="labelCol"
+                          :wrapper-col="wrapperCol">
+              <a-form-model-item prop="name"
+                                 label="公司名称">
+                <a-input v-model="infoForm.name"
+                         :disabled="disabled"
+                         placeholder="请输入"
+                         style="width: 75%" />
               </a-form-model-item>
-              <a-form-model-item prop="idCard" label="公司编号">
-                <a-input
-                  v-model="infoForm.id"
-                  :disabled="true"
-                  style="width: 75%"
-                />
+              <a-form-model-item prop="idCard"
+                                 label="公司编号">
+                <a-input v-model="infoForm.id"
+                         :disabled="true"
+                         style="width: 75%" />
               </a-form-model-item>
-              <a-form-model-item prop="idCard" label="公司地址">
-                <a-input
-                  v-model="infoForm.address"
-                  :disabled="disabled"
-                  placeholder="请输入"
-                  style="width: 75%"
-                />
+              <a-form-model-item prop="idCard"
+                                 label="公司地址">
+                <a-input v-model="infoForm.address"
+                         :disabled="disabled"
+                         placeholder="请输入"
+                         style="width: 75%" />
               </a-form-model-item>
-              <a-form-model-item prop="mobile" label="法定责任人">
-                <a-input
-                  v-model="infoForm.mobile"
-                  :disabled="disabled"
-                  placeholder="请输入"
-                  type="number"
-                  @change="test"
-                  style="width: 75%"
-                />
+              <a-form-model-item prop="mobile"
+                                 label="法定责任人">
+                <a-input v-model="infoForm.mobile"
+                         :disabled="disabled"
+                         placeholder="请输入"
+                         type="number"
+                         @change="test"
+                         style="width: 75%" />
               </a-form-model-item>
-              <a-form-model-item prop="mobile" label="法定责任人身份证号">
-                <a-input
-                  v-model="infoForm.idCard"
-                  :disabled="disabled"
-                  placeholder="请输入"
-                  @change="test"
-                  style="width: 75%"
-                />
+              <a-form-model-item prop="mobile"
+                                 label="法定责任人身份证号">
+                <a-input v-model="infoForm.idCard"
+                         :disabled="disabled"
+                         placeholder="请输入"
+                         @change="test"
+                         style="width: 75%" />
               </a-form-model-item>
-              <a-form-model-item prop="mobile" label="法定责任人手机号">
-                <a-input
-                  v-model="infoForm.mobile"
-                  :disabled="disabled"
-                  placeholder="请输入"
-                  type="number"
-                  @change="test"
-                  style="width: 75%"
-                />
+              <a-form-model-item prop="mobile"
+                                 label="法定责任人手机号">
+                <a-input v-model="infoForm.mobile"
+                         :disabled="disabled"
+                         placeholder="请输入"
+                         type="number"
+                         @change="test"
+                         style="width: 75%" />
               </a-form-model-item>
             </a-form-model>
-            <a-button
-              v-if="disabled"
-              type="primary"
-              shape="round"
-              style="margin-left: 43%"
-              @click="disabled = false"
-              >修改信息</a-button
-            >
+            <a-button v-if="disabled"
+                      type="primary"
+                      shape="round"
+                      style="margin-left: 43%"
+                      @click="disabled = false">修改信息</a-button>
             <div v-else>
-              <a-button
-                type="primary"
-                shape="round"
-                style="margin-left: 36%"
-                @click="
+              <a-button type="primary"
+                        shape="round"
+                        style="margin-left: 36%"
+                        @click="
                   disabled = true
                   $message.success('修改成功')
-                "
-                >保存</a-button
-              >
-              <a-button
-                type="primary"
-                shape="round"
-                style="margin-left: 5%"
-                @click="disabled = true"
-                >取消</a-button
-              >
+                ">保存</a-button>
+              <a-button type="primary"
+                        shape="round"
+                        style="margin-left: 5%"
+                        @click="disabled = true">取消</a-button>
             </div>
           </div>
-          <div class="myTripInfo" v-else-if="currentIndex === 2">
-            <a-form-model
-              ref="form"
-              :model="form"
-              :rules="rules"
-              :label-col="labelCol"
-              :wrapper-col="wrapperCol"
-            >
-              <a-spin :spinning="loading" tip="加载中...">
+          <div class="myTripInfo"
+               v-else-if="currentIndex === 2">
+            <a-form-model ref="form"
+                          :model="form"
+                          :rules="rules"
+                          :label-col="labelCol"
+                          :wrapper-col="wrapperCol">
+              <a-spin :spinning="loading"
+                      tip="加载中...">
                 <a-form-model-item>
-                  <a-upload
-                    name="avatar"
-                    list-type="picture-card"
-                    class="avatar-uploader"
-                    :show-upload-list="false"
-                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                    :before-upload="beforeUpload"
-                    @change="handleChange"
-                  >
-                    <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
+                  <a-upload name="avatar"
+                            list-type="picture-card"
+                            class="avatar-uploader"
+                            :show-upload-list="false"
+                            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                            :before-upload="beforeUpload"
+                            @change="handleChange">
+                    <img v-if="imageUrl"
+                         :src="imageUrl"
+                         alt="avatar" />
                     <div v-else>
                       <a-icon :type="loading ? 'loading' : 'plus'" />
                       <div class="ant-upload-text">Upload</div>
@@ -199,215 +177,243 @@
                   </a-upload>
                 </a-form-model-item>
               </a-spin>
-              <a-form-model-item prop="departure" label="出发地">
-                <a-select
-                  v-model="form.departure"
-                  @change="tripChange"
-                  @search="searchTrip"
-                  style="width: 75%"
-                  show-search
-                  :show-arrow="true"
-                  :allowClear="false"
-                  :default-active-first-option="true"
-                  :not-found-content="null"
-                  :filter-option="false"
-                  option-filter-prop="children"
-                  placeholder="请选择出发地"
-                  labelInValue
-                >
-                  <a-select-option
-                    v-for="item in cityList"
-                    :key="item.no"
-                    :value="item.no"
-                  >
+              <a-form-model-item prop="departure"
+                                 label="出发地">
+                <a-select v-model="form.departure"
+                          @change="tripChange"
+                          @search="searchTrip"
+                          style="width: 75%"
+                          show-search
+                          :show-arrow="true"
+                          :allowClear="false"
+                          :default-active-first-option="true"
+                          :not-found-content="null"
+                          :filter-option="false"
+                          option-filter-prop="children"
+                          placeholder="请选择出发地"
+                          labelInValue>
+                  <a-select-option v-for="item in cityList"
+                                   :key="item.no"
+                                   :value="item.no">
                     {{ item.city }}
                   </a-select-option>
                 </a-select>
               </a-form-model-item>
-              <a-form-model-item prop="destination" label="目的地">
-                <a-select
-                  v-model="form.destination"
-                  @change="tripChange"
-                  @search="searchTrip"
-                  style="width: 75%"
-                  show-search
-                  :show-arrow="true"
-                  :allowClear="false"
-                  :default-active-first-option="true"
-                  :not-found-content="null"
-                  :filter-option="false"
-                  option-filter-prop="children"
-                  placeholder="请选择目的地"
-                  labelInValue
-                >
-                  <a-select-option
-                    v-for="item in cityList"
-                    :key="item.no"
-                    :value="item.no"
-                  >
+              <a-form-model-item prop="destination"
+                                 label="目的地">
+                <a-select v-model="form.destination"
+                          @change="tripChange"
+                          @search="searchTrip"
+                          style="width: 75%"
+                          show-search
+                          :show-arrow="true"
+                          :allowClear="false"
+                          :default-active-first-option="true"
+                          :not-found-content="null"
+                          :filter-option="false"
+                          option-filter-prop="children"
+                          placeholder="请选择目的地"
+                          labelInValue>
+                  <a-select-option v-for="item in cityList"
+                                   :key="item.no"
+                                   :value="item.no">
                     {{ item.city }}
                   </a-select-option>
                 </a-select>
               </a-form-model-item>
-              <a-form-model-item prop="departure_time" label="预计出发时间">
-                <a-date-picker
-                  :allowClear="false"
-                  inputReadOnly
-                  show-time
-                  :disabled-date="disabledDate"
-                  v-model="form.departure_time"
-                  format="YYYY-MM-DD HH:mm:ss"
-                  placeholder="请选择"
-                />
+              <a-form-model-item prop="departure_time"
+                                 label="预计出发时间">
+                <a-date-picker :allowClear="false"
+                               inputReadOnly
+                               show-time
+                               :disabled-date="disabledDate"
+                               v-model="form.departure_time"
+                               format="YYYY-MM-DD HH:mm:ss"
+                               placeholder="请选择" />
               </a-form-model-item>
-              <a-form-model-item prop="destination_time" label="预计抵达时间">
-                <a-date-picker
-                  :allowClear="false"
-                  inputReadOnly
-                  show-time
-                  :disabled-date="disabledDate"
-                  v-model="form.destination_time"
-                  format="YYYY-MM-DD HH:mm:ss"
-                  placeholder="请选择"
-                />
+              <a-form-model-item prop="destination_time"
+                                 label="预计抵达时间">
+                <a-date-picker :allowClear="false"
+                               inputReadOnly
+                               show-time
+                               :disabled-date="disabledDate"
+                               v-model="form.destination_time"
+                               format="YYYY-MM-DD HH:mm:ss"
+                               placeholder="请选择" />
               </a-form-model-item>
-              <a-form-model-item prop="ticketCount" label="机票总数量">
-                <a-input-number
-                  v-model="form.ticketCount"
-                  @blur="ticketCountChange"
-                  placeholder="请输入"
-                  style="width: 75%"
-                  :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
-                />
+              <a-form-model-item prop="economy_column"
+                                 label="经济舱列数">
+                <a-select v-model="form.economy_column"
+                          @change="colChange"
+                          style="width: 75%"
+                          :show-arrow="true"
+                          :allowClear="false"
+                          :default-active-first-option="true"
+                          :not-found-content="null"
+                          :filter-option="false"
+                          option-filter-prop="children"
+                          placeholder="请选择列">
+                  <a-select-option v-for="item in columnList"
+                                   :key="item"
+                                   :value="item">
+                    {{ item }}
+                  </a-select-option>
+                </a-select>
               </a-form-model-item>
-              <a-form-model-item
-                prop="businessCabinCount"
-                label="商务/头等舱数量"
-              >
-                <a-input-number
-                  v-model="form.businessCabinCount"
-                  @blur="businessCabinCountChange"
-                  placeholder="请输入"
-                  style="width: 75%"
-                  :parser="(value) => value.replace(/\s?|(,*)/g, '')"
-                />
+              <a-form-model-item prop="economy_row"
+                                 label="经济舱排数">
+                <a-input-number v-model="form.economy_row"
+                                placeholder="请输入"
+                                style="width: 75%"
+                                :min="0" />
               </a-form-model-item>
-              <a-form-model-item prop="businessCabinPrice" label="商务舱单价">
-                <a-input-number
-                  :default-value="1000"
-                  :formatter="
+              <a-form-model-item prop="business_column"
+                                 label="商务舱列数">
+                <a-input v-model="form.business_column"
+                         disabled
+                         placeholder="请输入"
+                         style="width: 75%" />
+              </a-form-model-item>
+              <a-form-model-item prop="business_row"
+                                 label="商务舱排数">
+                <a-input-number v-model="form.business_row"
+                                placeholder="请输入"
+                                style="width: 75%"
+                                :min="0" />
+              </a-form-model-item>
+              <a-form-model-item prop="ticket_count"
+                                 label="机票总数量">
+                <a-input-number v-model="form.ticket_count"
+                                @blur="ticketCountChange"
+                                placeholder="请输入"
+                                style="width: 75%"
+                                :min="0"
+                                :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')" />
+              </a-form-model-item>
+              <a-form-model-item prop="business_cabin_count"
+                                 label="商务/头等舱数量">
+                <a-input-number v-model="form.business_cabin_count"
+                                @blur="businessCabinCountChange"
+                                placeholder="请输入"
+                                style="width: 75%"
+                                :min="0"
+                                :parser="(value) => value.replace(/\s?|(,*)/g, '')" />
+              </a-form-model-item>
+              <a-form-model-item prop="business_cabin_price"
+                                 label="商务舱单价">
+                <a-input-number :default-value="1000"
+                                :formatter="
                     (value) =>
                       `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                   "
-                  :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
-                  style="width: 40%"
-                  v-model="form.businessCabinPrice"
-                />
+                                :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
+                                style="width: 40%"
+                                :min="0"
+                                v-model="form.business_cabin_price" />
               </a-form-model-item>
-              <a-form-model-item prop="economyCabinCount" label="经济舱数量">
-                <a-input-number
-                  v-model="form.economyCabinCount"
-                  @blur="economyCabinCountChange"
-                  placeholder="请输入"
-                  style="width: 75%"
-                  :parser="(value) => value.replace(/\s?|(,*)/g, '')"
-                />
+              <a-form-model-item prop="economy_cabin_count"
+                                 label="经济舱数量">
+                <a-input-number v-model="form.economy_cabin_count"
+                                @blur="economyCabinCountChange"
+                                placeholder="请输入"
+                                style="width: 75%"
+                                :parser="(value) => value.replace(/\s?|(,*)/g, '')"
+                                :min="0" />
               </a-form-model-item>
-              <a-form-model-item prop="economyCabinPrice" label="经济舱单价">
-                <a-input-number
-                  :default-value="1000"
-                  :formatter="
+              <a-form-model-item prop="economy_cabin_price"
+                                 label="经济舱单价">
+                <a-input-number :default-value="1000"
+                                :formatter="
                     (value) =>
                       `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                   "
-                  :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
-                  style="width: 40%"
-                  v-model="form.economyCabinPrice"
-                />
+                                :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
+                                style="width: 40%"
+                                :min="0"
+                                v-model="form.economy_cabin_price" />
               </a-form-model-item>
             </a-form-model>
-            <a-button
-              type="primary"
-              shape="round"
-              style="margin-left: 43%"
-              @click="submit"
-              >提交</a-button
-            >
-            <a-button
-              type="primary"
-              shape="round"
-              style="margin-left: 10px"
-              @click="reset"
-              >重置</a-button
-            >
+            <a-button type="primary"
+                      shape="round"
+                      style="margin-left: 43%"
+                      @click="submit">提交</a-button>
+            <a-button type="primary"
+                      shape="round"
+                      style="margin-left: 10px"
+                      @click="reset">重置</a-button>
           </div>
-          <div class="myOrder" v-else-if="currentIndex === 3">
+          <div class="myOrder"
+               v-else-if="currentIndex === 3">
             333
-            <a-table
-              :columns="orderColumns"
-              :data-source="orderData"
-              :pagination="pagination"
-            >
-              <span slot="date" slot-scope="text"
-                ><a-icon type="clock-circle" style="margin-right: 10px" />{{
+            <a-table :columns="orderColumns"
+                     :data-source="orderData"
+                     :pagination="pagination">
+              <span slot="date"
+                    slot-scope="text">
+                <a-icon type="clock-circle"
+                        style="margin-right: 10px" />{{
                   text
-                }}</span
-              >
-              <span slot="name" slot-scope="text"
-                ><a-icon type="user" style="margin-right: 10px" />{{
+                }}
+              </span>
+              <span slot="name"
+                    slot-scope="text">
+                <a-icon type="user"
+                        style="margin-right: 10px" />{{
                   text
-                }}</span
-              >
-              <span slot="idCard" slot-scope="text"
-                ><a-icon type="key" style="margin-right: 10px" />{{
+                }}
+              </span>
+              <span slot="idCard"
+                    slot-scope="text">
+                <a-icon type="key"
+                        style="margin-right: 10px" />{{
                   text
-                }}</span
-              >
-              <span slot="mobile" slot-scope="text"
-                ><a-icon type="phone" style="margin-right: 10px" />{{
+                }}
+              </span>
+              <span slot="mobile"
+                    slot-scope="text">
+                <a-icon type="phone"
+                        style="margin-right: 10px" />{{
                   text
-                }}</span
-              >
-              <span slot="money" slot-scope="text"
-                ><a-icon type="money-collect" style="margin-right: 10px" />{{
+                }}
+              </span>
+              <span slot="money"
+                    slot-scope="text">
+                <a-icon type="money-collect"
+                        style="margin-right: 10px" />{{
                   text
-                }}</span
-              >
-              <span slot="state" slot-scope="text"
-                ><a-icon type="laptop" style="margin-right: 10px" />{{
+                }}
+              </span>
+              <span slot="state"
+                    slot-scope="text">
+                <a-icon type="laptop"
+                        style="margin-right: 10px" />{{
                   text
-                }}</span
-              >
-              <template slot="operation" slot-scope="text, record">
+                }}
+              </span>
+              <template slot="operation"
+                        slot-scope="text, record">
                 <div>
-                  <a-popconfirm
-                    title="确定取消航班吗？"
-                    ok-text="确定"
-                    cancel-text="取消"
-                    @confirm="returnTicket"
-                  >
-                    <a-button type="danger" style="margin-right: 5px"
-                      >取消</a-button
-                    >
+                  <a-popconfirm title="确定取消航班吗？"
+                                ok-text="确定"
+                                cancel-text="取消"
+                                @confirm="returnTicket">
+                    <a-button type="danger"
+                              style="margin-right: 5px">取消</a-button>
                   </a-popconfirm>
-                  <a-button
-                    type="primary"
-                    style="margin-left: 5px"
-                    @click="returnVisible = true"
-                    >详情</a-button
-                  >
+                  <a-button type="primary"
+                            style="margin-left: 5px"
+                            @click="returnVisible = true">详情</a-button>
                 </div>
               </template>
             </a-table>
-            <a-modal
-              title="机票信息"
-              :visible="returnVisible"
-              @ok="returnVisible = false"
-              @cancel="returnVisible = false"
-            >
+            <a-modal title="机票信息"
+                     :visible="returnVisible"
+                     @ok="returnVisible = false"
+                     @cancel="returnVisible = false">
             </a-modal>
           </div>
-          <div class="myBalance" v-else-if="currentIndex === 4">
+          <div class="myBalance"
+               v-else-if="currentIndex === 4">
             <div class="my-balance-top">
               <a-row>
                 <a-col :span="16">
@@ -415,92 +421,94 @@
                   <p>￥{{ wallet }}</p>
                 </a-col>
                 <a-col :span="8">
-                  <a-icon
-                    type="pay-circle"
-                    style="font-size: 60px; color: #ffd700; float: right"
-                  />
+                  <a-icon type="pay-circle"
+                          style="font-size: 60px; color: #ffd700; float: right" />
                 </a-col>
               </a-row>
-              <a-button shape="round" @click="payVisible = true">提现</a-button>
-              <a-modal
-                :visible="payVisible"
-                @ok="recharge"
-                @cancel="payVisible = false"
-                title="提现"
-              >
+              <a-button shape="round"
+                        @click="payVisible = true">提现</a-button>
+              <a-modal :visible="payVisible"
+                       @ok="recharge"
+                       @cancel="payVisible = false"
+                       title="提现">
                 <span>您选择的提现金额为: </span>
-                <a-input-number
-                  :default-value="1000"
-                  :formatter="
+                <a-input-number :default-value="1000"
+                                :formatter="
                     (value) =>
                       `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                   "
-                  :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
-                  style="width: 40%"
-                  v-model="payAmount"
-                />
+                                :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
+                                style="width: 40%"
+                                v-model="payAmount" />
               </a-modal>
             </div>
             <div class="my-balance-bottom">
               <p>余额明细</p>
               <!-- // date name idCard mobile money operation -->
-              <a-table :columns="balanceColumns" :data-source="balanceData">
-                <span slot="date" slot-scope="text"
-                  ><a-icon type="clock-circle" style="margin-right: 10px" />{{
+              <a-table :columns="balanceColumns"
+                       :data-source="balanceData">
+                <span slot="date"
+                      slot-scope="text">
+                  <a-icon type="clock-circle"
+                          style="margin-right: 10px" />{{
                     text
-                  }}</span
-                >
-                <span slot="name" slot-scope="text"
-                  ><a-icon type="user" style="margin-right: 10px" />{{
+                  }}
+                </span>
+                <span slot="name"
+                      slot-scope="text">
+                  <a-icon type="user"
+                          style="margin-right: 10px" />{{
                     text
-                  }}</span
-                >
-                <span slot="idCard" slot-scope="text"
-                  ><a-icon type="key" style="margin-right: 10px" />{{
+                  }}
+                </span>
+                <span slot="idCard"
+                      slot-scope="text">
+                  <a-icon type="key"
+                          style="margin-right: 10px" />{{
                     text
-                  }}</span
-                >
-                <span slot="mobile" slot-scope="text"
-                  ><a-icon type="phone" style="margin-right: 10px" />{{
+                  }}
+                </span>
+                <span slot="mobile"
+                      slot-scope="text">
+                  <a-icon type="phone"
+                          style="margin-right: 10px" />{{
                     text
-                  }}</span
-                >
-                <span slot="money" slot-scope="text"
-                  ><a-icon type="money-collect" style="margin-right: 10px" />{{
+                  }}
+                </span>
+                <span slot="money"
+                      slot-scope="text">
+                  <a-icon type="money-collect"
+                          style="margin-right: 10px" />{{
                     text
-                  }}</span
-                >
-                <span slot="operation" slot-scope="text"
-                  ><a-icon type="laptop" style="margin-right: 10px" />{{
+                  }}
+                </span>
+                <span slot="operation"
+                      slot-scope="text">
+                  <a-icon type="laptop"
+                          style="margin-right: 10px" />{{
                     text
-                  }}</span
-                >
+                  }}
+                </span>
               </a-table>
             </div>
           </div>
-          <a-modal
-            v-model="passwordVisible"
-            title="修改密码"
-            okText="保存"
-            @ok="changePassOk"
-            @cancel="changePassCancel"
-          >
-            <a-form-model
-              :label-col="{ span: 6 }"
-              :wrapper-col="{ span: 24 }"
-              :rules="rules"
-            >
+          <a-modal v-model="passwordVisible"
+                   title="修改密码"
+                   okText="保存"
+                   @ok="changePassOk"
+                   @cancel="changePassCancel">
+            <a-form-model :label-col="{ span: 6 }"
+                          :wrapper-col="{ span: 24 }"
+                          :rules="rules">
               <a-form-model-item>
                 <a-row :gutter="16">
                   <a-col :span="24">
                     <span class="text-red">*</span> 原密码：
-                    <a-input-password
-                      v-model="old_password"
-                      style="width: 60%"
-                      @blur="passwordBlur"
-                      @change="passwordChange"
-                      placeholder="请输入原密码"
-                    />
+                    <a-input-password v-model="old_password"
+                                      style="width: 60%"
+                                      @blur="passwordBlur"
+                                      @change="passwordChange"
+                                      placeholder="请输入原密码" />
                   </a-col>
                 </a-row>
               </a-form-model-item>
@@ -508,12 +516,10 @@
                 <a-row :gutter="16">
                   <a-col :span="24">
                     <span class="text-red">*</span> 新密码：
-                    <a-input-password
-                      v-model="new_password"
-                      style="width: 60%"
-                      @change="passwordChange"
-                      placeholder="请输入新密码"
-                    />
+                    <a-input-password v-model="new_password"
+                                      style="width: 60%"
+                                      @change="passwordChange"
+                                      placeholder="请输入新密码" />
                   </a-col>
                 </a-row>
               </a-form-model-item>
@@ -521,17 +527,13 @@
                 <a-row :gutter="16">
                   <a-col :span="24">
                     <span class="text-red">*</span> 确认密码：
-                    <a-input-password
-                      v-model="confirm_password"
-                      style="width: 60%"
-                      @blur="passwordBlur"
-                      @change="passwordChange"
-                      placeholder="请确认密码"
-                    />
-                    <p
-                      v-if="new_password !== confirm_password"
-                      class="text-red"
-                    >
+                    <a-input-password v-model="confirm_password"
+                                      style="width: 60%"
+                                      @blur="passwordBlur"
+                                      @change="passwordChange"
+                                      placeholder="请确认密码" />
+                    <p v-if="new_password !== confirm_password"
+                       class="text-red">
                       密码不一致，请重新输入
                     </p>
                   </a-col>
@@ -547,7 +549,7 @@
 
 <script>
 import { randomWord } from '@/common/utils'
-function getBase64(img, callback) {
+function getBase64 (img, callback) {
   const reader = new FileReader()
   reader.addEventListener('load', () => callback(reader.result))
   reader.readAsDataURL(img)
@@ -557,10 +559,10 @@ export default {
   props: {
     currentClick: {
       type: Number,
-      default: 3,
+      default: 2,
     },
   },
-  data() {
+  data () {
     return {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -581,23 +583,35 @@ export default {
         destination_time: [
           { required: true, message: '请填写到达时间', trigger: 'blur' },
         ],
-        businessCabinCount: [
+        business_cabin_count: [
           {
             required: true,
             message: '请填写商务/头等舱机票数量',
             trigger: 'blur',
           },
         ],
-        economyCabinCount: [
+        economy_cabin_count: [
           { required: true, message: '请填写经济舱机票数量', trigger: 'blur' },
         ],
-        ticketCount: [
+        ticket_count: [
           { required: true, message: '请填写机票数量', trigger: 'blur' },
         ],
-        businessCabinPrice: [
+        business_column: [
+          { required: true, message: '请选择商务舱列数', trigger: 'blur' },
+        ],
+        business_row: [
+          { required: true, message: '请选择商务舱行数', trigger: 'blur' },
+        ],
+        economy_column: [
+          { required: true, message: '请选择经济舱列数', trigger: 'blur' },
+        ],
+        economy_row: [
+          { required: true, message: '请选择经济舱行数', trigger: 'blur' },
+        ],
+        business_cabin_price: [
           { required: true, message: '请填写经济舱单价', trigger: 'blur' },
         ],
-        economyCabinPrice: [
+        economy_cabin_price: [
           { required: true, message: '请填写商务舱单价', trigger: 'blur' },
         ],
       },
@@ -606,11 +620,15 @@ export default {
         destination: '', //目的地
         departure_time: this.$moment(), //出发时间
         destination_time: this.$moment().add(2, 'hour'), //到达时间
-        ticketCount: 0, //机票数量
-        businessCabinCount: 0, //商务舱数量
-        economyCabinCount: 0, //商务舱数量
-        businessCabinPrice: 0, //商务舱单价
-        economyCabinPrice: 0, //经济舱单价
+        business_column: '',//商务舱列数
+        business_row: '',//商务舱行数
+        economy_column: '',//经济舱列数
+        economy_row: '',//经济舱行数
+        ticket_count: 0, //机票数量
+        business_cabin_count: 0, //商务舱数量
+        economy_cabin_count: 0, //经济舱数量
+        business_cabin_price: 0, //商务舱单价
+        economy_cabin_price: 0, //经济舱单价
       },
       old_password: '', //原密码
       new_password: '', //新密码
@@ -700,10 +718,10 @@ export default {
           destination: '深圳', //目的地
           departure_time: '2022-02-08 09:51:55', //出发时间
           destination_time: '2022-02-08 11:51:55', //到达时间
-          ticketCount: 600, //机票数量
+          ticket_count: 600, //机票数量
           bookedCount: 500, //已订机票
-          // businessCabinCount: 100, //商务舱数量
-          // economyCabinCount: 500, //商务舱数量
+          // business_cabin_count: 100, //商务舱数量
+          // economy_cabin_count: 500, //商务舱数量
         },
         {
           key: '2',
@@ -712,10 +730,10 @@ export default {
           destination: '深圳', //目的地
           departure_time: '2022-02-28 15:56:55', //出发时间
           destination_time: '2022-02-08 18:51:55', //到达时间
-          ticketCount: 1500, //机票数量
+          ticket_count: 1500, //机票数量
           bookedCount: 500, //已订机票
-          // businessCabinCount: 150, //商务舱数量
-          // economyCabinCount: 1350, //商务舱数量
+          // business_cabin_count: 150, //商务舱数量
+          // economy_cabin_count: 1350, //商务舱数量
         },
         {
           key: '3',
@@ -724,10 +742,10 @@ export default {
           destination: '广州', //目的地
           departure_time: '2022-03-01 22:51:55', //出发时间
           destination_time: '2022-03-02 01:51:55', //到达时间
-          ticketCount: 300, //机票数量
+          ticket_count: 300, //机票数量
           bookedCount: 500, //已订机票
-          // businessCabinCount: 20, //商务舱数量
-          // economyCabinCount: 280, //商务舱数量
+          // business_cabin_count: 20, //商务舱数量
+          // economy_cabin_count: 280, //商务舱数量
         },
       ],
       orderColumns: [
@@ -778,11 +796,11 @@ export default {
         },
         {
           title: '机票总数量',
-          dataIndex: 'ticketCount',
-          key: 'ticketCount',
+          dataIndex: 'ticket_count',
+          key: 'ticket_count',
           ellipsis: true,
           align: 'center',
-          scopedSlots: { customRender: 'ticketCount' },
+          scopedSlots: { customRender: 'ticket_count' },
           width: '10%',
         },
         {
@@ -796,38 +814,38 @@ export default {
         },
         // {
         //   title: '商务舱数量',
-        //   dataIndex: 'businessCabinCount',
-        //   key: 'businessCabinCount',
+        //   dataIndex: 'business_cabin_count',
+        //   key: 'business_cabin_count',
         //   ellipsis: true,
         //   align: 'center',
-        //   scopedSlots: { customRender: 'businessCabinCount' },
+        //   scopedSlots: { customRender: 'business_cabin_count' },
         //   width: '10%',
         // },
         // {
         //   title: '商务舱单价',
-        //   dataIndex: 'businessCabinPrice',
-        //   key: 'businessCabinPrice',
+        //   dataIndex: 'business_cabin_price',
+        //   key: 'business_cabin_price',
         //   ellipsis: true,
         //   align: 'center',
-        //   scopedSlots: { customRender: 'businessCabinPrice' },
+        //   scopedSlots: { customRender: 'business_cabin_price' },
         //   width: '10%',
         // },
         // {
         //   title: '经济舱数量',
-        //   dataIndex: 'economyCabinCount',
-        //   key: 'economyCabinCount',
+        //   dataIndex: 'economy_cabin_count',
+        //   key: 'economy_cabin_count',
         //   ellipsis: true,
         //   align: 'center',
-        //   scopedSlots: { customRender: 'economyCabinCount' },
+        //   scopedSlots: { customRender: 'economy_cabin_count' },
         //   width: '10%',
         // },
         // {
         //   title: '经济舱单价',
-        //   dataIndex: 'economyCabinPrice',
-        //   key: 'economyCabinPrice',
+        //   dataIndex: 'economy_cabin_price',
+        //   key: 'economy_cabin_price',
         //   ellipsis: true,
         //   align: 'center',
-        //   scopedSlots: { customRender: 'economyCabinPrice' },
+        //   scopedSlots: { customRender: 'economy_cabin_price' },
         //   width: '10%',
         // },
         {
@@ -840,6 +858,8 @@ export default {
           width: '20%',
         },
       ],
+      columnList: [5, 7, 8, 9],
+      rowList: [2, 3, 4, 5],
       cityList: [
         { no: 1, city: '深圳' },
         { no: 2, city: '广州' },
@@ -851,7 +871,7 @@ export default {
     }
   },
   components: {},
-  created() {
+  created () {
     console.log('[ this.$moment() ] >', this.$moment().valueOf())
     console.log('[ <= new Date().valueOf() ] >', new Date().valueOf())
     console.log(
@@ -868,38 +888,38 @@ export default {
   watch: {
     currentClick: {
       immediate: true,
-      handler(val) {
+      handler (val) {
         this.currentIndex = val
         this.defaultIndex = [`${val}`]
       },
     },
     defaultIndex: {
       immediate: true,
-      handler(val) {
+      handler (val) {
         this.defaultIndex = val
       },
     },
     // form: {
     //   deep: true,
     //   handler(newVal, oldVal) {
-    //     if (newVal.ticketCount !== oldVal.ticketCount) {
+    //     if (newVal.ticket_count !== oldVal.ticket_count) {
     //       console.log('[ 111 ] >', 111)
-    //       newVal.businessCabinCount = newVal.ticketCount / 10
-    //       newVal.economyCabinCount =
-    //         newVal.ticketCount - newVal.businessCabinCount
+    //       newVal.business_cabin_count = newVal.ticket_count / 10
+    //       newVal.economy_cabin_count =
+    //         newVal.ticket_count - newVal.business_cabin_count
     //     }
     //   },
     // },
   },
   computed: {
-    businessCabinCount() {
-      return this.form.ticketCount / 10
+    business_cabin_count () {
+      return this.form.ticket_count / 10
     },
-    economyCabinCount() {
-      return this.form.ticketCount - this.form.businessCabinCount
+    economy_cabin_count () {
+      return this.form.ticket_count - this.form.business_cabin_count
     },
   },
-  mounted() {
+  mounted () {
     console.log('[ randomWord ] >', randomWord(true, 8, 8))
     console.log(
       '[ new Date().getTime() + String(Math.round(Math.random() * 10000)) ] >',
@@ -907,36 +927,41 @@ export default {
     )
   },
   methods: {
-    ticketCountChange() {
-      if (this.form.ticketCount < this.form.businessCabinCount) {
-        this.form.businessCabinCount = this.form.ticketCount
-      }
-      this.form.economyCabinCount =
-        this.form.ticketCount - this.form.businessCabinCount
+    colChange (val, type) {
+      console.log('[ val ] >', val)
+      let index = this.columnList.findIndex(it => parseInt(it) === parseInt(val))
+      this.form.business_column = this.rowList[index]
     },
-    businessCabinCountChange() {
+    ticketCountChange () {
+      if (this.form.ticket_count < this.form.business_cabin_count) {
+        this.form.business_cabin_count = this.form.ticket_count
+      }
+      this.form.economy_cabin_count =
+        this.form.ticket_count - this.form.business_cabin_count
+    },
+    businessCabinCountChange () {
       if (
-        parseInt(this.form.businessCabinCount) > parseInt(this.form.ticketCount)
+        parseInt(this.form.business_cabin_count) > parseInt(this.form.ticket_count)
       ) {
         this.$message.error('不允许数量超过机票总数量')
-        this.form.businessCabinCount =
-          this.form.ticketCount - this.form.economyCabinCount
+        this.form.business_cabin_count =
+          this.form.ticket_count - this.form.economy_cabin_count
       }
-      this.form.economyCabinCount =
-        this.form.ticketCount - this.form.businessCabinCount
+      this.form.economy_cabin_count =
+        this.form.ticket_count - this.form.business_cabin_count
     },
-    economyCabinCountChange() {
+    economyCabinCountChange () {
       if (
-        parseInt(this.form.economyCabinCount) > parseInt(this.form.ticketCount)
+        parseInt(this.form.economy_cabin_count) > parseInt(this.form.ticket_count)
       ) {
         this.$message.error('不允许数量超过机票总数量')
-        this.form.economyCabinCount =
-          this.form.ticketCount - this.form.businessCabinCount
+        this.form.economy_cabin_count =
+          this.form.ticket_count - this.form.business_cabin_count
       }
-      this.form.businessCabinCount =
-        this.form.ticketCount - this.form.economyCabinCount
+      this.form.business_cabin_count =
+        this.form.ticket_count - this.form.economy_cabin_count
     },
-    changePassOk() {
+    changePassOk () {
       /**
         先判断原密码对不对
         在判断新密码和确认密码正不正确
@@ -950,57 +975,57 @@ export default {
       this.new_password = '' //新密码
       this.confirm_password = '' //确认密码
     },
-    changePassCancel() {
+    changePassCancel () {
       this.passwordVisible = false
       this.old_password = '' //原密码
       this.new_password = '' //新密码
       this.confirm_password = '' //确认密码
     },
-    passwordChange(val) {
+    passwordChange (val) {
       console.log('[ val ] >', val)
       this.old_password = this.old_password.trim() //原密码
       this.new_password = this.new_password.trim() //新密码
       this.confirm_password = this.confirm_password.trim() //确认密码
     },
-    passwordBlur(val) {
+    passwordBlur (val) {
       console.log('[ val ] >', val)
     },
-    updateInfo() {
+    updateInfo () {
       console.log('[ this.infoForm ] >', this.infoForm)
     },
-    submit() {
+    submit () {
       this.$message.success('提交成功')
       console.log('[ this.form ] >', this.form)
     },
-    reset() {
+    reset () {
       this.$refs.form.resetFields()
     },
-    tripChange(val) {
+    tripChange (val) {
       console.log('[ val ] >', val)
     },
-    searchTrip() {
+    searchTrip () {
       console.log('[ 11 ] >', 11)
     },
-    changePassword() {
+    changePassword () {
       this.passwordVisible = true
     },
-    logout() {
+    logout () {
       this.$message.error('退出登录')
       window.sessionStorage.clear()
       this.$router.push('/')
     },
-    recharge() {
+    recharge () {
       this.wallet += parseInt(this.payAmount)
       this.payVisible = false
       this.$message.success('充值成功')
     },
-    test(e) {
+    test (e) {
       console.log('[ e ] >', e)
     },
-    toggleCollapsed() {
+    toggleCollapsed () {
       this.collapsed = !this.collapsed
     },
-    typeClick(event) {
+    typeClick (event) {
       this.currentIndex = parseInt(event.key)
       console.log(
         '%c [ this.currentIndex ]-131',
@@ -1008,13 +1033,13 @@ export default {
         this.currentIndex
       )
     },
-    disabledDate(time) {
+    disabledDate (time) {
       return time < this.$moment().subtract(1, 'days')
     },
     /**
      * 图片相关函数
      */
-    handleChange(info) {
+    handleChange (info) {
       if (info.file.status === 'uploading') {
         this.loading = true
         return
@@ -1027,7 +1052,7 @@ export default {
         })
       }
     },
-    beforeUpload(file) {
+    beforeUpload (file) {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
       if (!isJpgOrPng) {
         this.$message.error('You can only upload JPG file!')
@@ -1042,7 +1067,7 @@ export default {
     /**
      * 我的订单相关函数
      */
-    returnTicket() {
+    returnTicket () {
       this.$message.success('取消航班成功')
     },
   },
@@ -1050,7 +1075,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import url('../current.less');
+@import url("../current.less");
 #components-layout-demo-custom-trigger {
   height: 100vh;
 }
@@ -1074,7 +1099,7 @@ export default {
   /* background: rgba(255, 255, 255, 0.2); */
   margin: 16px;
 }
-/** 
+/**
   头像相关css
 */
 .avatar-uploader {
@@ -1094,7 +1119,7 @@ export default {
   color: #666;
 }
 
-/** 
+/**
   我的余额相关css
 */
 .my-balance-top {

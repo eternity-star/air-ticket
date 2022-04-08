@@ -1,44 +1,55 @@
 <template>
   <div class="search-ticket">
     <div class="back-header">
-      <span style="cursor: pointer" @click="backClick"
-        ><a-icon type="left" />返回</span
-      >
+      <span style="cursor: pointer"
+            @click="backClick">
+        <a-icon type="left" />返回
+      </span>
     </div>
     <div class="show-ticket">
-      <a-steps :current="currentIndex" @change="onChange">
-        <a-step title="搜索">
-          <span slot="icon"><a-icon type="search" /></span>
+      <a-steps :current="currentIndex"
+               @change="onChange">
+        <a-step title="搜索"
+                description="输入搜索条件进行搜索">
+          <span slot="icon">
+            <a-icon type="search" />
+          </span>
         </a-step>
-        <a-step title="去程航班">
+        <a-step title="去程航班"
+                description="选择去程航班">
           <!-- <span slot="subTitle">Left 00:00:08</span> -->
-          <span slot="icon"
-            ><img
-              src="../../assets/image/飞机_起飞.png"
-              alt="飞机_起飞"
-              width="40px"
-              height="40px"
-          /></span>
+          <span slot="icon"><img src="../../assets/image/飞机_起飞.png"
+                 alt="飞机_起飞"
+                 width="40px"
+                 height="40px" /></span>
         </a-step>
         <!-- 要根据是否是往返航班来判断是否显示改步骤  roundShow-->
-        <a-step title="返程航班" v-if="roundShow">
-          <span slot="icon"
-            ><img
-              src="../../assets/image/飞机_降落.png"
-              alt="飞机_降落"
-              width="40px"
-              height="40px"
-          /></span>
+        <a-step title="返程航班"
+                v-if="roundShow"
+                description="选择返程航班">
+          <span slot="icon"><img src="../../assets/image/飞机_降落.png"
+                 alt="飞机_降落"
+                 width="40px"
+                 height="40px" /></span>
           <!-- <span slot="icon"><img src="../../assets/image/飞机_降落.png" alt="飞机_降落" width="40px" height="40px"></span> -->
         </a-step>
-        <a-step title="旅客" description="This is a description.">
-          <span slot="icon"><a-icon type="team" /></span>
+        <a-step title="旅客"
+                description="填写旅客信息">
+          <span slot="icon">
+            <a-icon type="team" />
+          </span>
         </a-step>
-        <a-step title="其他选项" description="This is a description.">
-          <span slot="icon"><a-icon type="team" /></span>
+        <a-step title="其他选项"
+                description="选择座舱等信息">
+          <span slot="icon">
+            <a-icon type="team" />
+          </span>
         </a-step>
-        <a-step title="付款" description="This is a description.">
-          <span slot="icon"><a-icon type="team" /></span>
+        <a-step title="付款"
+                description="请支付">
+          <span slot="icon">
+            <a-icon type="team" />
+          </span>
         </a-step>
       </a-steps>
 
@@ -46,33 +57,28 @@
       <div v-if="!detailShow && currentIndex === 1">
         <div class="mart10">
           <span style="font-size: 20px; font-weight: bold">筛选条件: </span>
-          <span class="marl10" style="font-size: 16px">
+          <span class="marl10"
+                style="font-size: 16px">
             时间：
-            <a-date-picker
-              :allowClear="false"
-              inputReadOnly
-              show-time
-              :disabled-date="disabledDate"
-              format="YYYY-MM-DD HH:mm:ss"
-              placeholder="请选择"
-            />
+            <a-date-picker :allowClear="false"
+                           inputReadOnly
+                           show-time
+                           :disabled-date="disabledDate"
+                           format="YYYY-MM-DD HH:mm:ss"
+                           placeholder="请选择" />
           </span>
           <span class="marl10">
-            <a-select
-              @change="conditionChange"
-              :defaultValue="{ key: 0, label: '起飞早-晚' }"
-              :show-arrow="true"
-              :dropdownMatchSelectWidth="false"
-              style="width: 10%"
-              :default-active-first-option="true"
-              :not-found-content="null"
-              labelInValue
-            >
-              <a-select-option
-                v-for="(item, index) in conditionList"
-                :key="index"
-                :value="index"
-              >
+            <a-select @change="conditionChange"
+                      :defaultValue="{ key: 0, label: '起飞早-晚' }"
+                      :show-arrow="true"
+                      :dropdownMatchSelectWidth="false"
+                      style="width: 10%"
+                      :default-active-first-option="true"
+                      :not-found-content="null"
+                      labelInValue>
+              <a-select-option v-for="(item, index) in conditionList"
+                               :key="index"
+                               :value="index">
                 {{ item }}
               </a-select-option>
             </a-select>
@@ -88,14 +94,12 @@
       <div v-else-if="!detailShow && roundShow && currentIndex === 2">
         <span>
           时间：
-          <a-date-picker
-            :allowClear="false"
-            inputReadOnly
-            show-time
-            :disabled-date="disabledDate"
-            format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择"
-          />
+          <a-date-picker :allowClear="false"
+                         inputReadOnly
+                         show-time
+                         :disabled-date="disabledDate"
+                         format="YYYY-MM-DD HH:mm:ss"
+                         placeholder="请选择" />
         </span>
         <div>
           <span>筛选条件</span>
@@ -103,71 +107,91 @@
       </div>
 
       <!-- 确认机票详情 -->
-      <div
-        v-else-if="
+      <div v-else-if="
           detailShow &&
           (currentIndex === 1 || (roundShow && currentIndex === 2))
-        "
-      >
-        <ticket-list :changeShow="true" @change="changeBack" />
-        <div class="next" @click="next">
+        ">
+        <ticket-list :changeShow="true"
+                     @change="changeBack" />
+        <div class="next"
+             @click="next">
           <span>下一步</span>
         </div>
       </div>
 
       <!-- 旅客 -->
-      <div
-        v-if="
+      <div v-if="
           (!roundShow && currentIndex === 2) ||
           (roundShow && currentIndex === 3)
-        "
-      >
+        ">
         旅客信息
         <div style="border: 1px solid #efefef">
           <div class="passenger-header">
             <a-icon type="user"></a-icon>
             乘机人
           </div>
-          <div class="passenger-info">
-            乘机人1：成人
-            姓名：
-            <a-input></a-input>
-            身份证：
-            <a-input></a-input>
+          <div class="passenger-info"
+               v-for="(item, index) in passengerList">
+            <a-row :gutter="[16, 16]">
+              <a-col>
+                <span>乘机人{{ index + 1 }}：{{ item.item_type.label }}</span>
+              </a-col>
+            </a-row>
+            <a-row :gutter="[10, 16]">
+              <a-col :span="8">
+                <span><span class="text-red">*</span>姓名：</span>
+                <a-input style="width: 50%"
+                         v-model="item.name" />
+              </a-col>
+              <a-col :span="8"
+                     :pull="2">
+                <span><span class="text-red">*</span>身份证：</span>
+                <a-input style="width: 50%"
+                         v-model="item.idCard" />
+              </a-col>
+              <a-col :span="8"
+                     :pull="4">
+                <span><span class="text-red">*</span>手机号码：</span>
+                <a-input style="width: 50%"
+                         v-model="item.mobile" />
+              </a-col>
+            </a-row>
           </div>
+        </div>
+        <div class="next"
+             @click="next">
+          <span>下一步</span>
         </div>
       </div>
 
       <!-- 其他选项 -->
-      <div
-        v-if="
+      <div v-if="
           (!roundShow && currentIndex === 3) ||
           (roundShow && currentIndex === 4)
-        "
-      >
+        ">
         座舱位置选择信息等
+        <div class="next"
+             @click="next">
+          <span>下一步</span>
+        </div>
       </div>
-
       <!-- 付款 -->
-      <div
-        v-if="
+      <div v-if="
           (!roundShow && currentIndex === 4) ||
           (roundShow && currentIndex === 5)
-        "
-      >
+        ">
         付款
       </div>
     </div>
-    <a-form-model
-      :model="form"
-      :rules="rules"
-      :label-col="labelCol"
-      :wrapper-col="wrapperCol"
-    >
+    <a-form-model :model="form"
+                  :rules="rules"
+                  :label-col="labelCol"
+                  :wrapper-col="wrapperCol">
       <!-- <a-row :gutter="16">
         <a-col :span="24"> -->
       <a-form-model-item>
-        <a-radio-group v-model="form.type" @change="typeChange">
+        <a-radio-group v-model="form.type"
+                       @change="typeChange">
           <a-radio :value="1">建议</a-radio>
           <a-radio :value="2">投诉</a-radio>
         </a-radio-group>
@@ -175,25 +199,22 @@
       <!-- </a-col>
       </a-row> -->
       <a-form-model-item>
-        <a-input
-          v-if="form.type === 1"
-          type="textarea"
-          :maxLength="70"
-          v-model="form.suggest"
-          :auto-size="{ minRows: 3, maxRows: 8 }"
-          placeholder="请填写建议"
-        />
-        <a-input
-          v-else
-          type="textarea"
-          :maxLength="70"
-          v-model="form.complaint"
-          :auto-size="{ minRows: 3, maxRows: 5 }"
-          placeholder="请填写投诉理由"
-        />
+        <a-input v-if="form.type === 1"
+                 type="textarea"
+                 :maxLength="70"
+                 v-model="form.suggest"
+                 :auto-size="{ minRows: 3, maxRows: 8 }"
+                 placeholder="请填写建议" />
+        <a-input v-else
+                 type="textarea"
+                 :maxLength="70"
+                 v-model="form.complaint"
+                 :auto-size="{ minRows: 3, maxRows: 5 }"
+                 placeholder="请填写投诉理由" />
       </a-form-model-item>
       <a-button @click="submit"> 提交 </a-button>
-      <a-button style="margin-left: 10px" @click="resetClick"> 重置 </a-button>
+      <a-button style="margin-left: 10px"
+                @click="resetClick"> 重置 </a-button>
     </a-form-model>
   </div>
 </template>
@@ -214,7 +235,7 @@ export default {
   components: {
     ticketList,
   },
-  data() {
+  data () {
     return {
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
@@ -240,14 +261,44 @@ export default {
         '价格高-低',
         '价格低-高',
       ],
+      passengerList: [],
     }
   },
-  mounted() {
+  mounted () {
     console.log(
       '[ this.$route.query.roundShow ] >',
       this.$route.query.roundShow
     )
     console.log('[ this.roundShow ] >', this.roundShow)
+    this.passengerList = [
+      {
+        item_type: {
+          key: 3,
+          label: '成人',
+        },
+        name: '',
+        idCard: '',
+        mobile: '',
+      },
+      {
+        item_type: {
+          key: 3,
+          label: '成人',
+        },
+        name: '',
+        idCard: '',
+        mobile: '',
+      },
+      {
+        item_type: {
+          key: 3,
+          label: '成人',
+        },
+        name: '',
+        idCard: '',
+        mobile: '',
+      },
+    ]
   },
   methods: {
     /**
@@ -264,33 +315,34 @@ export default {
      *                    第二步在确认乘客信息时，在分别选择乘客们往返航班对应的座位等信息
      *                多程时的查询订票规则，也是分成多个单行程来处理，但有对应的条件，上一个行程的时间要比下一个行程时间早，否则不允许查询
      */
-    prebook(val) {
+
+    prebook (val) {
       console.log('[ 333 ] >', val)
       this.detailShow = true
     },
-    changeBack() {
+    changeBack () {
       this.detailShow = false
     },
-    next() {
+    next () {
       console.log('[ "cececece" ] >', 'cececece')
       this.currentIndex = this.currentIndex + 1
       if (this.haveCurrentIndex < this.currentIndex) {
         this.haveCurrentIndex = this.currentIndex
       }
     },
-    onChange(current) {
+    onChange (current) {
       console.log('[ current ] >', current)
       if (current <= this.haveCurrentIndex) {
         this.currentIndex = current
       }
     },
-    conditionChange(val) {
+    conditionChange (val) {
       console.log('[ val ] >', val)
     },
-    typeChange() {
+    typeChange () {
       this.resetClick()
     },
-    submit() {
+    submit () {
       if (this.form.type === 1 && !this.form.suggest) {
         this.$message.error('请填写完整')
       } else if (this.form.type === 2 && !this.form.complaint) {
@@ -299,14 +351,14 @@ export default {
         this.$emit('suggestEvent', this.form)
       }
     },
-    resetClick() {
+    resetClick () {
       this.form.suggest = ''
       this.form.complaint = ''
     },
-    disabledDate(time) {
+    disabledDate (time) {
       return time < this.$moment().subtract(1, 'days')
     },
-    backClick() {
+    backClick () {
       this.$emit('update:searchShow', false)
     },
   },
@@ -314,7 +366,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import url('../current.less');
+@import url("../current.less");
 .search-ticket {
   padding: 10px 10px;
   .back-header {

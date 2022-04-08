@@ -451,7 +451,7 @@ export default {
       form: {
         trip: 1, //行程
         passengers: [], //乘机人数
-        // cabin_type: '', //舱位等级
+        cabin_type: [], //舱位等级
         tripList: [
           {
             plan_time: this.$moment(), //计划出行时间
