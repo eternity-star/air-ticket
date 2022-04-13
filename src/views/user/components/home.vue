@@ -5,70 +5,68 @@
         <div>
           <a-carousel autoplay>
             <div>
-              <img
-                src="../../../assets/image/backg1.jpg"
-                alt=""
-                width="100%"
-                height="100%"
-              />
+              <img src="../../../assets/image/backg1.jpg"
+                   alt=""
+                   width="100%"
+                   height="100%" />
             </div>
             <div>
-              <img
-                src="../../../assets/image/backg2.jpg"
-                alt=""
-                width="100%"
-                height="100%"
-              />
+              <img src="../../../assets/image/backg2.jpg"
+                   alt=""
+                   width="100%"
+                   height="100%" />
             </div>
             <div>
-              <img
-                src="../../../assets/image/backg3.jpg"
-                alt=""
-                width="100%"
-                height="100%"
-              />
+              <img src="../../../assets/image/backg3.jpg"
+                   alt=""
+                   width="100%"
+                   height="100%" />
             </div>
             <div>
-              <img
-                src="../../../assets/image/backg4.jpg"
-                alt=""
-                width="100%"
-                height="100%"
-              />
+              <img src="../../../assets/image/backg4.jpg"
+                   alt=""
+                   width="100%"
+                   height="100%" />
             </div>
           </a-carousel>
         </div>
       </div>
       <div class="search-ticket">
         <div class="search-top">
-          <img
-            src="../../../assets/image/飞机中.png"
-            alt=""
-            width="35px"
-            height="35px"
-          />
+          <img src="../../../assets/image/飞机中.png"
+               alt=""
+               width="35px"
+               height="35px" />
           <span>预订机票</span>
         </div>
         <div class="search-form">
-          <a-form-model ref="searchForm" :mode="form" :rules="rules">
+          <a-form-model ref="searchForm"
+                        :mode="form"
+                        :rules="rules">
             <a-row :gutter="10">
               <a-col :span="8">
                 <a-form-model-item prop="trip">
                   <span>行程：</span>
-                  <a-radio-group v-model="form.trip" @change="tripChange">
-                    <a-radio :value="1" style="font-size: 14px">单程</a-radio>
-                    <a-radio :value="2" style="font-size: 14px">往返</a-radio>
-                    <a-radio :value="3" style="font-size: 14px">多行程</a-radio>
+                  <a-radio-group v-model="form.trip"
+                                 @change="tripChange">
+                    <a-radio :value="1"
+                             style="font-size: 14px">单程</a-radio>
+                    <a-radio :value="2"
+                             style="font-size: 14px">往返</a-radio>
+                    <a-radio :value="3"
+                             style="font-size: 14px">多行程</a-radio>
                   </a-radio-group>
                 </a-form-model-item>
               </a-col>
               <a-col :span="8">
                 <a-form-model-item>
-                  <span
-                    ><a-icon type="user" style="font-size: 25px"></a-icon>
-                    乘机人：</span
-                  >
-                  <div class="passengers" @click="passengersClick">
+                  <span>
+                    <a-icon type="user"
+                            style="font-size: 25px"></a-icon>
+                    乘机人：
+                  </span>
+                  <div class="passengers"
+                       @click="passengersClick">
                     <span>{{ passengerLength }}个乘机人</span>
                   </div>
                 </a-form-model-item>
@@ -76,71 +74,57 @@
               <a-col :span="8">
                 <a-form-model-item>
                   <span>舱位等级：</span>
-                  <a-select
-                    v-model="form.cabin_type"
-                    @change="cabinChange"
-                    style="width: 70%;"
-                    mode="multiple"
-                    :show-arrow="true"
-                    :allowClear="true"
-                    :default-active-first-option="true"
-                    :not-found-content="null"
-                    :filter-option="false"
-                    option-filter-prop="children"
-                    placeholder="请选择舱位等级"
-                    labelInValue
-                  >
-                    <a-select-option
-                      v-for="(item, index) in cabinTypeList"
-                      :key="index"
-                      :value="index"
-                    >
+                  <a-select v-model="form.cabin_type"
+                            @change="cabinChange"
+                            style="width: 70%;"
+                            mode="multiple"
+                            :show-arrow="true"
+                            :allowClear="true"
+                            :default-active-first-option="true"
+                            :not-found-content="null"
+                            :filter-option="false"
+                            option-filter-prop="children"
+                            placeholder="请选择舱位等级"
+                            labelInValue>
+                    <a-select-option v-for="(item, index) in cabinTypeList"
+                                     :key="index"
+                                     :value="index">
                       {{ item }}
                     </a-select-option>
                   </a-select>
                 </a-form-model-item>
               </a-col>
             </a-row>
-            <a-row
-              :gutter="10"
-              v-for="(it, index) in form.tripList"
-              :key="index"
-            >
+            <a-row :gutter="10"
+                   v-for="(it, index) in form.tripList"
+                   :key="index">
               <a-col :span="8">
                 <a-form-model-item>
                   <span>出行日期：</span>
-                  <a-range-picker
-                    v-if="form.trip === 2"
-                    v-model="it.round_time"
-                    :allowClear="true"
-                    :disabledDate="rangeDisabledDate"
-                    :placeholder="['出行时间', '返程时间']"
-                    format="YYYY-MM-DD"
-                    @change="timeChange"
-                    style="width: 65%"
-                  />
-                  <a-date-picker
-                    v-else
-                    inputReadOnly
-                    v-model="it.plan_time"
-                    format="YYYY-MM-DD"
-                    :allowClear="true"
-                    :disabledDate="disabledDate"
-                    placeholder="请选择"
-                    style="width: 65%"
-                  />
+                  <a-range-picker v-if="form.trip === 2"
+                                  v-model="it.round_time"
+                                  :allowClear="true"
+                                  :disabledDate="rangeDisabledDate"
+                                  :placeholder="['出行时间', '返程时间']"
+                                  format="YYYY-MM-DD"
+                                  @change="timeChange"
+                                  style="width: 65%" />
+                  <a-date-picker v-else
+                                 inputReadOnly
+                                 v-model="it.plan_time"
+                                 format="YYYY-MM-DD"
+                                 :allowClear="true"
+                                 :disabledDate="disabledDate"
+                                 placeholder="请选择"
+                                 style="width: 65%" />
                 </a-form-model-item>
               </a-col>
               <a-col :span="8">
                 <a-form-model-item prop="trip_start">
-                  <span
-                    ><img
-                      src="../../../assets/image/飞机_起飞.png"
-                      alt=""
-                      width="30px"
-                      height="30px"
-                    />出发：</span
-                  >
+                  <span><img src="../../../assets/image/飞机_起飞.png"
+                         alt=""
+                         width="30px"
+                         height="30px" />出发：</span>
                   <!-- <a-select
                     v-model="it.trip_start"
                     @change="timeChange"
@@ -164,25 +148,19 @@
                       {{ item.city }}
                     </a-select-option>
                   </a-select> -->
-                  <a-cascader
-                    :options="cityList"
-                    :load-data="loadData"
-                    v-model="form.trip_start"
-                    style="width: 70%"
-                    placeholder="请选择出发地"
-                  />
+                  <a-cascader :options="cityList"
+                              :load-data="loadData"
+                              v-model="form.trip_start"
+                              style="width: 70%"
+                              placeholder="请选择出发地" />
                 </a-form-model-item>
               </a-col>
               <a-col :span="8">
                 <a-form-model-item prop="trip_end">
-                  <span
-                    ><img
-                      src="../../../assets/image/飞机_降落.png"
-                      alt=""
-                      width="30px"
-                      height="30px"
-                    />到达：</span
-                  >
+                  <span><img src="../../../assets/image/飞机_降落.png"
+                         alt=""
+                         width="30px"
+                         height="30px" />到达：</span>
                   <!-- <a-select
                     v-model="it.trip_end"
                     @change="timeChange"
@@ -206,19 +184,15 @@
                       {{ item.city }}
                     </a-select-option>
                   </a-select> -->
-                  <a-cascader
-                    :options="cityList"
-                    v-model="form.trip_end"
-                    :load-data="loadData"
-                    style="width: 70%"
-                    placeholder="请选择目的地"
-                  />
+                  <a-cascader :options="cityList"
+                              v-model="form.trip_end"
+                              :load-data="loadData"
+                              style="width: 70%"
+                              placeholder="请选择目的地" />
                   <span v-if="index > 1">
-                    <a-icon
-                      type="close-circle"
-                      style="margin-top: 15px; margin-left: 5px; cursor: pointer; color: red"
-                      @click="deleteTrip(index)"
-                    />
+                    <a-icon type="close-circle"
+                            style="margin-top: 15px; margin-left: 5px; cursor: pointer; color: red"
+                            @click="deleteTrip(index)" />
                   </span>
                 </a-form-model-item>
               </a-col>
@@ -230,72 +204,63 @@
                 />
               </a-col> -->
             </a-row>
-            <a-row :gutter="10" v-if="form.trip === 3">
+            <a-row :gutter="10"
+                   v-if="form.trip === 3">
               <a-col>
-                <a-button @click="addTrip" type="primary">
-                  <a-icon type="plus" /> 添加航程</a-button
-                >
+                <a-button @click="addTrip"
+                          type="primary">
+                  <a-icon type="plus" /> 添加航程
+                </a-button>
               </a-col>
             </a-row>
             <a-row :gutter="10">
               <a-col :push="11">
-                <a-button @click="search" type="primary" style="margin: 20px 0"
-                  ><a-icon type="search" />查询</a-button
-                >
+                <a-button @click="search"
+                          type="primary"
+                          style="margin: 20px 0">
+                  <a-icon type="search" />查询
+                </a-button>
               </a-col>
             </a-row>
-            <a-modal
-              title="乘机人"
-              :visible="passengersVisible"
-              okText="继续"
-              @ok="handerOk"
-              @cancel="handerCancel"
-            >
+            <a-modal title="乘机人"
+                     :visible="passengersVisible"
+                     okText="继续"
+                     @ok="handerOk"
+                     @cancel="handerCancel">
               <div>
-                <div
-                  v-for="(item, index) in this.form.passengers"
-                  :key="index"
-                  style="margin-bottom: 10px"
-                >
-                  <span
-                    ><a-icon type="user" style="font-size: 25px"></a-icon>
-                    乘机人{{ index + 1 }}：</span
-                  >
-                  <a-select
-                    @change="passengerChange"
-                    style="width: 70%"
-                    :show-arrow="true"
-                    :allowClear="true"
-                    :default-active-first-option="true"
-                    :not-found-content="null"
-                    :filter-option="false"
-                    v-model="item.item_type"
-                    option-filter-prop="children"
-                    placeholder="请选择乘机人类型"
-                    labelInValue
-                  >
-                    <a-select-option
-                      v-for="(it, index) in passengersType"
-                      :key="index"
-                      :value="index"
-                    >
+                <div v-for="(item, index) in this.form.passengers"
+                     :key="index"
+                     style="margin-bottom: 10px">
+                  <span>
+                    <a-icon type="user"
+                            style="font-size: 25px"></a-icon>
+                    乘机人{{ index + 1 }}：
+                  </span>
+                  <a-select @change="passengerChange"
+                            style="width: 70%"
+                            :show-arrow="true"
+                            :allowClear="true"
+                            :default-active-first-option="true"
+                            :not-found-content="null"
+                            :filter-option="false"
+                            v-model="item.item_type"
+                            option-filter-prop="children"
+                            placeholder="请选择乘机人类型"
+                            labelInValue>
+                    <a-select-option v-for="(it, index) in passengersType"
+                                     :key="index"
+                                     :value="index">
                       {{ it }}
                     </a-select-option>
                   </a-select>
-                  <a-icon
-                    type="close"
-                    style="color: #04a2de; cursor: pointer; margin-left: 5px"
-                    @click="deletePassenger(item, index)"
-                  />
+                  <a-icon type="close"
+                          style="color: #04a2de; cursor: pointer; margin-left: 5px"
+                          @click="deletePassenger(item, index)" />
                 </div>
-                <span
-                  @click="addPassenger"
-                  style="color: #04a2de; cursor: pointer"
-                >
-                  <a-icon
-                    type="plus-circle"
-                    style="margin-right: 5px"
-                  />添加乘机人
+                <span @click="addPassenger"
+                      style="color: #04a2de; cursor: pointer">
+                  <a-icon type="plus-circle"
+                          style="margin-right: 5px" />添加乘机人
                 </span>
               </div>
             </a-modal>
@@ -308,12 +273,11 @@
       <!-- 搜索规则：只展示今天搜索的记录；支持清空 -->
       <div style="text-align: center">
         <a-row>
-          <a-col :span="24" style="margin-top: 32px">
-            <a-statistic-countdown
-              title="Day Level"
-              :value="deadline"
-              format="D 天 H 时 m 分 s 秒 SSS 毫秒"
-            />
+          <a-col :span="24"
+                 style="margin-top: 32px">
+            <a-statistic-countdown title="Day Level"
+                                   :value="deadline"
+                                   format="D 天 H 时 m 分 s 秒 SSS 毫秒" />
           </a-col>
         </a-row>
       </div>
@@ -324,53 +288,41 @@
             <div class="recommend-self recommend-first">
               <div class="recommend-header">
                 今日推荐航班
-                <a-icon
-                  type="right-circle"
-                  theme="filled"
-                  style="margin-left: 2px"
-                />
+                <a-icon type="right-circle"
+                        theme="filled"
+                        style="margin-left: 2px" />
               </div>
               <div class="recommend-center">
-                <recommend-box
-                  v-for="(item, index) in recommendData"
-                  :key="index"
-                  :infoData="item"
-                  @click.native="recommendTicketClick(item)"
-                />
+                <recommend-box v-for="(item, index) in recommendData"
+                               :key="index"
+                               :infoData="item"
+                               @click.native="recommendTicketClick(item)" />
               </div>
             </div>
             <div class="recommend-self recommend-second">
               <div class="recommend-header">
                 今日推荐航班
-                <a-icon
-                  type="right-circle"
-                  theme="filled"
-                  style="margin-left: 2px"
-                />
+                <a-icon type="right-circle"
+                        theme="filled"
+                        style="margin-left: 2px" />
               </div>
               <div class="recommend-center">
-                <recommend-box
-                  v-for="(item, index) in recommendData"
-                  :key="index"
-                  :infoData="item"
-                />
+                <recommend-box v-for="(item, index) in recommendData"
+                               :key="index"
+                               :infoData="item" />
               </div>
             </div>
             <div class="recommend-self recommend-third">
               <div class="recommend-header">
                 今日推荐航班
-                <a-icon
-                  type="right-circle"
-                  theme="filled"
-                  style="margin-left: 2px"
-                />
+                <a-icon type="right-circle"
+                        theme="filled"
+                        style="margin-left: 2px" />
               </div>
               <div class="recommend-center">
-                <recommend-box
-                  v-for="(item, index) in recommendData"
-                  :key="index"
-                  :infoData="item"
-                />
+                <recommend-box v-for="(item, index) in recommendData"
+                               :key="index"
+                               :infoData="item" />
               </div>
             </div>
           </div>
@@ -380,45 +332,45 @@
           <div class="company-discount">
             <div class="discount-top">
               <div class="company-title">
-                <div
-                  :class="
+                <div :class="
                     isCurrent === index
                       ? 'discount-top-box-choose'
                       : 'discount-top-box'
                   "
-                  v-for="(item, index) in companyList"
-                  :key="index"
-                  @click="companyClick(item, index)"
-                >
-                  <img :src="item.imgUrl" alt="" width="40px" height="40px" />
+                     v-for="(item, index) in companyList"
+                     :key="index"
+                     @click="companyClick(item, index)">
+                  <img :src="item.imgUrl"
+                       alt=""
+                       width="40px"
+                       height="40px" />
                   <p>{{ item.title }}</p>
                 </div>
               </div>
               <div class="company-info">
                 <p>{{ companyDescription }}</p>
-                <div
-                  @mouseover="isShow = true"
-                  @mouseout="isShow = false"
-                  class="view-all"
-                >
+                <div @mouseover="isShow = true"
+                     @mouseout="isShow = false"
+                     class="view-all">
                   查看全部
                 </div>
-                <div v-show="isShow" class="company-description">
+                <div v-show="isShow"
+                     class="company-description">
                   {{ companyDescription }}
                 </div>
               </div>
             </div>
             <div class="discount-bottom">
               <!-- <recommend-box style="width: 35%; height: 30%"/> -->
-              <div
-                class="plane-ticket"
-                v-for="(item, index) in list"
-                :key="index"
-              >
+              <div class="plane-ticket"
+                   v-for="(item, index) in list"
+                   :key="index">
                 <a-row>
                   <a-col :span="16">
                     <div class="toAddress">
-                      <p>深圳<a-icon type="swap-right" />广州</p>
+                      <p>深圳
+                        <a-icon type="swap-right" />广州
+                      </p>
                       <p style="#999999">2022-02-03 周四</p>
                     </div>
                   </a-col>
@@ -443,7 +395,7 @@
 import recommendBox from './recommendBox.vue'
 export default {
   name: 'home',
-  data() {
+  data () {
     return {
       rules: {
         trip: [{ required: true, message: '请选择行程', trigger: 'change' }],
@@ -538,7 +490,7 @@ export default {
   components: {
     recommendBox,
   },
-  mounted() {
+  mounted () {
     console.log('[ Date.now() ] >', Date.now())
     this.companyDescription = this.companyList[0].description
     this.getProvince()
@@ -552,8 +504,8 @@ export default {
     // },
   },
   methods: {
-    getProvince() {
-      this.axios.get('/api/Air/getProvince').then(({data}) => {
+    getProvince () {
+      this.axios.get('/api/Air/getProvince').then(({ data }) => {
         if (data.msg === '请求成功') {
           this.cityList = data.data.map((it) => {
             return {
@@ -573,7 +525,7 @@ export default {
         // }
       })
     },
-    getCity(id, targetOption) {
+    getCity (id, targetOption) {
       const params = {
         province_id: id,
       }
@@ -594,12 +546,12 @@ export default {
       })
       targetOption.loading = false
     },
-    loadData(selectedOptions) {
+    loadData (selectedOptions) {
       const targetOption = selectedOptions[selectedOptions.length - 1]
       targetOption.loading = true
       this.getCity(targetOption.value, targetOption)
     },
-    addPassenger() {
+    addPassenger () {
       console.log('[ 2121 ] >', 2121)
       this.form.passengers.push({
         item_type: {
@@ -608,7 +560,7 @@ export default {
         },
       })
     },
-    deletePassenger(item, index) {
+    deletePassenger (item, index) {
       console.log(
         '%c [ index ]-530',
         'font-size:13px; background:pink; color:#bf2c9f;',
@@ -617,10 +569,10 @@ export default {
       console.log('[ item ] >', item)
       this.form.passengers.splice(index, 1)
     },
-    timeChange(val) {
+    timeChange (val) {
       console.log('[ val ] >', val)
     },
-    tripChange(e) {
+    tripChange (e) {
       let val = e.target.value
       if (val === 3) {
         this.form.tripList.push({
@@ -640,10 +592,10 @@ export default {
         ]
       }
     },
-    searchTrip(val) {
+    searchTrip (val) {
       console.log('[ val ] >', val)
     },
-    addTrip() {
+    addTrip () {
       console.log('[ 111 ] >', 111)
       this.form.tripList.push({
         plan_time: this.$moment(), //计划出行时间
@@ -652,13 +604,13 @@ export default {
         trip_end: {}, //目的地
       })
     },
-    deleteTrip(index) {
+    deleteTrip (index) {
       this.form.tripList.splice(index, 1)
     },
-    search() {
+    search () {
       console.log('[ this.form ] >', this.form)
     },
-    getCurrentStyle(current, today) {
+    getCurrentStyle (current, today) {
       const style = {}
       if (current.date() === 1) {
         style.border = '1px solid #1890ff'
@@ -666,16 +618,16 @@ export default {
       }
       return style
     },
-    cabinChange(val) {
+    cabinChange (val) {
       console.log('[ val ] >', val)
       this.form.cabin_type.forEach(it => {
         it.value = it.label.trim()
       })
     },
-    passengerChange(val) {
+    passengerChange (val) {
       console.log('[ val ] >', val)
     },
-    handerOk() {
+    handerOk () {
       let state = this.form.passengers.some((it) => !it.item_type)
       if (state) {
         this.$message.error('请填写完整')
@@ -684,11 +636,11 @@ export default {
       this.passengerLength = this.form.passengers.length
       this.passengersVisible = false
     },
-    handerCancel() {
+    handerCancel () {
       this.form.passengers = this.oldPassengers
       this.passengersVisible = false
     },
-    recommendTicketClick(airline) {
+    recommendTicketClick (airline) {
       this.$emit('ticketSearch', airline, this.form.trip)
       // this.$router.push({
       //   name: 'searchTicket',
@@ -698,11 +650,11 @@ export default {
       //   }
       // })
     },
-    passengersClick() {
+    passengersClick () {
       this.oldPassengers = this.form.passengers
       this.passengersVisible = true
     },
-    companyClick(item, index) {
+    companyClick (item, index) {
       console.log('[ item ] >', item)
       this.isCurrent = index
       this.companyDescription = item.description
@@ -712,20 +664,20 @@ export default {
      * 配置函数
      */
     // 过滤时间
-    range(start, end) {
+    range (start, end) {
       const result = []
       for (let i = start; i < end; i++) {
         result.push(i)
       }
       return result
     },
-    disabledDate(time) {
+    disabledDate (time) {
       return time < this.$moment().subtract(1, "days")
     },
-    rangeDisabledDate(current) {
+    rangeDisabledDate (current) {
       return current && current <= this.$moment().startOf('day')
     },
-    disabledRangeTime(type) {
+    disabledRangeTime (type) {
       if (type === 'start') {
         return {
           disabledHours: () => this.range(0, 60).splice(4, 20),
@@ -744,7 +696,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import url('../../current.less');
+@import url("../../current.less");
 .user-center {
   width: 100%;
   /* margin: 0 auto; */

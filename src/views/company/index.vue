@@ -157,7 +157,7 @@
                           :rules="rules"
                           :label-col="labelCol"
                           :wrapper-col="wrapperCol">
-              <a-spin :spinning="loading"
+              <!-- <a-spin :spinning="loading"
                       tip="加载中...">
                 <a-form-model-item>
                   <a-upload name="avatar"
@@ -176,162 +176,199 @@
                     </div>
                   </a-upload>
                 </a-form-model-item>
-              </a-spin>
-              <a-form-model-item prop="departure"
-                                 label="出发地">
-                <a-select v-model="form.departure"
-                          @change="tripChange"
-                          @search="searchTrip"
-                          style="width: 75%"
-                          show-search
-                          :show-arrow="true"
-                          :allowClear="false"
-                          :default-active-first-option="true"
-                          :not-found-content="null"
-                          :filter-option="false"
-                          option-filter-prop="children"
-                          placeholder="请选择出发地"
-                          labelInValue>
-                  <a-select-option v-for="item in cityList"
-                                   :key="item.no"
-                                   :value="item.no">
-                    {{ item.city }}
-                  </a-select-option>
-                </a-select>
-              </a-form-model-item>
-              <a-form-model-item prop="destination"
-                                 label="目的地">
-                <a-select v-model="form.destination"
-                          @change="tripChange"
-                          @search="searchTrip"
-                          style="width: 75%"
-                          show-search
-                          :show-arrow="true"
-                          :allowClear="false"
-                          :default-active-first-option="true"
-                          :not-found-content="null"
-                          :filter-option="false"
-                          option-filter-prop="children"
-                          placeholder="请选择目的地"
-                          labelInValue>
-                  <a-select-option v-for="item in cityList"
-                                   :key="item.no"
-                                   :value="item.no">
-                    {{ item.city }}
-                  </a-select-option>
-                </a-select>
-              </a-form-model-item>
-              <a-form-model-item prop="departure_time"
-                                 label="预计出发时间">
-                <a-date-picker :allowClear="false"
-                               inputReadOnly
-                               show-time
-                               :disabled-date="disabledDate"
-                               v-model="form.departure_time"
-                               format="YYYY-MM-DD HH:mm:ss"
-                               placeholder="请选择" />
-              </a-form-model-item>
-              <a-form-model-item prop="destination_time"
-                                 label="预计抵达时间">
-                <a-date-picker :allowClear="false"
-                               inputReadOnly
-                               show-time
-                               :disabled-date="disabledDate"
-                               v-model="form.destination_time"
-                               format="YYYY-MM-DD HH:mm:ss"
-                               placeholder="请选择" />
-              </a-form-model-item>
-              <a-form-model-item prop="economy_column"
-                                 label="经济舱列数">
-                <a-select v-model="form.economy_column"
-                          @change="colChange"
-                          style="width: 75%"
-                          :show-arrow="true"
-                          :allowClear="false"
-                          :default-active-first-option="true"
-                          :not-found-content="null"
-                          :filter-option="false"
-                          option-filter-prop="children"
-                          placeholder="请选择列">
-                  <a-select-option v-for="item in columnList"
-                                   :key="item"
-                                   :value="item">
-                    {{ item }}
-                  </a-select-option>
-                </a-select>
-              </a-form-model-item>
-              <a-form-model-item prop="economy_row"
-                                 label="经济舱排数">
-                <a-input-number v-model="form.economy_row"
-                                placeholder="请输入"
-                                style="width: 75%"
-                                :min="0" />
-              </a-form-model-item>
-              <a-form-model-item prop="business_column"
-                                 label="商务舱列数">
-                <a-input v-model="form.business_column"
-                         disabled
-                         placeholder="请输入"
-                         style="width: 75%" />
-              </a-form-model-item>
-              <a-form-model-item prop="business_row"
-                                 label="商务舱排数">
-                <a-input-number v-model="form.business_row"
-                                placeholder="请输入"
-                                style="width: 75%"
-                                :min="0" />
-              </a-form-model-item>
-              <a-form-model-item prop="ticket_count"
-                                 label="机票总数量">
-                <a-input-number v-model="form.ticket_count"
-                                @blur="ticketCountChange"
-                                placeholder="请输入"
-                                style="width: 75%"
-                                :min="0"
-                                :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')" />
-              </a-form-model-item>
-              <a-form-model-item prop="business_cabin_count"
-                                 label="商务/头等舱数量">
-                <a-input-number v-model="form.business_cabin_count"
-                                @blur="businessCabinCountChange"
-                                placeholder="请输入"
-                                style="width: 75%"
-                                :min="0"
-                                :parser="(value) => value.replace(/\s?|(,*)/g, '')" />
-              </a-form-model-item>
-              <a-form-model-item prop="business_cabin_price"
-                                 label="商务舱单价">
-                <a-input-number :default-value="1000"
-                                :formatter="
+              </a-spin> -->
+              <a-row>
+                <a-col :span="12">
+                  <a-form-model-item prop="departure"
+                                     label="出发地">
+                    <a-cascader :options="cityList"
+                                :load-data="loadData"
+                                v-model="form.departure"
+                                style="width: 70%"
+                                placeholder="请选择出发地" />
+                  </a-form-model-item>
+                </a-col>
+                <a-col :span="12">
+                  <a-form-model-item prop="destination"
+                                     label="目的地">
+                    <a-cascader :options="cityList"
+                                v-model="form.destination"
+                                :load-data="loadData"
+                                style="width: 70%"
+                                placeholder="请选择目的地" />
+                  </a-form-model-item>
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col :span="12">
+                  <a-form-model-item prop="departure_time"
+                                     label="预计出发时间">
+                    <a-date-picker :allowClear="false"
+                                   inputReadOnly
+                                   show-time
+                                   style="width: 100%"
+                                   :disabled-date="disabledDate"
+                                   v-model="form.departure_time"
+                                   format="YYYY-MM-DD HH:mm:ss"
+                                   placeholder="请选择" />
+                  </a-form-model-item>
+                </a-col>
+                <a-col :span="12">
+                  <a-form-model-item prop="destination_time"
+                                     label="预计抵达时间">
+                    <a-date-picker :allowClear="false"
+                                   inputReadOnly
+                                   show-time
+                                   style="width: 100%"
+                                   :disabled-date="disabledDate"
+                                   v-model="form.destination_time"
+                                   format="YYYY-MM-DD HH:mm:ss"
+                                   placeholder="请选择" />
+                  </a-form-model-item>
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col>
+                  <a-form-model-item prop="ticket_count"
+                                     label="机票总数量"
+                                     :label-col="{ span: 3 }"
+                                     :wrapper-col="{ span: 10 }">
+                    <a-input-number v-model="form.ticket_count"
+                                    disabled
+                                    @blur="ticketCountChange"
+                                    placeholder="请输入"
+                                    style="width: 75%"
+                                    :min="0"
+                                    :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')" />
+                  </a-form-model-item>
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col>
+                  <a-form-model-item prop="business_cabin_count"
+                                     label="商务/头等舱数量"
+                                     :label-col="{ span: 3 }"
+                                     :wrapper-col="{ span: 10 }">
+                    <a-input-number v-model="form.business_cabin_count"
+                                    disabled
+                                    @blur="businessCabinCountChange"
+                                    placeholder="请输入"
+                                    style="width: 75%"
+                                    :min="0"
+                                    :parser="(value) => value.replace(/\s?|(,*)/g, '')" />
+                  </a-form-model-item>
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col :span="24">
+                  <a-form-model-item prop="economy_cabin_count"
+                                     label="经济舱数量"
+                                     :label-col="{ span: 3 }"
+                                     :wrapper-col="{ span: 10 }">
+                    <a-input-number v-model="form.economy_cabin_count"
+                                    disabled
+                                    @blur="economyCabinCountChange"
+                                    placeholder="请输入"
+                                    style="width: 75%"
+                                    :parser="(value) => value.replace(/\s?|(,*)/g, '')"
+                                    :min="0" />
+                  </a-form-model-item>
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col :span="8">
+                  <a-form-model-item prop="economy_column"
+                                     label="经济舱列数"
+                                     :label-col="{ span: 9 }"
+                                     :wrapper-col="{ span: 15 }">
+                    <a-select v-model="form.economy_column"
+                              @change="colChange"
+                              style="width: 75%"
+                              :show-arrow="true"
+                              :allowClear="false"
+                              :default-active-first-option="true"
+                              :not-found-content="null"
+                              :filter-option="false"
+                              option-filter-prop="children"
+                              placeholder="请选择列">
+                      <a-select-option v-for="item in columnList"
+                                       :key="item"
+                                       :value="item">
+                        {{ item }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-model-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-model-item prop="economy_row"
+                                     label="经济舱排数"
+                                     :label-col="{ span: 9 }"
+                                     :wrapper-col="{ span: 15 }">
+                    <a-input-number v-model="form.economy_row"
+                                    @change="rowChange($event, 1)"
+                                    placeholder="请输入"
+                                    style="width: 75%"
+                                    :min="0" />
+                  </a-form-model-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-model-item prop="economy_cabin_price"
+                                     label="经济舱单价"
+                                     :label-col="{ span: 9 }"
+                                     :wrapper-col="{ span: 15 }">
+                    <a-input-number :default-value="1000"
+                                    :formatter="
                     (value) =>
                       `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                   "
-                                :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
-                                style="width: 40%"
-                                :min="0"
-                                v-model="form.business_cabin_price" />
-              </a-form-model-item>
-              <a-form-model-item prop="economy_cabin_count"
-                                 label="经济舱数量">
-                <a-input-number v-model="form.economy_cabin_count"
-                                @blur="economyCabinCountChange"
-                                placeholder="请输入"
-                                style="width: 75%"
-                                :parser="(value) => value.replace(/\s?|(,*)/g, '')"
-                                :min="0" />
-              </a-form-model-item>
-              <a-form-model-item prop="economy_cabin_price"
-                                 label="经济舱单价">
-                <a-input-number :default-value="1000"
-                                :formatter="
+                                    :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
+                                    style="width: 40%"
+                                    :min="0"
+                                    v-model="form.economy_cabin_price" />
+                  </a-form-model-item>
+                </a-col>
+              </a-row>
+              <a-row>
+                <a-col :span="8">
+                  <a-form-model-item prop="business_column"
+                                     label="商务舱列数"
+                                     :label-col="{ span: 9 }"
+                                     :wrapper-col="{ span: 15 }">
+                    <a-input v-model="form.business_column"
+                             disabled
+                             placeholder="请输入"
+                             style="width: 75%" />
+                  </a-form-model-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-model-item prop="business_row"
+                                     label="商务舱排数"
+                                     :label-col="{ span: 9 }"
+                                     :wrapper-col="{ span: 15 }">
+                    <a-input-number v-model="form.business_row"
+                                    @change="rowChange($event, 2)"
+                                    placeholder="请输入"
+                                    style="width: 75%"
+                                    :min="0" />
+                  </a-form-model-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-model-item prop="business_cabin_price"
+                                     label="商务舱单价"
+                                     :label-col="{ span: 9 }"
+                                     :wrapper-col="{ span: 15 }">
+                    <a-input-number :default-value="1000"
+                                    :formatter="
                     (value) =>
                       `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                   "
-                                :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
-                                style="width: 40%"
-                                :min="0"
-                                v-model="form.economy_cabin_price" />
-              </a-form-model-item>
+                                    :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
+                                    style="width: 40%"
+                                    :min="0"
+                                    v-model="form.business_cabin_price" />
+                  </a-form-model-item>
+                </a-col>
+              </a-row>
             </a-form-model>
             <a-button type="primary"
                       shape="round"
@@ -572,10 +609,10 @@ export default {
       disabled: true,
       rules: {
         departure: [
-          { required: true, message: '请填写出发地', trigger: 'blur' },
+          { required: true, message: '请填写出发地', trigger: 'change' },
         ],
         destination: [
-          { required: true, message: '请填写目的地', trigger: 'blur' },
+          { required: true, message: '请填写目的地', trigger: 'change' },
         ],
         departure_time: [
           { required: true, message: '请填写出发时间', trigger: 'blur' },
@@ -616,8 +653,8 @@ export default {
         ],
       },
       form: {
-        departure: '', //出发地
-        destination: '', //目的地
+        departure: [], //出发地
+        destination: [], //目的地
         departure_time: this.$moment(), //出发时间
         destination_time: this.$moment().add(2, 'hour'), //到达时间
         business_column: '',//商务舱列数
@@ -925,12 +962,30 @@ export default {
       '[ new Date().getTime() + String(Math.round(Math.random() * 10000)) ] >',
       new Date().getTime() + String(Math.round(Math.random() * 10000))
     )
+    this.getProvince()
   },
   methods: {
     colChange (val, type) {
       console.log('[ val ] >', val)
       let index = this.columnList.findIndex(it => parseInt(it) === parseInt(val))
       this.form.business_column = this.rowList[index]
+      if (this.form.economy_row) {
+        this.form.economy_cabin_count = this.form.economy_row * this.form.economy_column
+      }
+      if (this.form.business_column) {
+        this.form.business_cabin_count = this.form.business_row * this.form.business_column
+      }
+    },
+    rowChange (val, type) {
+      if (type === 1) {
+        if (this.form.economy_column) {
+          this.form.economy_cabin_count = this.form.economy_row * this.form.economy_column
+        }
+      } else {
+        if (this.form.business_column) {
+          this.form.business_cabin_count = this.form.business_row * this.form.business_column
+        }
+      }
     },
     ticketCountChange () {
       if (this.form.ticket_count < this.form.business_cabin_count) {
@@ -1063,6 +1118,50 @@ export default {
       }
       return isJpgOrPng && isLt2M
     },
+    /**
+     * 查询城市
+     */
+    getProvince () {
+      this.axios.get('/api/Air/getProvince').then(({ data }) => {
+        if (data.msg === '请求成功') {
+          this.cityList = data.data.map((it) => {
+            return {
+              value: it.province_id,
+              label: it.province,
+              isLeaf: false,
+            }
+          })
+        } else {
+          this.$message.error(data.msg)
+        }
+      })
+    },
+    getCity (id, targetOption) {
+      const params = {
+        province_id: id,
+      }
+      console.log('[ params ] >', params)
+      this.axios.post('/api/Air/getCity', params).then(({ data }) => {
+        console.log('[ data ] >', data)
+        if (data.msg === '请求成功') {
+          targetOption.children = data.data.map((it) => {
+            return {
+              value: it.city_id,
+              label: it.city,
+            }
+          })
+        } else {
+          this.$message.error(data.msg)
+        }
+        this.cityList = [...this.cityList]
+      })
+      targetOption.loading = false
+    },
+    loadData (selectedOptions) {
+      const targetOption = selectedOptions[selectedOptions.length - 1]
+      targetOption.loading = true
+      this.getCity(targetOption.value, targetOption)
+    },
 
     /**
      * 我的订单相关函数
@@ -1077,7 +1176,7 @@ export default {
 <style lang="less" scoped>
 @import url("../current.less");
 #components-layout-demo-custom-trigger {
-  height: 100vh;
+  min-height: 100vh;
 }
 #components-layout-demo-custom-trigger .trigger {
   font-size: 18px;

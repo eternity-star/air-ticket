@@ -39,12 +39,12 @@
             <a-icon type="team" />
           </span>
         </a-step>
-        <a-step title="其他选项"
+        <!-- <a-step title="其他选项"
                 description="选择座舱等信息">
           <span slot="icon">
             <a-icon type="team" />
           </span>
-        </a-step>
+        </a-step> -->
         <a-step title="付款"
                 description="请支付">
           <span slot="icon">
@@ -165,22 +165,26 @@
       </div>
 
       <!-- 其他选项 -->
-      <div v-if="
+      <!-- <div v-if="
           (!roundShow && currentIndex === 3) ||
           (roundShow && currentIndex === 4)
         ">
         座舱位置选择信息等
+        <cabin-list />
         <div class="next"
              @click="next">
           <span>下一步</span>
         </div>
-      </div>
+      </div> -->
+
       <!-- 付款 -->
-      <div v-if="
+      <!-- <div v-if="
           (!roundShow && currentIndex === 4) ||
           (roundShow && currentIndex === 5)
-        ">
+        "> -->
+      <div v-if="(!roundShow && currentIndex === 3) || (roundShow && currentIndex === 4)">
         付款
+
       </div>
     </div>
     <a-form-model :model="form"
@@ -221,6 +225,7 @@
 
 <script>
 import ticketList from './components/ticketList.vue'
+import cabinList from './components/cabinList.vue'
 export default {
   props: {
     id: {
@@ -234,6 +239,7 @@ export default {
   },
   components: {
     ticketList,
+    cabinList,
   },
   data () {
     return {
@@ -247,8 +253,8 @@ export default {
         suggest: '', // 建议
         complaint: '', // 投诉
       },
-      currentIndex: 2, // 导航栏的index
-      haveCurrentIndex: 2, // 进行到哪一步了
+      currentIndex: 3, // 导航栏的index
+      haveCurrentIndex: 3, // 进行到哪一步了
       detailShow: false,
       airlineLength: 6,
       conditionList: [
