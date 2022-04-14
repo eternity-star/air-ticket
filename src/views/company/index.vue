@@ -909,6 +909,7 @@ export default {
   },
   components: {},
   created () {
+    console.log('[ this.nanoid() ] >', this.nanoid())
     console.log('[ this.$moment() ] >', this.$moment().valueOf())
     console.log('[ <= new Date().valueOf() ] >', new Date().valueOf())
     console.log(
