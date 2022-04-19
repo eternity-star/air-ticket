@@ -17,6 +17,14 @@ const sqlMap = {
     updateUser: 'UPDATE user SET name = ?, sex = ?, idCard = ?, mobile = ? WHERE id = ?',
     selectUser: 'SELECT id,name,mobile,idCard,level,sex FROM user where id = ?'
   },
+  CompanyUser: {
+    login: 'SELECT company_id,name,mobile,idCard,level,address,own_plane,description FROM company where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
+    updateUser: 'UPDATE company SET name = ?, sex = ?, idCard = ?, mobile = ? WHERE id = ?',
+    selectUser: 'SELECT id,name,mobile,idCard,level,sex FROM user where id = ?'
+  },
+  CompanyPlane: {
+    select: 'SELECT * FROM plane WHERE plane_id IN (?)'
+  },
 }
 
 module.exports = sqlMap

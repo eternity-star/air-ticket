@@ -126,6 +126,82 @@ router.post('/getUser', (req, res) => {
   })
 })
 
+/**
+ * 航空公司相关
+ */
+// 接口：登录
+router.post('/comLogin', (req, res) => {
+  const sql = $sql.CompanyUser.login
+  const params = req.body
+  console.log('接口：登录', params)
+  conn.query(sql, [params.loginName, params.loginName, params.password, params.level], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+      if (result.length === 0) {
+        returnData.msg = '用户名或密码错误'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+
+
+// 接口：查询航空公司所属飞机
+router.post('/getPlaneList', (req, res) => {
+  const sql = $sql.CompanyPlane.select
+  const params = req.body
+  console.log('%c [ req.body ]-165', 'font-size:13px; background:pink; color:#bf2c9f;', req.body)
+  params.ids = params.ids.split(',')
+  let ss = 'SELECT * FROM plane WHERE plane_id IN (?'
+  if (params.ids.length > 1) {
+    params.ids.forEach((it, index) => {
+      if (parseInt(index) !== 0) {
+        ss += ', ?'
+      }
+    })
+    ss += ")"
+  } else {
+    ss = sql
+  }
+  console.log('接口：查询航空公司所属飞机', params)
+  conn.query(ss, [...params.ids], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+      if (result.length === 0) {
+        returnData.msg = '用户名或密码错误'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+
+
+
+
 
 
 // 接口：查询省份
