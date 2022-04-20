@@ -675,7 +675,6 @@ export default {
       '[ new Date().getTime() + String(Math.round(Math.random() * 10000)) ] >',
       new Date().getTime() + String(Math.round(Math.random() * 10000))
     )
-    this.getProvince()
   },
   methods: {
     changePassOk () {
@@ -773,45 +772,7 @@ export default {
       }
       return isJpgOrPng && isLt2M
     },
-    /**
-     * 查询城市
-     */
-    getProvince () {
-      this.axios.get('/api/Air/getProvince').then(({ data }) => {
-        if (data.msg === '请求成功') {
-          this.cityList = data.data.map((it) => {
-            return {
-              value: it.province_id,
-              label: it.province,
-              isLeaf: false,
-            }
-          })
-        } else {
-          this.$message.error(data.msg)
-        }
-      })
-    },
-    getCity (id, targetOption) {
-      const params = {
-        province_id: id,
-      }
-      console.log('[ params ] >', params)
-      this.axios.post('/api/Air/getCity', params).then(({ data }) => {
-        console.log('[ data ] >', data)
-        if (data.msg === '请求成功') {
-          targetOption.children = data.data.map((it) => {
-            return {
-              value: it.city_id,
-              label: it.city,
-            }
-          })
-        } else {
-          this.$message.error(data.msg)
-        }
-        this.cityList = [...this.cityList]
-      })
-      targetOption.loading = false
-    },
+
 
 
     /**

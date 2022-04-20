@@ -5,26 +5,6 @@
                   :rules="rules"
                   :label-col="labelCol"
                   :wrapper-col="wrapperCol">
-      <!-- <a-spin :spinning="loading"
-                      tip="加载中...">
-                <a-form-model-item>
-                  <a-upload name="avatar"
-                            list-type="picture-card"
-                            class="avatar-uploader"
-                            :show-upload-list="false"
-                            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                            :before-upload="beforeUpload"
-                            @change="handleChange">
-                    <img v-if="imageUrl"
-                         :src="imageUrl"
-                         alt="avatar" />
-                    <div v-else>
-                      <a-icon :type="loading ? 'loading' : 'plus'" />
-                      <div class="ant-upload-text">Upload</div>
-                    </div>
-                  </a-upload>
-                </a-form-model-item>
-              </a-spin> -->
       <a-row>
         <a-col :span="12">
           <a-form-model-item prop="departure"
@@ -56,6 +36,7 @@
                            show-time
                            style="width: 100%"
                            :disabled-date="disabledDate"
+                           @change="timeChange"
                            v-model="form.departure_time"
                            format="YYYY-MM-DD HH:mm:ss"
                            placeholder="请选择" />
@@ -69,6 +50,7 @@
                            show-time
                            style="width: 100%"
                            :disabled-date="disabledDate"
+                           @change="timeChange"
                            v-model="form.destination_time"
                            format="YYYY-MM-DD HH:mm:ss"
                            placeholder="请选择" />
@@ -88,11 +70,12 @@
                       :not-found-content="null"
                       :filter-option="false"
                       option-filter-prop="children"
+                      label-in-value
                       placeholder="请选择飞机">
               <a-select-option v-for="item in planeList"
-                               :key="item.id"
-                               :value="item.id">
-                {{ item.name }}
+                               :key="item.plane_id"
+                               :value="item.plane_id">
+                {{ item.plane_name }}
               </a-select-option>
             </a-select>
           </a-form-model-item>
@@ -134,6 +117,7 @@
                             :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
                             style="width: 40%"
                             :min="0"
+                            @change="aaa"
                             v-model="form.business_cabin_price" />
           </a-form-model-item>
         </a-col>
@@ -290,6 +274,9 @@ export default {
         destination_time: [
           { required: true, message: '请填写到达时间', trigger: 'blur' },
         ],
+        plane: [
+          { required: true, message: '请选择飞机', trigger: 'blur' },
+        ],
         business_cabin_count: [
           {
             required: true,
@@ -327,6 +314,7 @@ export default {
         destination: [], //目的地
         departure_time: this.$moment(), //出发时间
         destination_time: this.$moment().add(2, 'hour'), //到达时间
+        plane: '',//选择的飞机
         business_column: '',//商务舱列数
         business_row: '',//商务舱行数
         economy_column: '',//经济舱列数
@@ -339,14 +327,7 @@ export default {
       },
       columnList: [5, 7, 8, 9],
       rowList: [2, 3, 4, 5],
-      cityList: [
-        { no: 1, city: '深圳' },
-        { no: 2, city: '广州' },
-        { no: 3, city: '东莞' },
-        { no: 4, city: '中山' },
-        { no: 5, city: '珠海' },
-        { no: 6, city: '惠州' },
-      ], //城市
+      cityList: [], //城市
       planeList: '',
       user: JSON.parse(window.sessionStorage.getItem('user')),
     }
@@ -356,8 +337,12 @@ export default {
   },
   mounted () {
     this.getPlaneList()
+    this.getProvince()
   },
   methods: {
+    aaa (val) {
+      console.log('[ typeof(val) ] >', typeof (val))
+    },
     async getPlaneList () {
       const params = {
         ids: this.user.own_plane
@@ -367,14 +352,79 @@ export default {
         console.log('[ data ] >', data)
         if (data.msg === '请求成功') {
           console.log('[ data.data ] >', data.data)
-          this.planeList = data.data.map(it => {
-            return {
-              id: it.plane_id,
-              name: it.plane_name,
-            }
-          })
+          this.planeList = data.data
         }
       })
+    },
+    /**
+     * 查询城市
+     */
+    getProvince () {
+      this.axios.get('/api/Air/getProvince').then(({ data }) => {
+        if (data.msg === '请求成功') {
+          this.cityList = data.data.map((it) => {
+            return {
+              value: it.province_id,
+              label: it.province,
+              isLeaf: false,
+            }
+          })
+        } else {
+          this.$message.error(data.msg)
+        }
+      })
+    },
+    getCity (id, targetOption) {
+      const params = {
+        province_id: id,
+      }
+      console.log('[ params ] >', params)
+      this.axios.post('/api/Air/getCity', params).then(({ data }) => {
+        console.log('[ data ] >', data)
+        if (data.msg === '请求成功') {
+          targetOption.children = data.data.map((it) => {
+            return {
+              value: it.city_id,
+              label: it.city,
+            }
+          })
+        } else {
+          this.$message.error(data.msg)
+        }
+        this.cityList = [...this.cityList]
+      })
+      targetOption.loading = false
+    },
+    // 查询是否在飞
+    async searchAirLine (id) {
+      const params = {
+        plane_id: id
+      }
+      const { data } = await this.axios.post('/api/Air/searchAirLine', params)
+      console.log('[ data ] >', data)
+      if (data.msg === '请求成功') {
+        if (!data.data.length) {
+          return true
+        } else {
+          console.log('[ data.data ] >', data.data)
+          let infoData = data.data
+          infoData.forEach(it => {
+            // 起飞时间大于查出来的到达时间
+            // 到达时间小于查出来的起飞时间
+            if (this.$moment(it.destination_time) < this.$moment(this.form.departure_time) || this.$moment(it.departure_time) > this.$moment(this.form.destination_time)) {
+              // 则可以飞行
+              return true
+            } else {
+              this.$message.error("在该时段，此飞机已有行程，请重新选择时间")
+              return false;
+            }
+          })
+          console.log('[ this.$moment(infoData[0].departure_time).format("") ] >',)
+        }
+      } else {
+        this.$message.error(data.msg)
+        return false;
+      }
     },
     loadData (selectedOptions) {
       const targetOption = selectedOptions[selectedOptions.length - 1]
@@ -384,8 +434,19 @@ export default {
     disabledDate (time) {
       return time < this.$moment().subtract(1, 'days')
     },
-    planeChange (val) {
+    async planeChange (val) {
       console.log('[ val ] >', val)
+      await this.searchAirLine(val.key);
+      let find = this.planeList.find(it => it.plane_id === val.key)
+      console.log('%c [ find ]-386', 'font-size:13px; background:pink; color:#bf2c9f;', find)
+      if (find) {
+        this.form.ticket_count = find.capacity;
+        this.form.business_cabin_count = find.business_capacity
+        this.form.economy_cabin_count = find.economy_capacity
+      }
+    },
+    timeChange (val) {
+      this.form.plane = ''
     },
     colChange (val, type) {
       console.log('[ val ] >', val)
@@ -438,7 +499,37 @@ export default {
       this.form.business_cabin_count =
         this.form.ticket_count - this.form.economy_cabin_count
     },
-    submit () {
+    vailForm () {
+      if (!this.form.departure.length) {
+        this.$message.error("请填写出发地！")
+        return false
+      }
+      if (!this.form.destination.length) {
+        this.$message.error("请填写目的地！")
+        return false
+      }
+      if (!this.form.plane) {
+        this.$message.error("请选择飞机！")
+        return false
+      }
+      if (!this.form.business_cabin_price) {
+        this.$message.error("请填写商务舱单价！")
+        return false
+      }
+      if (!this.form.economy_cabin_price) {
+        this.$message.error("请填写经济舱单价！")
+        return false
+      }
+      return true
+    },
+    async submit () {
+      if (!this.vailForm()) {
+        return
+      }
+      let type = await this.searchAirLine(this.form.plane.key)
+      if (!type) {
+        return
+      }
       this.$message.success('提交成功')
       console.log('[ this.form ] >', this.form)
     },
@@ -451,5 +542,8 @@ export default {
 <style lang="less" scoped>
 @import url("../../../current.less");
 .air-line-create {
+  /**
+
+  */
 }
 </style>

@@ -198,6 +198,55 @@ router.post('/getPlaneList', (req, res) => {
   })
 })
 
+// 接口：插入航班
+router.post('/submitAirLine', (req, res) => {
+  const sql = $sql.AirLine.insert
+  const params = req.body
+  console.log('接口：插入航班', params)
+  conn.query(sql, [params.line_id, params.company_id, params.plane_id, params.departure, params.destination, params.departure_time, params.destination_time, params.ticket_count, params.business_cabin_count, params.economy_cabin_count, params.business_cabin_price, params.economy_cabin_price, params.have_ticket_count, params.have_business_cabin_count, params.have_economy_cabin_count], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：查询航班（根据飞机id查询）
+router.post('/searchAirLine', (req, res) => {
+  const sql = $sql.AirLine.select
+  const params = req.body
+  console.log('接口：插入航班', params)
+  // params.line_id, params.company_id, params.plane_id, params.departure, params.destination, params.departure_time, params.destination_time, params.ticket_count, params.business_cabin_count, params.economy_cabin_count, params.business_cabin_price, params.economy_cabin_price, params.have_ticket_count, params.have_business_cabin_count, params.have_economy_cabin_count
+  conn.query(sql, [params.plane_id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
 
 
 
