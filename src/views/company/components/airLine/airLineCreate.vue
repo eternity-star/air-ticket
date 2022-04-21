@@ -290,14 +290,16 @@
         </a-col>
       </a-row> -->
     </a-form-model>
-    <a-button type="primary"
-              shape="round"
-              style="margin-left: 43%"
-              @click="submit">提交</a-button>
-    <a-button type="primary"
-              shape="round"
-              style="margin-left: 10px"
-              @click="reset">重置</a-button>
+    <div v-if="!id">
+      <a-button type="primary"
+                shape="round"
+                style="margin-left: 43%"
+                @click="submit">提交</a-button>
+      <a-button type="primary"
+                shape="round"
+                style="margin-left: 10px"
+                @click="reset">重置</a-button>
+    </div>
   </div>
 </template>
 <script>
@@ -393,6 +395,10 @@ export default {
   mounted () {
     this.getPlaneList()
     this.getProvince()
+    if (this.id) {
+      this.initForm()
+      console.log('[ 111 ] >', 111)
+    }
   },
   methods: {
     aaa (val) {
@@ -628,6 +634,53 @@ export default {
         economy_cabin_price: parseInt(this.form.economy_cabin_price),
       }
       return FormDb
+    },
+    async getOneCity (id) {
+      const params = {
+        city_id: id
+      }
+      const { data } = await this.axios.post('/api/Air/getCity', params)
+      if (data.msg === '请求成功') {
+        console.log('[ data.data ] >', data.data)
+        let infoData = data.data[0]
+        return infoData
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
+    async initForm () {
+      console.log('[ this.id ] >', this.id)
+      const params = {
+        line_id: this.id
+      }
+      const { data } = await this.axios.post('/api/Air/searchAirLine', params)
+      console.log('[ data ] >', data)
+      if (data.msg === '请求成功') {
+        console.log('[ data.data ] >', data.data)
+        let infoData = data.data[0]
+        let city1 = await this.getOneCity(infoData.departure)
+        let city2 = await this.getOneCity(infoData.destination)
+        this.form = {
+          departure: [city1.province_id, city1.city_id], //出发地
+          destination: [city2.province_id, city2.city_id], //目的地
+          departure_time: this.$moment(infoData.departure_time), //出发时间
+          destination_time: this.$moment(infoData.destination_time), //到达时间
+          plane: {
+            key: infoData.plane_id,
+            label: null
+          },//选择的飞机
+          ticket_count: infoData.ticket_count, //机票数量
+          business_cabin_count: infoData.business_cabin_count, //商务舱数量
+          economy_cabin_count: infoData.economy_cabin_count, //经济舱数量
+          business_cabin_price: infoData.business_cabin_price, //商务舱单价
+          economy_cabin_price: infoData.economy_cabin_price, //经济舱单价
+          have_ticket_count: infoData.have_ticket_count,//已订机票总数量
+          have_business_cabin_count: infoData.have_business_cabin_count,//已订商务舱数量
+          have_economy_cabin_count: infoData.have_economy_cabin_count,//已订经济舱数量
+        }
+      } else {
+        this.$message.error(data.msg)
+      }
     },
     reset () {
       this.$refs.form.resetFields()

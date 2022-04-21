@@ -20,6 +20,7 @@
       </template>
     </a-table>
     <a-modal title="机票信息"
+             width="80%"
              :visible="returnVisible"
              destroyOnClose
              @ok="returnVisible = false"
@@ -227,11 +228,12 @@ export default {
       }
     },
     contorlAction (item, type) {
+      console.log('[ item ] >', item)
       if (type === 1) {
         this.$message.success('取消航班成功')
       } else {
+        this.currentId = item.no
         this.returnVisible = true
-
       }
     },
   },

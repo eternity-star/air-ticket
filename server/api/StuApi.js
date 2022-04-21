@@ -233,6 +233,9 @@ router.post('/searchAirLine', (req, res) => {
   } else if (params.company_id) {
     args = params.company_id
     sql = $sql.AirLine.selectCompanyAir
+  } else if (params.line_id) {
+    args = params.line_id
+    sql = $sql.AirLine.selectAirLine
   }
   // params.line_id, params.company_id, params.plane_id, params.departure, params.destination, params.departure_time, params.destination_time, params.ticket_count, params.business_cabin_count, params.economy_cabin_count, params.business_cabin_price, params.economy_cabin_price, params.have_ticket_count, params.have_business_cabin_count, params.have_economy_cabin_count
   conn.query(sql, [args], function (err, result) {
@@ -286,10 +289,17 @@ router.get('/getProvince', (req, res) => {
 
 // 接口：查询省份下的城市
 router.post('/getCity', (req, res) => {
-  const sql = $sql.City.selectCity
+  let sql = $sql.City.selectAllCity
   const params = req.body
+  let args;
+  if (params.province_id) {
+    args = params.province_id
+  } else if (params.city_id) {
+    args = params.city_id
+    sql = $sql.City.selectCity
+  }
   console.log('接口：查询省份下的城市', params)
-  conn.query(sql, [params.province_id], function (err, result) {
+  conn.query(sql, [args], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -307,6 +317,7 @@ router.post('/getCity', (req, res) => {
     jsonWrite(res, returnData)
   })
 })
+
 
 
 

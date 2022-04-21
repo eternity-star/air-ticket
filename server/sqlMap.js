@@ -9,7 +9,8 @@ const sqlMap = {
   },
   City: {
     selectProvince: 'SELECT DISTINCT province_id, province FROM air_location ORDER BY province_id', //查询省份
-    selectCity: 'SELECT city_id, city FROM air_location WHERE province_id = ?'  //查询城市
+    selectAllCity: 'SELECT city_id, city FROM air_location WHERE province_id = ?',  //查询城市
+    selectCity: 'SELECT * FROM air_location WHERE city_id = ?'  //查询城市
   },
   User: {
     insertUser: 'insert into user(id, name, password, mobile, idCard, level) values(?,?,?,?,?,?)', //插入用户信息
@@ -29,6 +30,7 @@ const sqlMap = {
     insert: 'insert into air_line(line_id, company_id, plane_id, departure, destination, departure_time, destination_time, ticket_count, business_cabin_count, economy_cabin_count, business_cabin_price, economy_cabin_price, have_ticket_count, have_business_cabin_count, have_economy_cabin_count) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', // 插入航班
     selectPlaneAir: 'SELECT * FROM air_line where plane_id = ?',
     selectCompanyAir: 'SELECT * FROM air_line where company_id = ?',
+    selectAirLine: 'SELECT * FROM air_line where line_id = ?',
   }
 }
 
