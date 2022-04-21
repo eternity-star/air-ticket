@@ -224,11 +224,18 @@ router.post('/submitAirLine', (req, res) => {
 
 // 接口：查询航班（根据飞机id查询）
 router.post('/searchAirLine', (req, res) => {
-  const sql = $sql.AirLine.select
+  let sql = $sql.AirLine.selectPlaneAir
   const params = req.body
   console.log('接口：插入航班', params)
+  let args;
+  if (params.plane_id) {
+    args = params.plane_id
+  } else if (params.company_id) {
+    args = params.company_id
+    sql = $sql.AirLine.selectCompanyAir
+  }
   // params.line_id, params.company_id, params.plane_id, params.departure, params.destination, params.departure_time, params.destination_time, params.ticket_count, params.business_cabin_count, params.economy_cabin_count, params.business_cabin_price, params.economy_cabin_price, params.have_ticket_count, params.have_business_cabin_count, params.have_economy_cabin_count
-  conn.query(sql, [params.plane_id], function (err, result) {
+  conn.query(sql, [args], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)

@@ -27,7 +27,8 @@ const sqlMap = {
   },
   AirLine: {
     insert: 'insert into air_line(line_id, company_id, plane_id, departure, destination, departure_time, destination_time, ticket_count, business_cabin_count, economy_cabin_count, business_cabin_price, economy_cabin_price, have_ticket_count, have_business_cabin_count, have_economy_cabin_count) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', // 插入航班
-    select: 'SELECT * FROM air_line where plane_id = ?'
+    selectPlaneAir: 'SELECT * FROM air_line where plane_id = ?',
+    selectCompanyAir: 'SELECT * FROM air_line where company_id = ?',
   }
 }
 

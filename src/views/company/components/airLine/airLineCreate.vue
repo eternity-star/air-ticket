@@ -11,7 +11,9 @@
                              label="出发地">
             <a-cascader :options="cityList"
                         :load-data="loadData"
+                        :disabled="id ? true : false"
                         v-model="form.departure"
+                        @change="aaa"
                         style="width: 70%"
                         placeholder="请选择出发地" />
           </a-form-model-item>
@@ -22,6 +24,7 @@
             <a-cascader :options="cityList"
                         v-model="form.destination"
                         :load-data="loadData"
+                        :disabled="id ? true : false"
                         style="width: 70%"
                         placeholder="请选择目的地" />
           </a-form-model-item>
@@ -36,9 +39,10 @@
                            show-time
                            style="width: 100%"
                            :disabled-date="disabledDate"
+                           :disabled="id ? true : false"
                            @change="timeChange"
                            v-model="form.departure_time"
-                           format="YYYY-MM-DD HH:mm:ss"
+                           format="YYYY-MM-DD HH:mm"
                            placeholder="请选择" />
           </a-form-model-item>
         </a-col>
@@ -50,9 +54,10 @@
                            show-time
                            style="width: 100%"
                            :disabled-date="disabledDate"
+                           :disabled="id ? true : false"
                            @change="timeChange"
                            v-model="form.destination_time"
-                           format="YYYY-MM-DD HH:mm:ss"
+                           format="YYYY-MM-DD HH:mm"
                            placeholder="请选择" />
           </a-form-model-item>
         </a-col>
@@ -69,6 +74,7 @@
                       :default-active-first-option="true"
                       :not-found-content="null"
                       :filter-option="false"
+                      :disabled="id ? true : false"
                       option-filter-prop="children"
                       label-in-value
                       placeholder="请选择飞机">
@@ -117,6 +123,7 @@
                             :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
                             style="width: 40%"
                             :min="0"
+                            :disabled="id ? true : false"
                             @change="aaa"
                             v-model="form.business_cabin_price" />
           </a-form-model-item>
@@ -145,8 +152,46 @@
                   "
                             :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
                             style="width: 40%"
+                            :disabled="id ? true : false"
                             :min="0"
                             v-model="form.economy_cabin_price" />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+      <a-row v-if="id">
+        <a-col :span="12">
+          <a-form-model-item label="已订机票总数量">
+            <a-input-number v-model="form.have_ticket_count"
+                            disabled
+                            @blur="ticketCountChange"
+                            placeholder="请输入"
+                            style="width: 75%"
+                            :min="0"
+                            :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')" />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+      <a-row v-if="id">
+        <a-col :span="12">
+          <a-form-model-item label="已订商务舱数量">
+            <a-input-number v-model="form.have_business_cabin_count"
+                            disabled
+                            @blur="ticketCountChange"
+                            placeholder="请输入"
+                            style="width: 75%"
+                            :min="0"
+                            :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')" />
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item label="已订经济舱数量">
+            <a-input-number v-model="form.have_economy_cabin_count"
+                            disabled
+                            @blur="ticketCountChange"
+                            placeholder="请输入"
+                            style="width: 75%"
+                            :min="0"
+                            :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')" />
           </a-form-model-item>
         </a-col>
       </a-row>
@@ -257,6 +302,12 @@
 </template>
 <script>
 export default {
+  props: {
+    id: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       labelCol: { span: 6 },
@@ -324,6 +375,9 @@ export default {
         economy_cabin_count: 0, //经济舱数量
         business_cabin_price: 0, //商务舱单价
         economy_cabin_price: 0, //经济舱单价
+        have_ticket_count: 0,//已订机票总数量
+        have_business_cabin_count: 0,//已订商务舱数量
+        have_economy_cabin_count: 0,//已订经济舱数量
       },
       columnList: [5, 7, 8, 9],
       rowList: [2, 3, 4, 5],
@@ -333,7 +387,8 @@ export default {
     }
   },
   created () {
-
+    console.log('[ String(Math.round(Math.random() * 10000)) ] >', String(Math.round(Math.random() * 10000)))
+    console.log('[ this.$moment().subtract(1, "days") ] >', this.$moment().subtract(1, 'days').endOf('day'))
   },
   mounted () {
     this.getPlaneList()
@@ -341,6 +396,7 @@ export default {
   },
   methods: {
     aaa (val) {
+      console.log('[ val ] >', val)
       console.log('[ typeof(val) ] >', typeof (val))
     },
     async getPlaneList () {
@@ -403,8 +459,9 @@ export default {
       const { data } = await this.axios.post('/api/Air/searchAirLine', params)
       console.log('[ data ] >', data)
       if (data.msg === '请求成功') {
+        let type = true
         if (!data.data.length) {
-          return true
+          return type
         } else {
           console.log('[ data.data ] >', data.data)
           let infoData = data.data
@@ -413,13 +470,12 @@ export default {
             // 到达时间小于查出来的起飞时间
             if (this.$moment(it.destination_time) < this.$moment(this.form.departure_time) || this.$moment(it.departure_time) > this.$moment(this.form.destination_time)) {
               // 则可以飞行
-              return true
             } else {
               this.$message.error("在该时段，此飞机已有行程，请重新选择时间")
-              return false;
+              type = false;
             }
           })
-          console.log('[ this.$moment(infoData[0].departure_time).format("") ] >',)
+          return type
         }
       } else {
         this.$message.error(data.msg)
@@ -432,7 +488,7 @@ export default {
       this.getCity(targetOption.value, targetOption)
     },
     disabledDate (time) {
-      return time < this.$moment().subtract(1, 'days')
+      return time < this.$moment().subtract(1, 'days').endOf('day')
     },
     async planeChange (val) {
       console.log('[ val ] >', val)
@@ -446,6 +502,11 @@ export default {
       }
     },
     timeChange (val) {
+      console.log('[ this.form.departure_time ] >',)
+      console.log('[ val ] >', val)
+      if (this.form.departure_time > this.form.destination_time) {
+        this.$message.error("出发时间不能大于到达时间")
+      }
       this.form.plane = ''
     },
     colChange (val, type) {
@@ -520,6 +581,10 @@ export default {
         this.$message.error("请填写经济舱单价！")
         return false
       }
+      if (this.form.departure_time > this.form.destination_time) {
+        this.$message.error("出发时间不能大于到达时间")
+        return false
+      }
       return true
     },
     async submit () {
@@ -527,11 +592,42 @@ export default {
         return
       }
       let type = await this.searchAirLine(this.form.plane.key)
+      console.log('%c [ type ]-541', 'font-size:13px; background:pink; color:#bf2c9f;', type)
       if (!type) {
         return
       }
-      this.$message.success('提交成功')
-      console.log('[ this.form ] >', this.form)
+      let FormDb = this.getFormData()
+      const params = {
+        line_id: 'LI' + new Date().getTime() + String(Math.round(Math.random() * 10000)),
+        company_id: this.user.company_id,
+        have_ticket_count: 0,
+        have_business_cabin_count: 0,
+        have_economy_cabin_count: 0
+      }
+      Object.assign(params, FormDb)
+      const { data } = await this.axios.post('/api/Air/submitAirLine', params)
+      console.log('[ data ] >', data)
+      if (data.msg === '请求成功') {
+        console.log('[ data.data ] >', data.data)
+        this.$message.success('提交成功')
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
+    getFormData () {
+      let FormDb = {
+        plane_id: this.form.plane.key,
+        departure: this.form.departure[1],
+        destination: this.form.destination[1],
+        departure_time: this.$moment(this.form.departure_time).format("YYYY-MM-DD HH:mm"),
+        destination_time: this.$moment(this.form.departure_time).format("YYYY-MM-DD HH:mm"),
+        ticket_count: parseInt(this.form.ticket_count),
+        business_cabin_count: parseInt(this.form.business_cabin_count),
+        economy_cabin_count: parseInt(this.form.economy_cabin_count),
+        business_cabin_price: parseInt(this.form.business_cabin_price),
+        economy_cabin_price: parseInt(this.form.economy_cabin_price),
+      }
+      return FormDb
     },
     reset () {
       this.$refs.form.resetFields()
@@ -541,9 +637,7 @@ export default {
 </script>
 <style lang="less" scoped>
 @import url("../../../current.less");
-.air-line-create {
-  /**
-
-  */
-}
+// .air-line-create {
+//   padding: 1px;
+// }
 </style>

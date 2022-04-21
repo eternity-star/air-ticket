@@ -152,77 +152,12 @@
           </div>
           <div class="myTripInfo"
                v-else-if="currentIndex === 2">
-            <airLineCreate />
+            <airLineCreate v-if="currentIndex === 2" />
           </div>
           <div class="myOrder"
                v-else-if="currentIndex === 3">
             333
-            <a-table :columns="orderColumns"
-                     :data-source="orderData"
-                     :pagination="pagination">
-              <span slot="date"
-                    slot-scope="text">
-                <a-icon type="clock-circle"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
-              </span>
-              <span slot="name"
-                    slot-scope="text">
-                <a-icon type="user"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
-              </span>
-              <span slot="idCard"
-                    slot-scope="text">
-                <a-icon type="key"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
-              </span>
-              <span slot="mobile"
-                    slot-scope="text">
-                <a-icon type="phone"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
-              </span>
-              <span slot="money"
-                    slot-scope="text">
-                <a-icon type="money-collect"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
-              </span>
-              <span slot="state"
-                    slot-scope="text">
-                <a-icon type="laptop"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
-              </span>
-              <template slot="operation"
-                        slot-scope="text, record">
-                <div>
-                  <a-popconfirm title="确定取消航班吗？"
-                                ok-text="确定"
-                                cancel-text="取消"
-                                @confirm="returnTicket">
-                    <a-button type="danger"
-                              style="margin-right: 5px">取消</a-button>
-                  </a-popconfirm>
-                  <a-button type="primary"
-                            style="margin-left: 5px"
-                            @click="returnVisible = true">详情</a-button>
-                </div>
-              </template>
-            </a-table>
-            <a-modal title="机票信息"
-                     :visible="returnVisible"
-                     @ok="returnVisible = false"
-                     @cancel="returnVisible = false">
-            </a-modal>
+            <airLineManage v-if="currentIndex === 3" />
           </div>
           <div class="myBalance"
                v-else-if="currentIndex === 4">
@@ -362,6 +297,7 @@
 <script>
 import { randomWord } from '@/common/utils'
 import airLineCreate from './components/airLine/airLineCreate.vue'
+import airLineManage from './components/airLine/airLineManage.vue'
 function getBase64 (img, callback) {
   const reader = new FileReader()
   reader.addEventListener('load', () => callback(reader.result))
@@ -372,11 +308,12 @@ export default {
   props: {
     currentClick: {
       type: Number,
-      default: 2,
+      default: 3,
     },
   },
   components: {
-    airLineCreate
+    airLineCreate,
+    airLineManage,
   },
   data () {
     return {
@@ -399,13 +336,8 @@ export default {
       // avatar: '',
       loading: false,
       imageUrl: '',
-      returnVisible: false,
       payVisible: false,
       passwordVisible: false,
-      pagination: {
-        pageSize: 5,
-        hideOnSinglePage: true,
-      },
       balanceData: [
         {
           key: '1',
@@ -469,154 +401,7 @@ export default {
           width: '10%',
         },
       ],
-      orderData: [
-        {
-          key: '1',
-          no: randomWord(true, 8, 8),
-          departure: '北京', //出发地
-          destination: '深圳', //目的地
-          departure_time: '2022-02-08 09:51:55', //出发时间
-          destination_time: '2022-02-08 11:51:55', //到达时间
-          ticket_count: 600, //机票数量
-          bookedCount: 500, //已订机票
-          // business_cabin_count: 100, //商务舱数量
-          // economy_cabin_count: 500, //商务舱数量
-        },
-        {
-          key: '2',
-          no: randomWord(true, 8, 8),
-          departure: '东莞', //出发地
-          destination: '深圳', //目的地
-          departure_time: '2022-02-28 15:56:55', //出发时间
-          destination_time: '2022-02-08 18:51:55', //到达时间
-          ticket_count: 1500, //机票数量
-          bookedCount: 500, //已订机票
-          // business_cabin_count: 150, //商务舱数量
-          // economy_cabin_count: 1350, //商务舱数量
-        },
-        {
-          key: '3',
-          no: randomWord(true, 8, 8),
-          departure: '中山', //出发地
-          destination: '广州', //目的地
-          departure_time: '2022-03-01 22:51:55', //出发时间
-          destination_time: '2022-03-02 01:51:55', //到达时间
-          ticket_count: 300, //机票数量
-          bookedCount: 500, //已订机票
-          // business_cabin_count: 20, //商务舱数量
-          // economy_cabin_count: 280, //商务舱数量
-        },
-      ],
-      orderColumns: [
-        {
-          title: '航班编号',
-          dataIndex: 'no',
-          key: 'no',
-          ellipsis: true,
-          align: 'center',
-          scopedSlots: { customRender: 'no' },
-          width: '10%',
-        },
-        {
-          title: '出发地',
-          dataIndex: 'departure',
-          key: 'departure',
-          ellipsis: true,
-          align: 'center',
-          scopedSlots: { customRender: 'departure' },
-          width: '10%',
-        },
-        {
-          title: '目的地',
-          dataIndex: 'destination',
-          key: 'destination',
-          ellipsis: true,
-          align: 'center',
-          scopedSlots: { customRender: 'destination' },
-          width: '10%',
-        },
-        {
-          title: '预计出发时间',
-          dataIndex: 'departure_time',
-          key: 'departure_time',
-          ellipsis: true,
-          align: 'center',
-          scopedSlots: { customRender: 'departure_time' },
-          width: '15%',
-        },
-        {
-          title: '预计抵达时间',
-          dataIndex: 'destination_time',
-          key: 'destination_time',
-          ellipsis: true,
-          align: 'center',
-          scopedSlots: { customRender: 'destination_time' },
-          width: '15%',
-        },
-        {
-          title: '机票总数量',
-          dataIndex: 'ticket_count',
-          key: 'ticket_count',
-          ellipsis: true,
-          align: 'center',
-          scopedSlots: { customRender: 'ticket_count' },
-          width: '10%',
-        },
-        {
-          title: '已订机票',
-          dataIndex: 'bookedCount',
-          key: 'bookedCount',
-          ellipsis: true,
-          align: 'center',
-          scopedSlots: { customRender: 'bookedCount' },
-          width: '10%',
-        },
-        // {
-        //   title: '商务舱数量',
-        //   dataIndex: 'business_cabin_count',
-        //   key: 'business_cabin_count',
-        //   ellipsis: true,
-        //   align: 'center',
-        //   scopedSlots: { customRender: 'business_cabin_count' },
-        //   width: '10%',
-        // },
-        // {
-        //   title: '商务舱单价',
-        //   dataIndex: 'business_cabin_price',
-        //   key: 'business_cabin_price',
-        //   ellipsis: true,
-        //   align: 'center',
-        //   scopedSlots: { customRender: 'business_cabin_price' },
-        //   width: '10%',
-        // },
-        // {
-        //   title: '经济舱数量',
-        //   dataIndex: 'economy_cabin_count',
-        //   key: 'economy_cabin_count',
-        //   ellipsis: true,
-        //   align: 'center',
-        //   scopedSlots: { customRender: 'economy_cabin_count' },
-        //   width: '10%',
-        // },
-        // {
-        //   title: '经济舱单价',
-        //   dataIndex: 'economy_cabin_price',
-        //   key: 'economy_cabin_price',
-        //   ellipsis: true,
-        //   align: 'center',
-        //   scopedSlots: { customRender: 'economy_cabin_price' },
-        //   width: '10%',
-        // },
-        {
-          title: '操作',
-          dataIndex: 'operation',
-          key: 'operation',
-          ellipsis: true,
-          align: 'center',
-          scopedSlots: { customRender: 'operation' },
-          width: '20%',
-        },
-      ],
+
     }
   },
 
@@ -775,12 +560,6 @@ export default {
 
 
 
-    /**
-     * 我的订单相关函数
-     */
-    returnTicket () {
-      this.$message.success('取消航班成功')
-    },
   },
 }
 </script>
