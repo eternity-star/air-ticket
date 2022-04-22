@@ -156,6 +156,54 @@ router.post('/comLogin', (req, res) => {
   })
 })
 
+// 接口：查询密码是否正确
+router.post('/judgeComPassword', (req, res) => {
+  const sql = $sql.CompanyUser.selectPassword
+  const params = req.body
+  console.log('接口：查询密码是否正确', params)
+  conn.query(sql, [params.password], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：更改密码
+router.post('/updatePassword', (req, res) => {
+  const sql = $sql.CompanyUser.updatePassword
+  const params = req.body
+  console.log('接口：更改密码', params)
+  conn.query(sql, [params.password, params.company_id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
 
 
 // 接口：查询航空公司所属飞机
@@ -203,7 +251,31 @@ router.post('/submitAirLine', (req, res) => {
   const sql = $sql.AirLine.insert
   const params = req.body
   console.log('接口：插入航班', params)
-  conn.query(sql, [params.line_id, params.company_id, params.plane_id, params.departure, params.destination, params.departure_time, params.destination_time, params.ticket_count, params.business_cabin_count, params.economy_cabin_count, params.business_cabin_price, params.economy_cabin_price, params.have_ticket_count, params.have_business_cabin_count, params.have_economy_cabin_count], function (err, result) {
+  conn.query(sql, [params.line_id, params.company_id, params.plane_id, params.departure, params.destination, params.departure_time, params.destination_time, params.ticket_count, params.business_cabin_count, params.economy_cabin_count, params.business_cabin_price, params.economy_cabin_price, params.have_ticket_count, params.have_business_cabin_count, params.have_economy_cabin_count, params.is_show], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：取消航班
+router.post('/updateAirLine', (req, res) => {
+  const sql = $sql.AirLine.updateAirLine
+  const params = req.body
+  console.log('接口：插入航班', params)
+  conn.query(sql, [params.line_id], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -297,6 +369,8 @@ router.post('/getCity', (req, res) => {
   } else if (params.city_id) {
     args = params.city_id
     sql = $sql.City.selectCity
+  } else {
+    sql = $sql.City.selectAll
   }
   console.log('接口：查询省份下的城市', params)
   conn.query(sql, [args], function (err, result) {

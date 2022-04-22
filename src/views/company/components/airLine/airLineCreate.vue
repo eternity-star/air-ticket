@@ -5,7 +5,23 @@
                   :rules="rules"
                   :label-col="labelCol"
                   :wrapper-col="wrapperCol">
-      <a-row>
+      <a-row v-if="id">
+        <a-col :span="12">
+          <a-form-model-item prop="departure"
+                             label="出发地">
+            <a-input v-model="form.departureShow"
+                     disabled />
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item prop="destination"
+                             label="目的地">
+            <a-input v-model="form.destinationShow"
+                     disabled />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+      <a-row v-else>
         <a-col :span="12">
           <a-form-model-item prop="departure"
                              label="出发地">
@@ -363,6 +379,8 @@ export default {
         ],
       },
       form: {
+        departureShow: '',
+        destinationShow: '',
         departure: [], //出发地
         destination: [], //目的地
         departure_time: this.$moment(), //出发时间
@@ -510,9 +528,6 @@ export default {
     timeChange (val) {
       console.log('[ this.form.departure_time ] >',)
       console.log('[ val ] >', val)
-      if (this.form.departure_time > this.form.destination_time) {
-        this.$message.error("出发时间不能大于到达时间")
-      }
       this.form.plane = ''
     },
     colChange (val, type) {
@@ -608,7 +623,8 @@ export default {
         company_id: this.user.company_id,
         have_ticket_count: 0,
         have_business_cabin_count: 0,
-        have_economy_cabin_count: 0
+        have_economy_cabin_count: 0,
+        is_show: 1,
       }
       Object.assign(params, FormDb)
       const { data } = await this.axios.post('/api/Air/submitAirLine', params)
@@ -616,6 +632,9 @@ export default {
       if (data.msg === '请求成功') {
         console.log('[ data.data ] >', data.data)
         this.$message.success('提交成功')
+        setTimeout(() => {
+          this.$emit("changeCurrentIndex", 3)
+        }, 1000)
       } else {
         this.$message.error(data.msg)
       }
@@ -661,8 +680,8 @@ export default {
         let city1 = await this.getOneCity(infoData.departure)
         let city2 = await this.getOneCity(infoData.destination)
         this.form = {
-          departure: [city1.province_id, city1.city_id], //出发地
-          destination: [city2.province_id, city2.city_id], //目的地
+          departureShow: city1.province + '/' + city1.city, //出发地
+          destinationShow: city2.province + '/' + city2.city, //目的地
           departure_time: this.$moment(infoData.departure_time), //出发时间
           destination_time: this.$moment(infoData.destination_time), //到达时间
           plane: {
@@ -690,7 +709,7 @@ export default {
 </script>
 <style lang="less" scoped>
 @import url("../../../current.less");
-// .air-line-create {
-//   padding: 1px;
-// }
+.air-line-create {
+  overflow: auto;
+}
 </style>

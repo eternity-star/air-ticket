@@ -10,7 +10,8 @@
                         ok-text="确定"
                         cancel-text="取消"
                         @confirm="contorlAction(record, 1)">
-            <a-button type="danger"
+            <a-button v-if="$moment() < $moment(record.departure_time)"
+                      type="danger"
                       style="margin-right: 5px">取消</a-button>
           </a-popconfirm>
           <a-button type="primary"
@@ -40,7 +41,7 @@ export default {
     return {
       returnVisible: false,
       pagination: {
-        pageSize: 5,
+        pageSize: 10,
         hideOnSinglePage: true,
       },
       user: JSON.parse(window.sessionStorage.getItem('user')),
@@ -193,15 +194,30 @@ export default {
           width: '20%',
         },
       ],
+      allCityList: [],
     }
   },
-  created () {
-
+  async created () {
+    await this.getAllCity()
   },
   mounted () {
     console.log('[ this.getAirLineList() ] >', this.getAirLineList())
   },
   methods: {
+    filterCity (val) {
+      let find = this.allCityList.find(it => it.city_id === val)
+      if (find) {
+        return find.city
+      }
+    },
+    async getAllCity (id) {
+      const { data } = await this.axios.post('/api/Air/getCity')
+      if (data.msg === '请求成功') {
+        this.allCityList = data.data
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
     // /api/Air/searchAirLine
     async getAirLineList () {
       const params = {
@@ -211,26 +227,40 @@ export default {
       console.log('[ data ] >', data)
       if (data.msg === '请求成功') {
         console.log('[ data.data ] >', data.data)
+        data.data = data.data.filter(it => it.is_show === 1)
         this.orderData = data.data.map(it => {
-          return {
-            key: it.line_id,
-            no: it.line_id,
-            departure: it.departure,
-            destination: it.destination,
-            departure_time: this.$moment(it.departure_time).format("YYYY-MM-DD HH:mm:ss"),
-            destination_time: this.$moment(it.destination_time).format("YYYY-MM-DD HH:mm:ss"),
-            ticket_count: it.ticket_count,
-            bookedCount: it.have_ticket_count,
+          if (it.is_show === 1) {
+            return {
+              key: it.line_id,
+              no: it.line_id,
+              departure: this.filterCity(it.departure),
+              destination: this.filterCity(it.destination),
+              departure_time: this.$moment(it.departure_time).format("YYYY-MM-DD HH:mm:ss"),
+              destination_time: this.$moment(it.destination_time).format("YYYY-MM-DD HH:mm:ss"),
+              ticket_count: it.ticket_count,
+              bookedCount: it.have_ticket_count,
+            }
           }
         })
+        console.log('[ this.orderData ] >', this.orderData)
       } else {
         this.$message.error(data.msg)
       }
     },
-    contorlAction (item, type) {
+    async contorlAction (item, type) {
       console.log('[ item ] >', item)
       if (type === 1) {
-        this.$message.success('取消航班成功')
+        const params = {
+          line_id: item.key
+        }
+        console.log('[ params ] >', params)
+        const { data } = await this.axios.post('/api/Air/updateAirLine', params)
+        if (data.msg === '请求成功') {
+          this.$message.success('取消航班成功')
+          await this.getAirLineList()
+        } else {
+          this.$message.error(data.msg)
+        }
       } else {
         this.currentId = item.no
         this.returnVisible = true
