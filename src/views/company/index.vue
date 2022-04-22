@@ -152,11 +152,11 @@
           </div>
           <div class="myTripInfo"
                v-else-if="currentIndex === 2">
-            <airLineCreate v-if="currentIndex === 2" />
+            <airLineCreate v-if="currentIndex === 2"
+                           @changeCurrentIndex="changeCurrentIndex" />
           </div>
           <div class="myOrder"
                v-else-if="currentIndex === 3">
-            333
             <airLineManage v-if="currentIndex === 3" />
           </div>
           <div class="myBalance"
@@ -401,7 +401,7 @@ export default {
           width: '10%',
         },
       ],
-
+      user: JSON.parse(window.sessionStorage.getItem('user')),
     }
   },
 
@@ -432,6 +432,7 @@ export default {
       immediate: true,
       handler (val) {
         this.defaultIndex = val
+        console.log('%c [ this.defaultIndex ]-436', 'font-size:13px; background:pink; color:#bf2c9f;', this.defaultIndex)
       },
     },
     // form: {
@@ -462,19 +463,69 @@ export default {
     )
   },
   methods: {
-    changePassOk () {
+    async changePassOk () {
       /**
         先判断原密码对不对
         在判断新密码和确认密码正不正确
        */
+      let type = await this.judgeComPassword(this.old_password)
+      if (!type) {
+        return
+      }
+      if (this.new_password === this.old_password) {
+        this.$message.error('与旧密码一致，请重新输入')
+        return
+      }
       if (this.new_password !== this.confirm_password) {
         this.$message.error('密码不一致，请重新输入')
         return
       }
-      this.passwordVisible = false
-      this.old_password = '' //原密码
-      this.new_password = '' //新密码
-      this.confirm_password = '' //确认密码
+      const params = {
+        password: this.new_password,
+        company_id: this.user.company_id
+      }
+      const { data } = await this.axios.post('/api/Air/updatePassword', params);
+      console.log('%c [ data ]-508', 'font-size:13px; background:pink; color:#bf2c9f;', data)
+      if (data.msg === '请求成功') {
+        this.$message.success("修改成功")
+        setTimeout(() => {
+          this.passwordVisible = false
+          this.old_password = '' //原密码
+          this.new_password = '' //新密码
+          this.confirm_password = '' //确认密码
+        }, 1000)
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
+    async judgeComPassword (password) {
+      const params = {
+        password
+      }
+      const { data } = await this.axios.post('/api/Air/judgeComPassword', params)
+      if (data.msg === '请求成功') {
+        if (data.data.length) {
+          let type = false
+          data.data.forEach(it => {
+            if (it.company_id === this.user.company_id) {
+              console.log('[ 222 ] >', 222)
+              type = true
+            }
+          })
+          console.log('[ type ] >', type)
+          if (!type) {
+            this.$message.error('密码错误，请重新输入')
+            return false
+          } else {
+            return true
+          }
+        } else {
+          return true
+        }
+      } else {
+        this.$message.error(data.msg)
+        return false
+      }
     },
     changePassCancel () {
       this.passwordVisible = false
@@ -487,6 +538,10 @@ export default {
       this.old_password = this.old_password.trim() //原密码
       this.new_password = this.new_password.trim() //新密码
       this.confirm_password = this.confirm_password.trim() //确认密码
+    },
+    changeCurrentIndex (val) {
+      this.currentIndex = val
+      this.defaultIndex = [`${val}`]
     },
     passwordBlur (val) {
       console.log('[ val ] >', val)
