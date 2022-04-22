@@ -36,6 +36,8 @@ const sqlMap = {
     selectAirLine: 'SELECT * FROM air_line where line_id = ?',
     updateAirLine: 'UPDATE air_line SET is_show = 0 WHERE line_id = ?',
   }
+  // 测试
+  // "SELECT * FROM `air_line` where departure_time  > '2022-05-02 00:00:00' and destination_time < '2022-05-02 23:59:59'"
 }
 
 module.exports = sqlMap

@@ -89,7 +89,7 @@
                     <a-select-option v-for="(item, index) in cabinTypeList"
                                      :key="index"
                                      :value="index">
-                      {{ item }}
+                      {{item}}
                     </a-select-option>
                   </a-select>
                 </a-form-model-item>
@@ -491,7 +491,7 @@ export default {
     recommendBox,
   },
   mounted () {
-    console.log('[ Date.now() ] >', Date.now())
+    console.log('[ this.$moment("2022-04-22") ===  ] >', this.$moment("2022-04-22").startOf("day").valueOf() === this.$moment().startOf("day").valueOf())
     this.companyDescription = this.companyList[0].description
     this.getProvince()
     // this.getCity('1')
@@ -609,6 +609,7 @@ export default {
     },
     search () {
       console.log('[ this.form ] >', this.form)
+      this.form.plan_time
     },
     getCurrentStyle (current, today) {
       const style = {}
@@ -621,7 +622,7 @@ export default {
     cabinChange (val) {
       console.log('[ val ] >', val)
       this.form.cabin_type.forEach(it => {
-        it.value = it.label.trim()
+        it.label = it.label.trim()
       })
     },
     passengerChange (val) {
