@@ -62,16 +62,21 @@
                 <a-form-model-item>
                   <span>
                     <a-icon type="user"
-                            style="font-size: 25px"></a-icon>
-                    乘机人：
+                            style="font-size: 20px"></a-icon>
+                    乘机人数：
                   </span>
-                  <div class="passengers"
+                  <a-input-number v-model="form.passengerNum"
+                                  placeholder="请输入"
+                                  style="width: 60%"
+                                  :min="0"
+                                  :max="5" />
+                  <!-- <div class="passengers"
                        @click="passengersClick">
                     <span>{{ passengerLength }}个乘机人</span>
-                  </div>
+                  </div> -->
                 </a-form-model-item>
               </a-col>
-              <a-col :span="8">
+              <!-- <a-col :span="8">
                 <a-form-model-item>
                   <span>舱位等级：</span>
                   <a-select v-model="form.cabin_type"
@@ -93,117 +98,215 @@
                     </a-select-option>
                   </a-select>
                 </a-form-model-item>
-              </a-col>
-            </a-row>
-            <a-row :gutter="10"
-                   v-for="(it, index) in form.tripList"
-                   :key="index">
-              <a-col :span="8">
-                <a-form-model-item>
-                  <span>出行日期：</span>
-                  <a-range-picker v-if="form.trip === 2"
-                                  v-model="it.round_time"
-                                  :allowClear="true"
-                                  :disabledDate="rangeDisabledDate"
-                                  :placeholder="['出行时间', '返程时间']"
-                                  format="YYYY-MM-DD"
-                                  @change="timeChange"
-                                  style="width: 65%" />
-                  <a-date-picker v-else
-                                 inputReadOnly
-                                 v-model="it.plan_time"
-                                 format="YYYY-MM-DD"
-                                 :allowClear="true"
-                                 :disabledDate="disabledDate"
-                                 placeholder="请选择"
-                                 style="width: 65%" />
-                </a-form-model-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-model-item prop="trip_start">
-                  <span><img src="../../../assets/image/飞机_起飞.png"
-                         alt=""
-                         width="30px"
-                         height="30px" />出发：</span>
-                  <!-- <a-select
-                    v-model="it.trip_start"
-                    @change="timeChange"
-                    @search="searchTrip"
-                    style="width: 65%"
-                    show-search
-                    :show-arrow="true"
-                    :allowClear="false"
-                    :default-active-first-option="true"
-                    :not-found-content="null"
-                    :filter-option="false"
-                    option-filter-prop="children"
-                    placeholder="请选择出发地"
-                    labelInValue
-                  >
-                    <a-select-option
-                      v-for="item in cityList"
-                      :key="item.no"
-                      :value="item.no"
-                    >
-                      {{ item.city }}
-                    </a-select-option>
-                  </a-select> -->
-                  <a-cascader :options="cityList"
-                              :load-data="loadData"
-                              v-model="form.trip_start"
-                              style="width: 70%"
-                              placeholder="请选择出发地" />
-                </a-form-model-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-model-item prop="trip_end">
-                  <span><img src="../../../assets/image/飞机_降落.png"
-                         alt=""
-                         width="30px"
-                         height="30px" />到达：</span>
-                  <!-- <a-select
-                    v-model="it.trip_end"
-                    @change="timeChange"
-                    @search="searchTrip"
-                    style="width: 65%"
-                    show-search
-                    :show-arrow="true"
-                    :allowClear="false"
-                    :default-active-first-option="true"
-                    :not-found-content="null"
-                    :filter-option="false"
-                    option-filter-prop="children"
-                    placeholder="请选择目的地"
-                    labelInValue
-                  >
-                    <a-select-option
-                      v-for="item in cityList"
-                      :key="item.no"
-                      :value="item.no"
-                    >
-                      {{ item.city }}
-                    </a-select-option>
-                  </a-select> -->
-                  <a-cascader :options="cityList"
-                              v-model="form.trip_end"
-                              :load-data="loadData"
-                              style="width: 70%"
-                              placeholder="请选择目的地" />
-                  <span v-if="index > 1">
-                    <a-icon type="close-circle"
-                            style="margin-top: 15px; margin-left: 5px; cursor: pointer; color: red"
-                            @click="deleteTrip(index)" />
-                  </span>
-                </a-form-model-item>
-              </a-col>
-              <!-- <a-col :span="1" v-if="index > 1">
-                <a-icon
-                  type="close-circle"
-                  style="margin-top: 15px; cursor: pointer; color: red"
-                  @click="deleteTrip(index)"
-                />
               </a-col> -->
             </a-row>
+            <div v-if="form.trip !== 3">
+              <a-row :gutter="10">
+                <a-col :span="8">
+                  <a-form-model-item>
+                    <span v-if="form.trip === 2">出行、返程日期：</span>
+                    <span v-else>出行日期：</span>
+                    <a-range-picker v-if="form.trip === 2"
+                                    v-model="form.round_time"
+                                    :allowClear="false"
+                                    :disabledDate="rangeDisabledDate"
+                                    :placeholder="['出行时间', '返程时间']"
+                                    format="YYYY-MM-DD"
+                                    @change="timeChange"
+                                    style="width: 65%" />
+                    <a-date-picker v-else
+                                   inputReadOnly
+                                   v-model="form.plan_time"
+                                   format="YYYY-MM-DD"
+                                   :allowClear="false"
+                                   :disabledDate="disabledDate"
+                                   placeholder="请选择"
+                                   style="width: 65%" />
+                  </a-form-model-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-model-item prop="trip_start">
+                    <span><img src="../../../assets/image/飞机_起飞.png"
+                           alt=""
+                           width="30px"
+                           height="30px" />出发：</span>
+                    <!-- <a-select
+                      v-model="it.trip_start"
+                      @change="timeChange"
+                      @search="searchTrip"
+                      style="width: 65%"
+                      show-search
+                      :show-arrow="true"
+                      :allowClear="false"
+                      :default-active-first-option="true"
+                      :not-found-content="null"
+                      :filter-option="false"
+                      option-filter-prop="children"
+                      placeholder="请选择出发地"
+                      labelInValue
+                    >
+                      <a-select-option
+                        v-for="item in cityList"
+                        :key="item.no"
+                        :value="item.no"
+                      >
+                        {{ item.city }}
+                      </a-select-option>
+                    </a-select> -->
+                    <a-cascader :options="cityList"
+                                :load-data="loadData"
+                                v-model="form.trip_start"
+                                style="width: 70%"
+                                placeholder="请选择出发地" />
+                  </a-form-model-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-model-item prop="trip_end">
+                    <span><img src="../../../assets/image/飞机_降落.png"
+                           alt=""
+                           width="30px"
+                           height="30px" />到达：</span>
+                    <!-- <a-select
+                      v-model="it.trip_end"
+                      @change="timeChange"
+                      @search="searchTrip"
+                      style="width: 65%"
+                      show-search
+                      :show-arrow="true"
+                      :allowClear="false"
+                      :default-active-first-option="true"
+                      :not-found-content="null"
+                      :filter-option="false"
+                      option-filter-prop="children"
+                      placeholder="请选择目的地"
+                      labelInValue
+                    >
+                      <a-select-option
+                        v-for="item in cityList"
+                        :key="item.no"
+                        :value="item.no"
+                      >
+                        {{ item.city }}
+                      </a-select-option>
+                    </a-select> -->
+                    <a-cascader :options="cityList"
+                                v-model="form.trip_end"
+                                :load-data="loadData"
+                                style="width: 70%"
+                                placeholder="请选择目的地" />
+                  </a-form-model-item>
+                </a-col>
+                <!-- <a-col :span="1" v-if="index > 1">
+                  <a-icon
+                    type="close-circle"
+                    style="margin-top: 15px; cursor: pointer; color: red"
+                    @click="deleteTrip(index)"
+                  />
+                </a-col> -->
+              </a-row>
+            </div>
+            <div v-else>
+              <a-row :gutter="10"
+                     v-for="(it, index) in form.tripList"
+                     :key="index">
+                <a-col :span="8">
+                  <a-form-model-item>
+                    <span>出行日期：</span>
+                    <a-date-picker inputReadOnly
+                                   v-model="it.plan_time"
+                                   format="YYYY-MM-DD"
+                                   :allowClear="false"
+                                   :disabledDate="disabledDate"
+                                   placeholder="请选择"
+                                   style="width: 65%" />
+                  </a-form-model-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-model-item prop="trip_start">
+                    <span><img src="../../../assets/image/飞机_起飞.png"
+                           alt=""
+                           width="30px"
+                           height="30px" />出发：</span>
+                    <!-- <a-select
+                      v-model="it.trip_start"
+                      @change="timeChange"
+                      @search="searchTrip"
+                      style="width: 65%"
+                      show-search
+                      :show-arrow="true"
+                      :allowClear="false"
+                      :default-active-first-option="true"
+                      :not-found-content="null"
+                      :filter-option="false"
+                      option-filter-prop="children"
+                      placeholder="请选择出发地"
+                      labelInValue
+                    >
+                      <a-select-option
+                        v-for="item in cityList"
+                        :key="item.no"
+                        :value="item.no"
+                      >
+                        {{ item.city }}
+                      </a-select-option>
+                    </a-select> -->
+                    <a-cascader :options="cityList"
+                                :load-data="loadData"
+                                v-model="it.trip_start"
+                                style="width: 70%"
+                                placeholder="请选择出发地" />
+                  </a-form-model-item>
+                </a-col>
+                <a-col :span="8">
+                  <a-form-model-item prop="trip_end">
+                    <span><img src="../../../assets/image/飞机_降落.png"
+                           alt=""
+                           width="30px"
+                           height="30px" />到达：</span>
+                    <!-- <a-select
+                      v-model="it.trip_end"
+                      @change="timeChange"
+                      @search="searchTrip"
+                      style="width: 65%"
+                      show-search
+                      :show-arrow="true"
+                      :allowClear="false"
+                      :default-active-first-option="true"
+                      :not-found-content="null"
+                      :filter-option="false"
+                      option-filter-prop="children"
+                      placeholder="请选择目的地"
+                      labelInValue
+                    >
+                      <a-select-option
+                        v-for="item in cityList"
+                        :key="item.no"
+                        :value="item.no"
+                      >
+                        {{ item.city }}
+                      </a-select-option>
+                    </a-select> -->
+                    <a-cascader :options="cityList"
+                                v-model="it.trip_end"
+                                :load-data="loadData"
+                                style="width: 70%"
+                                placeholder="请选择目的地" />
+                    <span v-if="index > 1">
+                      <a-icon type="close-circle"
+                              style="margin-top: 15px; margin-left: 5px; cursor: pointer; color: red"
+                              @click="deleteTrip(index)" />
+                    </span>
+                  </a-form-model-item>
+                </a-col>
+                <!-- <a-col :span="1" v-if="index > 1">
+                  <a-icon
+                    type="close-circle"
+                    style="margin-top: 15px; cursor: pointer; color: red"
+                    @click="deleteTrip(index)"
+                  />
+                </a-col> -->
+              </a-row>
+            </div>
             <a-row :gutter="10"
                    v-if="form.trip === 3">
               <a-col>
@@ -403,15 +506,19 @@ export default {
       form: {
         trip: 1, //行程
         passengers: [], //乘机人数
+        passengerNum: 1,//成绩人数
         cabin_type: [], //舱位等级
+        plan_time: this.$moment(), //计划出行时间
+        trip_start: [], //出发地
+        trip_end: [], //目的地
+        round_time: [this.$moment(), this.$moment().add(1, 'day')], // 往返时间
         tripList: [
           {
             plan_time: this.$moment(), //计划出行时间
-            round_time: [this.$moment(), this.$moment().add(1, 'day')], // 往返时间
-            trip_start: '', //出发地
-            trip_end: '', //目的地
+            trip_start: [], //出发地
+            trip_end: [], //目的地
           },
-        ],
+        ], // 多程时才有值
       },
       cityList: [
         { no: 1, city: '深圳' },
@@ -429,7 +536,7 @@ export default {
         '成人',
       ], //乘客类型
       cabinTypeList: ['经济舱', '商务/头等舱'],
-      deadline: 1649410200000,
+      deadline: 1651224600000,
       recommendData: [
         {
           id: 0,
@@ -607,9 +714,30 @@ export default {
     deleteTrip (index) {
       this.form.tripList.splice(index, 1)
     },
-    search () {
-      console.log('[ this.form ] >', this.form)
-      this.form.plan_time
+    async search () {
+      if (this.form.passengerNum === 0) {
+        this.$message.error("请填写乘机人数")
+        return
+      }
+      // params.destination_time, params.departure_time, params.passengerNum, params.departure, params.destination,
+      const params = {
+        passengerNum: this.form.passengerNum,
+        departure: this.form.trip_start[1],
+        destination: this.form.trip_end[1],
+      }
+      if (this.form.trip === 1) {
+        params.departure_time = this.$moment(this.form.plan_time).format("YYYY-MM-DD") + ' ' + '00:00:00'
+        params.destination_time = this.$moment(this.form.plan_time).format("YYYY-MM-DD") + ' ' + '23:59:59'
+      }
+      const { data } = await this.axios.post('/api/Air/getAirLine', params)
+      console.log('%c [ data ]-633', 'font-size:13px; background:pink; color:#bf2c9f;', data)
+      if (data.msg === '请求成功') {
+        this.$emit("sendAirLine", data.data);
+        this.$emit('ticketSearch', this.form.trip)
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
     },
     getCurrentStyle (current, today) {
       const style = {}
@@ -641,8 +769,10 @@ export default {
       this.form.passengers = this.oldPassengers
       this.passengersVisible = false
     },
-    recommendTicketClick (airline) {
-      this.$emit('ticketSearch', airline, this.form.trip)
+    recommendTicketClick (item) {
+      // this.$emit('ticketSearch', this.form.trip)
+      this.$emit('sendAirLine', item.line_id)
+      this.$emit('ticketSearch', this.form.trip)
       // this.$router.push({
       //   name: 'searchTicket',
       //   query: {

@@ -85,8 +85,9 @@
           </span>
         </div>
         <div class="mart10">
-          <span style="font-size: 20px">航班({{ airlineLength }})</span>
-          <ticket-list @prebook="prebook" />
+          <span style="font-size: 20px">航班({{ infoData.length }})</span>
+          <ticket-list @prebook="prebook"
+                       :infoData="infoData" />
         </div>
       </div>
 
@@ -112,7 +113,8 @@
           (currentIndex === 1 || (roundShow && currentIndex === 2))
         ">
         <ticket-list :changeShow="true"
-                     @change="changeBack" />
+                     @change="changeBack"
+                     :infoData="infoData" />
         <div class="next"
              @click="next">
           <span>下一步</span>
@@ -236,6 +238,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    infoData: {
+      type: Array,
+      default: () => []
+    },
   },
   components: {
     ticketList,
@@ -253,8 +259,8 @@ export default {
         suggest: '', // 建议
         complaint: '', // 投诉
       },
-      currentIndex: 3, // 导航栏的index
-      haveCurrentIndex: 3, // 进行到哪一步了
+      currentIndex: 1, // 导航栏的index
+      haveCurrentIndex: 1, // 进行到哪一步了
       detailShow: false,
       airlineLength: 6,
       conditionList: [
@@ -271,10 +277,6 @@ export default {
     }
   },
   mounted () {
-    console.log(
-      '[ this.$route.query.roundShow ] >',
-      this.$route.query.roundShow
-    )
     console.log('[ this.roundShow ] >', this.roundShow)
     this.passengerList = [
       {

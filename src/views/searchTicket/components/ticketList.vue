@@ -1,48 +1,51 @@
 <template>
   <div class="ticket-list">
-    <div class="ticket-info" v-for="(item, index) in ticketList" :key="index">
+    <div class="ticket-info"
+         v-for="(item, index) in ticketList"
+         :key="index">
       <div class="info">
         <div class="info-left">
-          <span style="margin-bottom: 10px; display: block">23:50 - 13:45</span>
+          <span style="margin-bottom: 10px; display: block">{{item.departure_time}} - {{item.destination_time}}</span>
           <a-timeline>
-            <a-timeline-item>Create a services site 2015-09-01</a-timeline-item>
-            <a-timeline-item
-              >Solve initial network problems 2015-09-01</a-timeline-item
-            >
-            <!-- <a-timeline-item>Technical testing 2015-09-01</a-timeline-item>
-            <a-timeline-item
-              >Network problems being solved 2015-09-01</a-timeline-item
-            > -->
+            <a-timeline-item>{{item.departure}}</a-timeline-item>
+            <a-timeline-item>{{item.destination}}</a-timeline-item>
           </a-timeline>
         </div>
         <div class="info-center">
-          <span>航空飞机</span>
-          <span
-            >行程时长:
-            <a-icon
-              type="clock-circle"
-              theme="filled"
-              style="margin-right: 2px; margin-left: 10px"
-            />20h55</span
-          >
+          <span>{{item.plane}}</span>
+          <span>行程时长:
+            <a-icon type="clock-circle"
+                    theme="filled"
+                    style="margin-right: 2px; margin-left: 10px" />{{changeTime(item.duration)}}
+          </span>
         </div>
         <div class="info-right">
-          <span>￥<span style="font-size: 30px">3084</span></span>
-          <span class="text-red">该价格剩余5个座位！</span>
+          <span>￥<span style="font-size: 30px">{{item.economy_cabin_price}}</span></span>
+          <span class="text-red">该价格剩余{{item.surplus}}个座位！</span>
         </div>
-        <div class="operation" v-if="!changeShow">
-          <div class="book" v-if="bookShow" @click="book">
-            订票 <a-icon type="down" />
+        <div class="operation"
+             v-if="!changeShow">
+          <div class="book"
+               v-if="bookShow"
+               @click="book">
+            订票
+            <a-icon type="down" />
           </div>
-          <div class="cancel" v-else @click="bookShow = true">
-            收起 <a-icon type="up" />
+          <div class="cancel"
+               v-else
+               @click="bookShow = true">
+            收起
+            <a-icon type="up" />
           </div>
         </div>
-        <div v-else class="operation" @click="change">
+        <div v-else
+             class="operation"
+             @click="change">
           <div class="change">变更</div>
         </div>
       </div>
-      <div class="show" v-if="!bookShow">
+      <div class="show"
+           v-if="!bookShow">
         <a-row :gutter="10">
           <a-col :span="6">
             <div style="text-align: center; line-height: 100px">航空公司</div>
@@ -55,7 +58,8 @@
           <a-col :span="6">
             <div style="text-align: center; line-height: 100px">
               ￥2750
-              <span class="prebook" @click="prebook"> 预订 </span>
+              <span class="prebook"
+                    @click="prebook"> 预订 </span>
             </div>
           </a-col>
         </a-row>
@@ -65,28 +69,69 @@
 </template>
 
 <script>
+import { toHourMinute } from '@/common/utils'
 export default {
   props: {
     changeShow: {
       type: Boolean,
       default: false,
     },
+    infoData: {
+      type: Array,
+      default: () => []
+    },
   },
-  data() {
+  data () {
     return {
       ticketList: [1, 2, 3, 4, 5],
       bookShow: true,
     }
   },
+  watch: {
+    infoData: {
+      immediate: true,
+      deep: true,
+      handler (val) {
+        console.log('[ val ] >', val)
+        this.ticketList = [...val]
+        this.ticketList.forEach((it, index) => {
+          it.departure_time = this.$moment(it.departure_time).format("YYYY-MM-DD HH:mm")
+          it.destination_time = this.$moment(it.destination_time).format("YYYY-MM-DD HH:mm")
+          it.duration = this.$moment(it.destination_time).diff(this.$moment(it.departure_time), 'minutes')
+          it.surplus = it.ticket_count - it.have_ticket_count //剩余数量
+          it.plane = this.planeList[index]
+        })
+        console.log('[ this.ticketList ] >', this.ticketList)
+      },
+    }
+  },
+  mounted () {
+  },
   methods: {
-    book() {
+    async getPlaneName (list) {
+      const params = {
+        ids: id
+      }
+      const { data } = await this.axios.post('/api/Air/getPlaneList', params)
+      console.log('%c [ data ]-115', 'font-size:13px; background:pink; color:#bf2c9f;', data)
+      if (data.msg === '请求成功') {
+        return data.data[0].plane_name
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
+    changeTime (val) {
+      console.log('[ val ] >', val)
+      return toHourMinute(val)
+    },
+    book () {
       this.bookShow = false
     },
-    prebook() {
+    prebook () {
       console.log('[ 111 ] >', 111)
       this.$emit('prebook', 1)
     },
-    change() {
+    change () {
       console.log('[ 333 ] >', 333)
       this.$emit('change', 2)
     },
@@ -95,7 +140,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import url('../../current.less');
+@import url("../../current.less");
 .ticket-list {
   .info:hover {
     box-shadow: 0 5px 5px rgba(192, 221, 252);

@@ -645,7 +645,7 @@ export default {
         departure: this.form.departure[1],
         destination: this.form.destination[1],
         departure_time: this.$moment(this.form.departure_time).format("YYYY-MM-DD HH:mm"),
-        destination_time: this.$moment(this.form.departure_time).format("YYYY-MM-DD HH:mm"),
+        destination_time: this.$moment(this.form.destination_time).format("YYYY-MM-DD HH:mm"),
         ticket_count: parseInt(this.form.ticket_count),
         business_cabin_count: parseInt(this.form.business_cabin_count),
         economy_cabin_count: parseInt(this.form.economy_cabin_count),

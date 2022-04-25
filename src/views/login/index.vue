@@ -185,12 +185,12 @@ export default {
                 },
               })
             } else if (this.user === 3) {
-              // this.$router.push({
-              //   name: 'user',
-              //   query: {
-              //     mark: 'owner',
-              //   },
-              // })
+              this.$router.push({
+                name: 'admin',
+                query: {
+                  mark: 'owner',
+                },
+              })
             }
           } else {
             this.$message.error(data.msg)

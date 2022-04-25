@@ -2,34 +2,34 @@
   <div class="user">
     <a-affix :offset-top="0">
       <div class="user-top">
-        <a-button
-          type="primary"
-          shape="round"
-          style="margin-right: 10px"
-          @click="barClick(1)"
-          >首页</a-button
-        >
-        <a-button shape="round" style="margin-right: 10px" @click="barClick(2)"
-          >个人中心</a-button
-        >
-        <a-button shape="round" style="margin-right: 10px" @click="barClick(3)"
-          >我的余额</a-button
-        >
-        <a-button shape="round" style="margin-right: 10px" @click="barClick(4)"
-          >我的订单</a-button
-        >
-        <a-button type="danger" shape="round" @click="barClick(5)"
-          >退出登录</a-button
-        >
+        <a-button type="primary"
+                  shape="round"
+                  style="margin-right: 10px"
+                  @click="barClick(1)">首页</a-button>
+        <a-button shape="round"
+                  style="margin-right: 10px"
+                  @click="barClick(2)">个人中心</a-button>
+        <a-button shape="round"
+                  style="margin-right: 10px"
+                  @click="barClick(3)">我的余额</a-button>
+        <a-button shape="round"
+                  style="margin-right: 10px"
+                  @click="barClick(4)">我的订单</a-button>
+        <a-button type="danger"
+                  shape="round"
+                  @click="barClick(5)">退出登录</a-button>
       </div>
     </a-affix>
-    <home v-if="currentIndex === 1 && !searchShow" @ticketSearch="ticketSearch" />
-    <my-info
-      v-else-if="currentIndex !== 1 && currentIndex !== 5 && hackReset == true & !searchShow"
-      :currentClick="currentClick"
-      ref="myInfo"
-    />
-    <search-ticket v-if="searchShow" :searchShow.sync="searchShow"/>
+    <home v-if="currentIndex === 1 && !searchShow"
+          @ticketSearch="ticketSearch"
+          @sendAirLine="sendAirLine" />
+    <my-info v-else-if="currentIndex !== 1 && currentIndex !== 5 && hackReset == true & !searchShow"
+             :currentClick="currentClick"
+             ref="myInfo" />
+    <search-ticket v-if="searchShow"
+                   :roundShow="roundShow"
+                   :searchShow.sync="searchShow"
+                   :infoData="infoData" />
   </div>
 </template>
 
@@ -39,12 +39,14 @@ import myInfo from './components/myInfo.vue'
 import searchTicket from '../searchTicket/index.vue'
 export default {
   name: 'user',
-  data() {
+  data () {
     return {
       currentIndex: 1,
       currentClick: 1,
       hackReset: false,
       searchShow: false,
+      roundShow: false,
+      infoData: {},
     }
   },
   components: {
@@ -52,7 +54,7 @@ export default {
     myInfo,
     searchTicket,
   },
-  mounted() {
+  mounted () {
     console.log('[ 222 ] >', 222)
     console.log('[ 111 ] >', 111)
     console.log(
@@ -76,16 +78,18 @@ export default {
   },
   watch: {},
   methods: {
-    ticketSearch(airline, trip) {
-      console.log('[ airline ] >', airline)
-      this.ticketId = airline.id
+    ticketSearch (trip) {
       this.roundShow = parseInt(trip) === 2
       this.searchShow = true
+    },
+    sendAirLine (data) {
+      console.log('[ data ] >', data)
+      this.infoData = data
     },
     /**
      * 导航栏点击事件
      */
-    barClick(type) {
+    barClick (type) {
       this.currentIndex = type
       this.searchShow = false
       if (type === 1) {
@@ -110,23 +114,23 @@ export default {
       }
     },
     // 首页
-    home() {
+    home () {
       this.$message.loading('哈利波特骑着扫帚飞')
     },
     // 个人中心
-    myInfo() {
+    myInfo () {
       this.$message.info('唱日落')
     },
     // 我的余额
-    myBalance() {
+    myBalance () {
       this.$message.success('冲哈哈')
     },
     // 我的订单
-    myOrder() {
+    myOrder () {
       this.$message.warning('唱日出')
     },
     // 退出登录
-    logOut() {
+    logOut () {
       this.$message.error('你xx')
       this.$router.push('/')
     },
@@ -135,9 +139,9 @@ export default {
 </script>
 
 <style scoped>
-@import url('../current.less');
+@import url("../current.less");
 /* .user {
-  
+
 } */
 .user-top {
   background-color: #ffffff;
@@ -151,6 +155,6 @@ export default {
   display: block;
   height: 0;
   clear: both;
-  visibility:hidden; 
+  visibility:hidden;
 } */
 </style>

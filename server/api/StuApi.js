@@ -395,6 +395,66 @@ router.post('/getCity', (req, res) => {
 
 
 
+// 接口：用户查询航班
+router.post('/getAirLine', (req, res) => {
+  const sql = $sql.AirLine.selectLine
+  const params = req.body
+  console.log('接口：用户查询航班', params)
+  conn.query(sql, [params.destination_time, params.departure_time, params.passengerNum, params.departure, params.destination], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：用户查询航班
+// router.post('/getCity', (req, res) => {
+//   let sql = $sql.City.selectAllCity
+//   const params = req.body
+//   let args;
+//   if (params.province_id) {
+//     args = params.province_id
+//   } else if (params.city_id) {
+//     args = params.city_id
+//     sql = $sql.City.selectCity
+//   } else {
+//     sql = $sql.City.selectAll
+//   }
+//   console.log('接口：查询省份下的城市', params)
+//   conn.query(sql, [args], function (err, result) {
+//     let returnData = {}
+//     if (err) {
+//       console.log(err)
+//       returnData = {
+//         data: err,
+//         msg: '请求错误'
+//       }
+//     }
+//     if (result) {
+//       returnData = {
+//         data: result,
+//         msg: '请求成功'
+//       }
+//     }
+//     jsonWrite(res, returnData)
+//   })
+// })
+
+
+
+
 
 
 

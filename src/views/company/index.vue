@@ -181,9 +181,9 @@
                 <span>您选择的提现金额为: </span>
                 <a-input-number :default-value="1000"
                                 :formatter="
-                    (value) =>
-                      `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                  "
+                                  (value) =>
+                                    `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                                "
                                 :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
                                 style="width: 40%"
                                 v-model="payAmount" />
