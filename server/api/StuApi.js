@@ -204,6 +204,30 @@ router.post('/updatePassword', (req, res) => {
   })
 })
 
+// 接口：获取航空公司信息
+router.post('/getCompanyUser', (req, res) => {
+  const sql = $sql.CompanyUser.selectUser
+  const params = req.body
+  console.log('接口：获取航空公司信息', params)
+  conn.query(sql, [params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
 
 
 // 接口：查询航空公司所属飞机

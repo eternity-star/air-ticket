@@ -58,7 +58,7 @@
                   </a-radio-group>
                 </a-form-model-item>
               </a-col>
-              <a-col :span="8">
+              <a-col :span="10">
                 <a-form-model-item>
                   <span>
                     <a-icon type="user"
@@ -717,6 +717,14 @@ export default {
     async search () {
       if (this.form.passengerNum === 0) {
         this.$message.error("请填写乘机人数")
+        return
+      }
+      if (this.form.trip_start.length === 0) {
+        this.$message.error("请选择出发地")
+        return
+      }
+      if (this.form.trip_end.length === 0) {
+        this.$message.error("请选择目的地")
         return
       }
       // params.destination_time, params.departure_time, params.passengerNum, params.departure, params.destination,

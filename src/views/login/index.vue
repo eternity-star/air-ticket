@@ -117,6 +117,7 @@ export default {
         mobile: this.registerForm.mobile,
         idCard: this.registerForm.idCard,
         level: 1,
+        money: 0
       }
       this.axios.post('/api/Air/registerUser', params).then(({ data }) => {
         console.log('[ data ] >', data)

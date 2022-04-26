@@ -14,16 +14,16 @@ const sqlMap = {
     selectCity: 'SELECT * FROM air_location WHERE city_id = ?'  //查询城市
   },
   User: {
-    insertUser: 'insert into user(id, name, password, mobile, idCard, level) values(?,?,?,?,?,?)', //插入用户信息
-    login: 'SELECT id,name,mobile,idCard,level,sex FROM user where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
+    insertUser: 'insert into user(id, name, password, mobile, idCard, level, money) values(?,?,?,?,?,?,?)', //插入用户信息
+    login: 'SELECT id,name,mobile,idCard,level,sex,money FROM user where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
     updateUser: 'UPDATE user SET name = ?, sex = ?, idCard = ?, mobile = ? WHERE id = ?',
-    selectUser: 'SELECT id,name,mobile,idCard,level,sex FROM user where id = ?'
+    selectUser: 'SELECT id,name,mobile,idCard,level,sex,money FROM user where id = ?'
   },
   CompanyUser: {
-    login: 'SELECT company_id,name,mobile,idCard,level,address,own_plane,description FROM company where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
+    login: 'SELECT company_id,name,mobile,idCard,level,address,own_plane,description,money FROM company where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
     updateCompanyUser: 'UPDATE company SET name = ?, sex = ?, idCard = ?, mobile = ? WHERE company_id = ?',
     updatePassword: 'UPDATE company SET password = ? WHERE company_id = ?',
-    selectUser: 'SELECT id,name,mobile,idCard,level,sex FROM company where company_id = ?',
+    selectUser: 'SELECT company_id,name,mobile,idCard,level,address,own_plane,description,money FROM company where company_id = ?',
     selectPassword: 'SELECT * FROM company where password = ?'
   },
   CompanyPlane: {

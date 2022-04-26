@@ -7,12 +7,13 @@
         <div class="info-left">
           <span style="margin-bottom: 10px; display: block">{{item.departure_time}} - {{item.destination_time}}</span>
           <a-timeline>
-            <a-timeline-item>{{item.departure}}</a-timeline-item>
-            <a-timeline-item>{{item.destination}}</a-timeline-item>
+            <a-timeline-item v-if="departureList[index]">{{departureList[index].city}}</a-timeline-item>
+            <a-timeline-item v-if="destinationList[index]">{{destinationList[index].city}}</a-timeline-item>
           </a-timeline>
         </div>
         <div class="info-center">
-          <span>{{item.plane}}</span>
+          <span v-if="companyList[index]">航空公司：{{companyList[index].name}}</span>
+          <span v-if="planeList[index]">飞机：{{planeList[index].plane_name}}</span>
           <span>行程时长:
             <a-icon type="clock-circle"
                     theme="filled"
@@ -25,18 +26,18 @@
         </div>
         <div class="operation"
              v-if="!changeShow">
+          <!-- v-if="bookShowList[index]" -->
           <div class="book"
-               v-if="bookShow"
-               @click="book">
+               @click="book(index)">
             订票
-            <a-icon type="down" />
+            <!-- <a-icon type="down" /> -->
           </div>
-          <div class="cancel"
+          <!-- <div class="cancel"
                v-else
-               @click="bookShow = true">
+               @click="bookShowList[index] = true">
             收起
             <a-icon type="up" />
-          </div>
+          </div> -->
         </div>
         <div v-else
              class="operation"
@@ -44,8 +45,8 @@
           <div class="change">变更</div>
         </div>
       </div>
-      <div class="show"
-           v-if="!bookShow">
+      <!-- <div class="show"
+           v-if="!item.bookShow">
         <a-row :gutter="10">
           <a-col :span="6">
             <div style="text-align: center; line-height: 100px">航空公司</div>
@@ -63,7 +64,7 @@
             </div>
           </a-col>
         </a-row>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -83,8 +84,13 @@ export default {
   },
   data () {
     return {
-      ticketList: [1, 2, 3, 4, 5],
+      ticketList: [],
       bookShow: true,
+      bookShowList: [],
+      companyList: [],
+      planeList: [],
+      departureList: [],
+      destinationList: [],
     }
   },
   watch: {
@@ -92,40 +98,76 @@ export default {
       immediate: true,
       deep: true,
       handler (val) {
-        console.log('[ val ] >', val)
         this.ticketList = [...val]
         this.ticketList.forEach((it, index) => {
           it.departure_time = this.$moment(it.departure_time).format("YYYY-MM-DD HH:mm")
           it.destination_time = this.$moment(it.destination_time).format("YYYY-MM-DD HH:mm")
           it.duration = this.$moment(it.destination_time).diff(this.$moment(it.departure_time), 'minutes')
           it.surplus = it.ticket_count - it.have_ticket_count //剩余数量
-          it.plane = this.planeList[index]
+          // it.plane = it.plane_id
         })
-        console.log('[ this.ticketList ] >', this.ticketList)
+        this.handleTicketList();
       },
     }
   },
   mounted () {
   },
   methods: {
-    async getPlaneName (list) {
+    handleTicketList () {
+      this.planeList = []
+      this.departureList = []
+      this.destinationList = []
+      this.bookShowList = []
+      this.ticketList.forEach(it => {
+        this.bookShowList.push(true)
+        this.getPlaneName(it.plane_id)
+        this.getCityName(it.departure, 1)
+        this.getCityName(it.destination, 2)
+        this.getCompanyUser(it.company_id)
+      })
+    },
+    async getPlaneName (id) {
       const params = {
         ids: id
       }
       const { data } = await this.axios.post('/api/Air/getPlaneList', params)
-      console.log('%c [ data ]-115', 'font-size:13px; background:pink; color:#bf2c9f;', data)
       if (data.msg === '请求成功') {
-        return data.data[0].plane_name
+        this.planeList.push(data.data[0])
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
+    async getCityName (id, type) {
+      const params = {
+        city_id: id
+      }
+      const { data } = await this.axios.post('/api/Air/getCity', params)
+      if (data.msg === '请求成功') {
+        if (type === 1) {
+          this.departureList.push(data.data[0])
+        } else {
+          this.destinationList.push(data.data[0])
+        }
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
+    async getCompanyUser (id) {
+      const params = {
+        id: id
+      }
+      const { data } = await this.axios.post('/api/Air/getCompanyUser', params)
+      if (data.msg === '请求成功') {
+        this.companyList.push(data.data[0])
       } else {
         this.$message.error(data.msg)
       }
     },
     changeTime (val) {
-      console.log('[ val ] >', val)
       return toHourMinute(val)
     },
-    book () {
-      this.bookShow = false
+    book (index) {
+      this.$emit('prebook', 1)
     },
     prebook () {
       console.log('[ 111 ] >', 111)
@@ -158,16 +200,19 @@ export default {
       flex: 2;
       padding: 20px;
       position: relative;
-      span:first-child {
-        position: absolute;
-        top: 30%;
-        transform: translateY(-50%);
+      span {
+        display: block;
       }
-      span:last-child {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-      }
+      // span:first-child {
+      //   position: absolute;
+      //   top: 30%;
+      //   transform: translateY(-50%);
+      // }
+      // span:last-child {
+      //   position: absolute;
+      //   top: 50%;
+      //   transform: translateY(-50%);
+      // }
     }
     .info-right {
       flex: 2;
