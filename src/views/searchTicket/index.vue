@@ -83,10 +83,17 @@
               </a-select-option>
             </a-select>
           </span>
+          <span class="marl10">
+            <a-radio-group v-model="cabin">
+              <a-radio :value="1">经济舱</a-radio>
+              <a-radio :value="2">商务舱</a-radio>
+            </a-radio-group>
+          </span>
         </div>
         <div class="mart10">
           <span style="font-size: 20px">航班({{ infoData.length }})</span>
           <ticket-list @prebook="prebook"
+                       :cabin="cabin"
                        :infoData="infoData" />
         </div>
       </div>
@@ -114,7 +121,8 @@
         ">
         <ticket-list :changeShow="true"
                      @change="changeBack"
-                     :infoData="infoData" />
+                     :cabin="cabin"
+                     :infoData="haveChooseInfoData" />
         <div class="next"
              @click="next">
           <span>下一步</span>
@@ -134,11 +142,6 @@
           </div>
           <div class="passenger-info"
                v-for="(item, index) in passengerList">
-            <a-row :gutter="[16, 16]">
-              <a-col>
-                <span>乘机人{{ index + 1 }}：{{ item.item_type.label }}</span>
-              </a-col>
-            </a-row>
             <a-row :gutter="[10, 16]">
               <a-col :span="8">
                 <span><span class="text-red">*</span>姓名：</span>
@@ -186,7 +189,15 @@
         "> -->
       <div v-if="(!roundShow && currentIndex === 3) || (roundShow && currentIndex === 4)">
         付款
-
+        <!-- btnShow -->
+        <div class="mart10">
+          <span style="font-size: 20px">航班({{ infoData.length }})</span>
+          <ticket-list :changeShow="true"
+                       @change="changeBack"
+                       :cabin="cabin"
+                       :btnShow="false"
+                       :infoData="haveChooseInfoData" />
+        </div>
       </div>
     </div>
     <a-form-model :model="form"
@@ -242,6 +253,10 @@ export default {
       type: Array,
       default: () => []
     },
+    passengerNum: {
+      type: Number,
+      default: 0
+    },
   },
   components: {
     ticketList,
@@ -274,39 +289,20 @@ export default {
         '价格低-高',
       ],
       passengerList: [],
+      haveChooseInfoData: [],
+      cabin: 1,
     }
   },
   mounted () {
     console.log('[ this.roundShow ] >', this.roundShow)
-    this.passengerList = [
-      {
-        item_type: {
-          key: 3,
-          label: '成人',
-        },
+    this.passengerList = []
+    for (let i = 0; i < this.passengerNum; i++) {
+      this.passengerList.push({
         name: '',
         idCard: '',
         mobile: '',
-      },
-      {
-        item_type: {
-          key: 3,
-          label: '成人',
-        },
-        name: '',
-        idCard: '',
-        mobile: '',
-      },
-      {
-        item_type: {
-          key: 3,
-          label: '成人',
-        },
-        name: '',
-        idCard: '',
-        mobile: '',
-      },
-    ]
+      })
+    }
   },
   methods: {
     /**
@@ -326,9 +322,11 @@ export default {
 
     prebook (val) {
       console.log('[ 333 ] >', val)
+      this.haveChooseInfoData.push(val)
       this.detailShow = true
     },
-    changeBack () {
+    changeBack (index) {
+      this.haveChooseInfoData.splice(index, 1)
       this.detailShow = false
     },
     next () {
@@ -337,11 +335,23 @@ export default {
       if (this.haveCurrentIndex < this.currentIndex) {
         this.haveCurrentIndex = this.currentIndex
       }
+      if ((!this.roundShow && this.currentIndex === 2) || (this.roundShow && this.currentIndex === 3)) {
+        console.log('[ this.passengerList ] >', this.passengerList)
+      }
     },
     onChange (current) {
       console.log('[ current ] >', current)
       if (current <= this.haveCurrentIndex) {
         this.currentIndex = current
+        this.haveCurrentIndex = current
+      }
+      if (this.currentIndex === 1) {
+        this.detailShow = false
+        this.haveChooseInfoData = []
+      }
+      if (this.roundShow && this.currentIndex === 2) {
+        this.detailShow = false
+        this.haveChooseInfoData.splice(1, 1)
       }
     },
     conditionChange (val) {

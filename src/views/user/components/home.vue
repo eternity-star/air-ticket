@@ -741,7 +741,7 @@ export default {
       console.log('%c [ data ]-633', 'font-size:13px; background:pink; color:#bf2c9f;', data)
       if (data.msg === '请求成功') {
         this.$emit("sendAirLine", data.data);
-        this.$emit('ticketSearch', this.form.trip)
+        this.$emit('ticketSearch', this.form.trip, this.form.passengerNum)
       } else {
         this.$message.error(data.msg)
         return

@@ -28,6 +28,7 @@
              ref="myInfo" />
     <search-ticket v-if="searchShow"
                    :roundShow="roundShow"
+                   :passengerNum="passengerNum"
                    :searchShow.sync="searchShow"
                    :infoData="infoData" />
   </div>
@@ -46,6 +47,7 @@ export default {
       hackReset: false,
       searchShow: false,
       roundShow: false,
+      passengerNum: 0,
       infoData: {},
     }
   },
@@ -78,8 +80,9 @@ export default {
   },
   watch: {},
   methods: {
-    ticketSearch (trip) {
+    ticketSearch (trip, num) {
       this.roundShow = parseInt(trip) === 2
+      this.passengerNum = num
       this.searchShow = true
     },
     sendAirLine (data) {

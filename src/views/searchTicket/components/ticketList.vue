@@ -21,28 +21,33 @@
           </span>
         </div>
         <div class="info-right">
-          <span>￥<span style="font-size: 30px">{{item.economy_cabin_price}}</span></span>
+          <span>￥
+            <span style="font-size: 30px"
+                  v-if="cabin === 1">{{item.economy_cabin_price}}</span>
+            <span style="font-size: 30px"
+                  v-else>{{item.business_cabin_price}}</span></span>
           <span class="text-red">该价格剩余{{item.surplus}}个座位！</span>
         </div>
-        <div class="operation"
-             v-if="!changeShow">
-          <!-- v-if="bookShowList[index]" -->
-          <div class="book"
-               @click="book(index)">
-            订票
-            <!-- <a-icon type="down" /> -->
-          </div>
-          <!-- <div class="cancel"
+        <div v-if="btnShow"
+             class="operation">
+          <div v-if="!changeShow">
+            <!-- v-if="bookShowList[index]" -->
+            <div class="book"
+                 @click="book(item)">
+              订票
+              <!-- <a-icon type="down" /> -->
+            </div>
+            <!-- <div class="cancel"
                v-else
                @click="bookShowList[index] = true">
             收起
             <a-icon type="up" />
           </div> -->
-        </div>
-        <div v-else
-             class="operation"
-             @click="change">
-          <div class="change">变更</div>
+          </div>
+          <div v-else
+               @click="change(index)">
+            <div class="change">变更</div>
+          </div>
         </div>
       </div>
       <!-- <div class="show"
@@ -81,6 +86,14 @@ export default {
       type: Array,
       default: () => []
     },
+    cabin: {
+      type: Number,
+      default: 1
+    },
+    btnShow: {
+      type: Boolean,
+      default: true
+    }
   },
   data () {
     return {
@@ -166,16 +179,14 @@ export default {
     changeTime (val) {
       return toHourMinute(val)
     },
-    book (index) {
-      this.$emit('prebook', 1)
+    book (item) {
+      this.$emit('prebook', item)
     },
     prebook () {
-      console.log('[ 111 ] >', 111)
       this.$emit('prebook', 1)
     },
-    change () {
-      console.log('[ 333 ] >', 333)
-      this.$emit('change', 2)
+    change (index) {
+      this.$emit('change', index)
     },
   },
 }
