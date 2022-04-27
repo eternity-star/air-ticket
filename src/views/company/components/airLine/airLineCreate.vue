@@ -383,8 +383,8 @@ export default {
         destinationShow: '',
         departure: [], //出发地
         destination: [], //目的地
-        departure_time: this.$moment(), //出发时间
-        destination_time: this.$moment().add(2, 'hour'), //到达时间
+        departure_time: this.$moment().add(2, 'hour'), //出发时间
+        destination_time: this.$moment().add(4, 'hour'), //到达时间
         plane: '',//选择的飞机
         business_column: '',//商务舱列数
         business_row: '',//商务舱行数

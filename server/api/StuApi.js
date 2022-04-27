@@ -15,7 +15,6 @@ const jsonWrite = function (res, ret) {
     res.json(
       ret
     )
-    console.log(111);
   }
 }
 
@@ -352,6 +351,89 @@ router.post('/searchAirLine', (req, res) => {
     jsonWrite(res, returnData)
   })
 })
+
+
+/**
+ * 余额相关
+ */
+// 接口：余额充值
+router.post('/recharge', (req, res) => {
+  const sql = $sql.User.updateMoney
+  const params = req.body
+  console.log('接口：余额充值', params)
+  conn.query(sql, [params.money, params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+// 接口：向资金表中插入值
+router.post('/insertCapital', (req, res) => {
+  const sql = $sql.Capital.insertCapital
+  const params = req.body
+  console.log('接口：向资金表中插入值', params)
+  conn.query(sql, [params.capital_id, params.user_id, params.user_name, params.created_time, params.money, params.control_type, params.order_id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：资金列表查询
+router.post('/getBalanceList', (req, res) => {
+  const sql = $sql.Capital.selectCapital
+  const params = req.body
+  console.log('接口：资金列表查询', params)
+  let arr = []
+  for (let item in params) {
+    arr.push(params[item])
+  }
+  console.log('[ arr ] >', arr)
+  conn.query(sql, [...arr], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+
+
 
 
 

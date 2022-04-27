@@ -24,7 +24,7 @@
             <span slot="title">
               <a-icon type="unordered-list" /><span>航班管理</span>
             </span>
-            <a-menu-item key="2"> 添加航班 </a-menu-item>
+            <a-menu-item key="2"> 发布航班 </a-menu-item>
             <a-menu-item key="3"> 航班管理 </a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="sub2">
@@ -37,7 +37,7 @@
             <span slot="title">
               <a-icon type="menu" /><span>乘客管理</span>
             </span>
-            <a-menu-item key="5"> 添加航班 </a-menu-item>
+            <a-menu-item key="5"> 发布航班 </a-menu-item>
             <a-menu-item key="6"> 航班管理 </a-menu-item>
           </a-sub-menu>
         </a-menu>

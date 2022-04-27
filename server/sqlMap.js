@@ -17,14 +17,16 @@ const sqlMap = {
     insertUser: 'insert into user(id, name, password, mobile, idCard, level, money) values(?,?,?,?,?,?,?)', //插入用户信息
     login: 'SELECT id,name,mobile,idCard,level,sex,money FROM user where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
     updateUser: 'UPDATE user SET name = ?, sex = ?, idCard = ?, mobile = ? WHERE id = ?',
-    selectUser: 'SELECT id,name,mobile,idCard,level,sex,money FROM user where id = ?'
+    selectUser: 'SELECT id,name,mobile,idCard,level,sex,money FROM user where id = ?',
+    updateMoney: 'UPDATE user SET money = ? WHERE id = ?',
   },
   CompanyUser: {
     login: 'SELECT company_id,name,mobile,idCard,level,address,own_plane,description,money FROM company where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
     updateCompanyUser: 'UPDATE company SET name = ?, sex = ?, idCard = ?, mobile = ? WHERE company_id = ?',
     updatePassword: 'UPDATE company SET password = ? WHERE company_id = ?',
     selectUser: 'SELECT company_id,name,mobile,idCard,level,address,own_plane,description,money FROM company where company_id = ?',
-    selectPassword: 'SELECT * FROM company where password = ?'
+    selectPassword: 'SELECT * FROM company where password = ?',
+    updateMoney: 'UPDATE company SET money = ? WHERE company_id = ?',
   },
   CompanyPlane: {
     select: 'SELECT * FROM plane WHERE plane_id IN (?)'
@@ -36,6 +38,10 @@ const sqlMap = {
     selectAirLine: 'SELECT * FROM air_line where line_id = ?',
     updateAirLine: 'UPDATE air_line SET is_show = 0 WHERE line_id = ?',
     selectLine: 'SELECT * from air_line WHERE destination_time < ? and ? < departure_time and (ticket_count -have_ticket_count) >= ? and departure = ? and destination = ?'
+  },
+  Capital: {
+    selectCapital: 'SELECT * FROM air_capital WHERE user_id = ?',
+    insertCapital: 'insert into air_capital(capital_id, user_id, user_name, created_time, money, control_type, order_id) values(?,?,?,?,?,?,?)',
   }
   // 测试
   // "SELECT * FROM `air_line` where departure_time  > '2022-05-02 00:00:00' and destination_time < '2022-05-02 23:59:59'"
