@@ -242,7 +242,7 @@ export default {
             }
           }
         })
-        console.log('[ this.orderData ] >', this.orderData)
+        this.orderData.reverse()
       } else {
         this.$message.error(data.msg)
       }

@@ -49,6 +49,11 @@
             <div class="change">变更</div>
           </div>
         </div>
+        <div v-else
+             class="operation mart10">
+          <div style="font-weight: bold; font-size: 16px">乘机人数：{{passengerNum}}</div>
+          <div style="font-weight: bold; font-size: 16px">总价格：{{item.totalMoney}}</div>
+        </div>
       </div>
       <!-- <div class="show"
            v-if="!item.bookShow">
@@ -93,7 +98,11 @@ export default {
     btnShow: {
       type: Boolean,
       default: true
-    }
+    },
+    passengerNum: {
+      type: Number,
+      default: 1
+    },
   },
   data () {
     return {
@@ -104,6 +113,7 @@ export default {
       planeList: [],
       departureList: [],
       destinationList: [],
+      totalMoney: '',
     }
   },
   watch: {
@@ -117,11 +127,16 @@ export default {
           it.destination_time = this.$moment(it.destination_time).format("YYYY-MM-DD HH:mm")
           it.duration = this.$moment(it.destination_time).diff(this.$moment(it.departure_time), 'minutes')
           it.surplus = it.ticket_count - it.have_ticket_count //剩余数量
+          if (this.cabin === 1) {
+            it.totalMoney = it.economy_cabin_price * this.passengerNum
+          } else {
+            it.totalMoney = it.business_cabin_price * this.passengerNum
+          }
           // it.plane = it.plane_id
         })
         this.handleTicketList();
       },
-    }
+    },
   },
   mounted () {
   },

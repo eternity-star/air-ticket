@@ -432,7 +432,108 @@ router.post('/getBalanceList', (req, res) => {
   })
 })
 
+// 接口：向订单表中插入值
+router.post('/insertOrder', (req, res) => {
+  const sql = $sql.PayTicket.insertOrder
+  const params = req.body
+  console.log('接口：向订单表中插入值', params)
+  // order_id, created_time, price, count, departure, destination, total_price, ticket_id
+  conn.query(sql, [params.order_id, params.created_time, params.price, params.count, params.departure, params.destination, params.total_price, params.ticket_id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
 
+// 接口：向机票表中插入值
+router.post('/insertTicket', (req, res) => {
+  const sql = $sql.PayTicket.insertTicket
+  const params = req.body
+  console.log('接口：向机票表中插入值', params)
+  // ticket_id, company_id, plane_id, line_id, user_id, user_name, created_time, departure, destination, departure_time, destination_time, duration, price, cabin_type, passenger_information
+  conn.query(sql, [params.ticket_id, params.company_id, params.plane_id, params.line_id, params.user_id, params.user_name, params.created_time, params.departure, params.destination, params.departure_time, params.destination_time, params.duration, , params.price, params.cabin_type, params.passenger_information], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：更新航班的机票销售情况
+router.post('/updateTicketUser', (req, res) => {
+  let sql = $sql.PayTicket.updateBusiness
+  const params = req.body
+  console.log('接口：更新航班的机票销售情况', params)
+  // type1为商务、2为经济
+  if (params.type === 2) {
+    sql = $sql.PayTicket.updateEconomy
+  }
+  conn.query(sql, [params.count, params.count, params.line_id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：更新用户钱包值
+router.post('/updateTicketUser', (req, res) => {
+  const sql = $sql.PayTicket.updateUser
+  const params = req.body
+  console.log('接口：更新用户钱包值', params)
+  // money - ? WHERE id
+  conn.query(sql, [params.payAmount, params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
 
 
 
@@ -583,76 +684,6 @@ router.post('/getAirLine', (req, res) => {
 
 
 
-
-
-
-
-
-/**
- * 测试
- */
-
-// 接口：增加信息
-router.post('/addStu', (req, res) => {
-  const sql = $sql.Stu.add
-  const params = req.body
-  console.log('添加', params)
-  conn.query(sql, [params.stu_name, params.stu_sex, params.stu_college, params.stu_class], function (err, result) {
-    if (err) {
-      console.log(err)
-    }
-    if (result) {
-      jsonWrite(res, result)
-    }
-  })
-})
-
-
-// 接口：删除信息
-router.post('/delStu', (req, res) => {
-  const sql = $sql.Stu.del
-  const params = req.body
-  console.log('删除', params)
-  conn.query(sql, [params.stu_Id], function (err, result) {
-    if (err) {
-      console.log(err)
-    }
-    if (result) {
-      jsonWrite(res, result)
-    }
-  })
-})
-
-// 接口：修改信息
-router.post('/updateStu', (req, res) => {
-  const sql = $sql.Stu.update
-  const params = req.body
-  console.log('修改', params)
-  conn.query(sql, [params.stu_name, params.stu_sex, params.stu_college, params.stu_class, params.stu_Id], function (err, result) {
-    if (err) {
-      console.log(err)
-    }
-    if (result) {
-      jsonWrite(res, result)
-    }
-  })
-})
-
-// 接口：查询信息
-router.post('/searchAir', (req, res) => {
-  const sql = $sql.Stu.search
-  const params = req.body
-  console.log('修改', params)
-  conn.query(sql, [params.id], function (err, result) {
-    if (err) {
-      this.$message.error(err)
-      console.log(err)
-    }
-    if (result) {
-      jsonWrite(res, result)
-    }
-  })
-})
 
 
 

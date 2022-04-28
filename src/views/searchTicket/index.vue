@@ -194,45 +194,24 @@
           <span style="font-size: 20px">航班({{ infoData.length }})</span>
           <ticket-list :changeShow="true"
                        @change="changeBack"
+                       :passengerNum="passengerNum"
                        :cabin="cabin"
                        :btnShow="false"
                        :infoData="haveChooseInfoData" />
         </div>
+        <div class="mart10">
+          <div class="textNext text-red">确认无误后，请点击支付</div>
+          <a-popconfirm title="Are you sure？"
+                        ok-text="Yes"
+                        cancel-text="No"
+                        @confirm="pay">
+            <div class="next">
+              <span>支付</span>
+            </div>
+          </a-popconfirm>
+        </div>
       </div>
     </div>
-    <a-form-model :model="form"
-                  :rules="rules"
-                  :label-col="labelCol"
-                  :wrapper-col="wrapperCol">
-      <!-- <a-row :gutter="16">
-        <a-col :span="24"> -->
-      <a-form-model-item>
-        <a-radio-group v-model="form.type"
-                       @change="typeChange">
-          <a-radio :value="1">建议</a-radio>
-          <a-radio :value="2">投诉</a-radio>
-        </a-radio-group>
-      </a-form-model-item>
-      <!-- </a-col>
-      </a-row> -->
-      <a-form-model-item>
-        <a-input v-if="form.type === 1"
-                 type="textarea"
-                 :maxLength="70"
-                 v-model="form.suggest"
-                 :auto-size="{ minRows: 3, maxRows: 8 }"
-                 placeholder="请填写建议" />
-        <a-input v-else
-                 type="textarea"
-                 :maxLength="70"
-                 v-model="form.complaint"
-                 :auto-size="{ minRows: 3, maxRows: 5 }"
-                 placeholder="请填写投诉理由" />
-      </a-form-model-item>
-      <a-button @click="submit"> 提交 </a-button>
-      <a-button style="margin-left: 10px"
-                @click="resetClick"> 重置 </a-button>
-    </a-form-model>
   </div>
 </template>
 
@@ -330,13 +309,23 @@ export default {
       this.detailShow = false
     },
     next () {
-      console.log('[ "cececece" ] >', 'cececece')
+      let type = true
+      //填写旅客信息 这一步
+      if ((!this.roundShow && this.currentIndex === 2) || (this.roundShow && this.currentIndex === 3)) {
+        console.log('[ this.passengerList ] >', this.passengerList)
+        this.passengerList.forEach(it => {
+          if (it.name === '' || it.idCard === '' || it.mobile === '') {
+            type = false
+          }
+        })
+      }
+      if (!type) {
+        this.$message.warning("请填写完整")
+        return
+      }
       this.currentIndex = this.currentIndex + 1
       if (this.haveCurrentIndex < this.currentIndex) {
         this.haveCurrentIndex = this.currentIndex
-      }
-      if ((!this.roundShow && this.currentIndex === 2) || (this.roundShow && this.currentIndex === 3)) {
-        console.log('[ this.passengerList ] >', this.passengerList)
       }
     },
     onChange (current) {
@@ -344,6 +333,9 @@ export default {
       if (current <= this.haveCurrentIndex) {
         this.currentIndex = current
         this.haveCurrentIndex = current
+      }
+      if (this.currentIndex === 0) {
+        this.$emit('update:searchShow', false)
       }
       if (this.currentIndex === 1) {
         this.detailShow = false
@@ -354,24 +346,12 @@ export default {
         this.haveChooseInfoData.splice(1, 1)
       }
     },
+    pay () {
+      console.log('[ this.haveChooseInfoData ] >', this.haveChooseInfoData)
+      console.log('[ 111 ] >', 111)
+    },
     conditionChange (val) {
       console.log('[ val ] >', val)
-    },
-    typeChange () {
-      this.resetClick()
-    },
-    submit () {
-      if (this.form.type === 1 && !this.form.suggest) {
-        this.$message.error('请填写完整')
-      } else if (this.form.type === 2 && !this.form.complaint) {
-        this.$message.error('请填写完整')
-      } else {
-        this.$emit('suggestEvent', this.form)
-      }
-    },
-    resetClick () {
-      this.form.suggest = ''
-      this.form.complaint = ''
     },
     disabledDate (time) {
       return time < this.$moment().subtract(1, 'days')
@@ -402,6 +382,14 @@ export default {
   .show-ticket {
     padding-left: 5%;
     padding-right: 5%;
+    .textNext {
+      margin: 10px 0 auto auto;
+      width: 200px;
+      height: 40px;
+      font-size: 16px;
+      line-height: 40px;
+      text-align: center;
+    }
     .next {
       cursor: pointer;
       // float: right;
