@@ -437,8 +437,7 @@ router.post('/insertOrder', (req, res) => {
   const sql = $sql.PayTicket.insertOrder
   const params = req.body
   console.log('接口：向订单表中插入值', params)
-  // order_id, created_time, price, count, departure, destination, total_price, ticket_id
-  conn.query(sql, [params.order_id, params.created_time, params.price, params.count, params.departure, params.destination, params.total_price, params.ticket_id], function (err, result) {
+  conn.query(sql, [params.order_id, params.created_time, params.count, params.departure, params.destination, params.total_price, params.ticket_id], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -483,12 +482,12 @@ router.post('/insertTicket', (req, res) => {
 })
 
 // 接口：更新航班的机票销售情况
-router.post('/updateTicketUser', (req, res) => {
+router.post('/updateLineCount', (req, res) => {
   let sql = $sql.PayTicket.updateBusiness
   const params = req.body
   console.log('接口：更新航班的机票销售情况', params)
-  // type1为商务、2为经济
-  if (params.type === 2) {
+  // type2为商务、1为经济
+  if (params.type === 1) {
     sql = $sql.PayTicket.updateEconomy
   }
   conn.query(sql, [params.count, params.count, params.line_id], function (err, result) {

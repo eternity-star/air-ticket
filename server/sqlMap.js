@@ -44,7 +44,7 @@ const sqlMap = {
     insertCapital: 'insert into air_capital(capital_id, user_id, user_name, created_time, money, control_type, order_id) values(?,?,?,?,?,?,?)',
   },
   PayTicket: {
-    insertOrder: 'insert into air_order(order_id, created_time, price, count, departure, destination, total_price, ticket_id) values(?,?,?,?,?,?,?,?)',
+    insertOrder: 'insert into air_order(order_id, created_time, count, departure, destination, total_price, ticket_id) values(?,?,?,?,?,?,?)',
     insertTicket: 'insert into air_ticket(ticket_id, company_id, plane_id, line_id, user_id, user_name, created_time, departure, destination, departure_time, destination_time, duration, price, cabin_type, passenger_information) values(?,?,?,?,?,?,?,?,?,?, ?, ?,?,?,?)',
     insertCapital: 'insert into air_capital(capital_id, user_id, user_name, created_time, money, control_type, order_id) values(?,?,?,?,?,?,?)',
     updateUser: 'UPDATE user SET money = money - ? WHERE id = ?',

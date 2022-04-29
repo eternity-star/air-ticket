@@ -63,20 +63,6 @@ export default {
       '[ window.sessionStorage.getItem("user") ] >',
       JSON.parse(window.sessionStorage.getItem('user'))
     )
-    // http://localhost:3000
-    const params = {
-      key: '1',
-    }
-    this.axios
-      .post('/api/Air/searchAir', {
-        id: '-1',
-      })
-      .then((res) => {
-        console.log('[ res222 ] >', res)
-      })
-      .catch((err) => {
-        console.log('[ err ] >', err)
-      })
   },
   watch: {},
   methods: {
