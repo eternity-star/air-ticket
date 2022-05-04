@@ -506,12 +506,12 @@ router.post('/insertTicket', (req, res) => {
 })
 
 // 接口：更新航班的机票销售情况
-router.post('/updateTicketUser', (req, res) => {
+router.post('/updateLineCount', (req, res) => {
   let sql = $sql.PayTicket.updateBusiness
   const params = req.body
   console.log('接口：更新航班的机票销售情况', params)
-  // type1为商务、2为经济
-  if (params.type === 2) {
+  // type2为商务、1为经济
+  if (params.type === 1) {
     sql = $sql.PayTicket.updateEconomy
   }
   conn.query(sql, [params.count, params.count, params.line_id], function (err, result) {

@@ -23,7 +23,7 @@
         <div class="info-right">
           <span>￥
             <span style="font-size: 30px"
-                  v-if="cabin === 1">{{item.economy_cabin_price}}</span>
+                  v-if="cabin === 0 ? (item.cabin === 1) : cabin === 1">{{item.economy_cabin_price}}</span>
             <span style="font-size: 30px"
                   v-else>{{item.business_cabin_price}}</span></span>
           <span class="text-red">该价格剩余{{item.surplus}}个座位！</span>
@@ -93,7 +93,7 @@ export default {
     },
     cabin: {
       type: Number,
-      default: 1
+      default: 0
     },
     btnShow: {
       type: Boolean,
@@ -195,6 +195,7 @@ export default {
       return toHourMinute(val)
     },
     book (item) {
+      item.cabin = this.cabin
       this.$emit('prebook', item)
     },
     prebook () {
