@@ -100,10 +100,30 @@ export default {
       },
       user: 1,
       visible: false,
+      userList: [],
+      companyList: [],
     }
   },
-  mounted () { },
+  mounted () {
+    this.selectLogin(1)
+    this.selectLogin(2)
+  },
   methods: {
+    async selectLogin (type = 1) {
+      const params = {
+        type
+      }
+      const { data } = await this.axios.post('/api/Air/selectLogin', params)
+      if (data.msg === '请求成功') {
+        if (type === 1) {
+          this.userList = data.data
+        } else {
+          this.companyList = data.data
+        }
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
     itemChange (event) {
       console.log('[ event ] >', event)
     },
@@ -118,7 +138,8 @@ export default {
         mobile: this.registerForm.mobile,
         idCard: this.registerForm.idCard,
         level: 1,
-        money: 0
+        money: 0,
+        state: 1,
       }
       this.axios.post('/api/Air/registerUser', params).then(({ data }) => {
         console.log('[ data ] >', data)
@@ -162,6 +183,11 @@ export default {
         this.axios.post('/api/Air/comLogin', params).then(({ data }) => {
           if (data.msg === '请求成功') {
             this.$message.success('登录成功')
+            let find = this.companyList.find(it => it.idCard === this.form.loginName || it.mobile === this.form.loginName)
+            if (!find) {
+              this.$message.error("该账户无登录权限")
+              return
+            }
             window.sessionStorage.setItem('user', JSON.stringify(data.data[0]))
             this.$router.push({
               name: 'company',
@@ -177,6 +203,11 @@ export default {
         this.axios.post('/api/Air/login', params).then(({ data }) => {
           console.log('[ data ] >', data)
           if (data.msg === '请求成功') {
+            let find = this.userList.find(it => it.idCard === this.form.loginName || it.mobile === this.form.loginName)
+            if (!find) {
+              this.$message.error("该账户无登录权限")
+              return
+            }
             this.$message.success('登录成功')
             window.sessionStorage.setItem('user', JSON.stringify(data.data[0]))
             if (this.user === 1) {

@@ -200,6 +200,7 @@
           <ticket-list :changeShow="true"
                        @change="changeBack"
                        :passengerNum="passengerNum"
+                       :cabin="cabin"
                        :btnShow="false"
                        :infoData="haveChooseInfoData" />
         </div>
@@ -291,7 +292,6 @@ export default {
         mobile: '',
       })
     }
-    this.capital_id = 'CA' + new Date().getTime() + String(Math.round(Math.random() * 10000))
     this.order_id = 'OR' + new Date().getTime() + String(Math.round(Math.random() * 10000))
     // this.ticket_id = 'TI' + new Date().getTime() + String(Math.round(Math.random() * 10000))
   },
@@ -358,6 +358,17 @@ export default {
         this.haveChooseInfoData.splice(1, 1)
       }
     },
+    async getCompanyUser (id) {
+      const params = {
+        id: id
+      }
+      const { data } = await this.axios.post('/api/Air/getCompanyUser', params)
+      if (data.msg === '请求成功') {
+        this.companyList.push(data.data[0])
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
     async pay () {
       this.totalPrice = 0
       this.haveChooseInfoData.forEach(item => {
@@ -370,27 +381,51 @@ export default {
         this.totalPrice += price
       })
       console.log('[ this.haveChooseInfoData ] >', this.haveChooseInfoData)
-      this.insertCapital();
+
       this.updateTicketUser();
       this.ticket_id = []
       await this.haveChooseInfoData.forEach((it, index) => {
         let id = 'TI' + new Date().getTime() + index + String(Math.round(Math.random() * 10000))
+        let CaId1 = 'CA' + new Date().getTime() + index + String(Math.round(Math.random() * 10000))
+        let CaId2 = 'CA' + new Date().getTime() + index + "1" + String(Math.round(Math.random() * 10000))
         this.ticket_id.push(id)
         this.insertTicket(id)
-        this.updateLineCount(it.cabin, item)
+        this.insertCapital(it, CaId1, 1);
+        this.insertCapital(it, CaId2, 2);
+        this.addMoney(it)
+        this.updateLineCount(it.cabin, it)
       })
       this.insertOrder();
     },
-    async insertCapital () {
+    // addMoney
+    async addMoney (item) {
+      const params = {
+        money: item.totalMoney,
+        id: item.company_id,
+      }
+      const { data } = await this.axios.post('api/Air/addMoney', params)
+      if (data.msg === '请求成功') {
+        console.log('[ data.data ] >', data.data)
+      } else {
+        return this.$message.error(data.msg)
+      }
+    },
+    async insertCapital (item, id, type = 1) {
       const params = {
         // params., params.user_id, params.user_name, params.created_time, params.money, params.control_type, params.order_id
-        capital_id: this.capital_id,
+        capital_id: id,
         user_id: this.user.id,
         user_name: this.user.name,
         created_time: this.created_time,
-        money: this.user.money,
+        money: item.totalMoney,
         control_type: 1,
         order_id: this.order_id,
+      }
+      if (type === 2) {
+        let name = this.getCompanyUser(item.company_id)
+        params.user_id = item.company_id
+        params.user_name = name
+        params.control_type = 4
       }
       const { data } = await this.axios.post('api/Air/insertCapital', params)
       if (data.msg === '请求成功') {
@@ -401,14 +436,18 @@ export default {
     },
     async insertOrder () {
       const params = {
-        // order_id, created_time, price, count, departure, destination, total_price, ticket_id
+        // order_id, user_id, user_name, created_time, count, departure, destination, total_price, ticket_id, state, line_id, company_id
         order_id: this.order_id,
+        user_id: this.user.id,
+        user_name: this.user.name,
         created_time: this.created_time,
         count: this.passengerNum * this.haveChooseInfoData.length,
         departure: this.haveChooseInfoData[0].departure,
-        departure: this.haveChooseInfoData[0].departure,
+        destination: this.haveChooseInfoData[0].destination,
         total_price: this.totalPrice,
         ticket_id: this.ticket_id.join(','),
+        line_id: item.line_id,
+        company_id: item.company_id
       }
       const { data } = await this.axios.post('api/Air/insertOrder', params)
       if (data.msg === '请求成功') {
@@ -458,7 +497,6 @@ export default {
     },
     async updateLineCount (type, item) {
       const params = {
-        // params., params.user_id, params.user_name, params.created_time, params.money, params.control_type, params.order_id
         // type 1经济 2商务 params.count, params.count, params.line_id
         type: type,
         count: this.passengerNum,

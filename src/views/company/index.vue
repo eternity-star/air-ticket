@@ -53,7 +53,7 @@
         </a-menu>
       </a-layout-sider>
       <a-layout>
-        <a-layout-header style="background: #fff; padding: 0">
+        <a-layout-header style="background: #fff; padding: 0;">
           <a-icon class="trigger"
                   :type="collapsed ? 'menu-unfold' : 'menu-fold'"
                   @click="() => (collapsed = !collapsed)" />
@@ -179,83 +179,57 @@
           </div>
           <div class="myBalance"
                v-else-if="currentIndex === 4">
-            <div class="my-balance-top">
-              <a-row>
-                <a-col :span="16">
-                  <p>我的余额</p>
-                  <p>￥{{ wallet }}</p>
-                </a-col>
-                <a-col :span="8">
-                  <a-icon type="pay-circle"
-                          style="font-size: 60px; color: #ffd700; float: right" />
-                </a-col>
-              </a-row>
-              <a-button shape="round"
-                        @click="payVisible = true">提现</a-button>
-              <a-modal :visible="payVisible"
-                       @ok="recharge"
-                       @cancel="payVisible = false"
-                       title="提现">
-                <span>您选择的提现金额为: </span>
-                <a-input-number :default-value="1000"
-                                :formatter="
-                                  (value) =>
-                                    `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                                "
-                                :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')"
-                                style="width: 40%"
-                                v-model="payAmount" />
-              </a-modal>
-            </div>
-            <div class="my-balance-bottom">
-              <p>余额明细</p>
-              <!-- // date name idCard mobile money operation -->
-              <a-table :columns="balanceColumns"
-                       :data-source="balanceData">
-                <span slot="date"
-                      slot-scope="text">
-                  <a-icon type="clock-circle"
-                          style="margin-right: 10px" />{{
-                    text
-                  }}
-                </span>
-                <span slot="name"
-                      slot-scope="text">
-                  <a-icon type="user"
-                          style="margin-right: 10px" />{{
-                    text
-                  }}
-                </span>
-                <span slot="idCard"
-                      slot-scope="text">
-                  <a-icon type="key"
-                          style="margin-right: 10px" />{{
-                    text
-                  }}
-                </span>
-                <span slot="mobile"
-                      slot-scope="text">
-                  <a-icon type="phone"
-                          style="margin-right: 10px" />{{
-                    text
-                  }}
-                </span>
-                <span slot="money"
-                      slot-scope="text">
-                  <a-icon type="money-collect"
-                          style="margin-right: 10px" />{{
-                    text
-                  }}
-                </span>
-                <span slot="operation"
-                      slot-scope="text">
-                  <a-icon type="laptop"
-                          style="margin-right: 10px" />{{
-                    text
-                  }}
-                </span>
-              </a-table>
-            </div>
+            <companyWallet />
+          </div>
+          <div class="myOrder"
+               v-else-if="currentIndex === 5">
+            <a-table :columns="orderColumns"
+                     :data-source="orderData"
+                     :pagination="pagination">
+              <span slot="date"
+                    slot-scope="text">
+                <a-icon type="clock-circle"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <span slot="name"
+                    slot-scope="text">
+                <a-icon type="user"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <span slot="idCard"
+                    slot-scope="text">
+                <a-icon type="key"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <span slot="mobile"
+                    slot-scope="text">
+                <a-icon type="phone"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <span slot="money"
+                    slot-scope="text">
+                <a-icon type="money-collect"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <!-- <span slot="state"
+                    slot-scope="text">
+                <a-icon type="laptop"
+                        style="margin-right: 10px" />{{text}}
+              </span> -->
+              <!-- <template slot="operation"
+                        slot-scope="text, record">
+                <div>
+                  <a-button type="danger"
+                            style="margin-left: 5px"
+                            @click="returnVisible = true">详情</a-button>
+                </div>
+              </template> -->
+            </a-table>
+            <a-modal title="机票信息"
+                     :visible="returnVisible"
+                     @ok="returnVisible = false"
+                     @cancel="returnVisible = false">
+            </a-modal>
           </div>
           <div class="myMessage"
                v-else-if="currentIndex === 7">
@@ -326,6 +300,7 @@ import suggestion from '../suggestion/index.vue'
 import message from '../message/index.vue'
 import airLineCreate from './components/airLine/airLineCreate.vue'
 import airLineManage from './components/airLine/airLineManage.vue'
+import CompanyWallet from './components/wallet/companyWallet.vue'
 function getBase64 (img, callback) {
   const reader = new FileReader()
   reader.addEventListener('load', () => callback(reader.result))
@@ -344,6 +319,7 @@ export default {
     airLineManage,
     message,
     suggestion,
+    CompanyWallet,
   },
   data () {
     return {
@@ -355,6 +331,10 @@ export default {
       disabled: true,
       rules: {
 
+      },
+      pagination: {
+        pageSize: 5,
+        hideOnSinglePage: true,
       },
       old_password: '', //原密码
       new_password: '', //新密码
@@ -369,7 +349,6 @@ export default {
       payVisible: false,
       passwordVisible: false,
       messageList: [],
-
       balanceData: [
         {
           key: '1',
@@ -423,15 +402,119 @@ export default {
           scopedSlots: { customRender: 'money' },
           width: '10%',
         },
+        // {
+        //   title: '操作类型',
+        //   dataIndex: 'operation',
+        //   key: 'operation',
+        //   ellipsis: true,
+        //   align: 'center',
+        //   scopedSlots: { customRender: 'operation' },
+        //   width: '10%',
+        // },
+      ],
+      orderData: [
         {
-          title: '操作类型',
-          dataIndex: 'operation',
-          key: 'operation',
+          key: '1',
+          date: '2022-02-08 09:51:55',
+          unitPrice: '600',
+          num: '1',
+          departure: '北京',
+          destination: '深圳',
+          money: '600',
+        },
+        {
+          key: '2',
+          date: '2022-02-08 09:51:55',
+          unitPrice: '600',
+          num: '1',
+          departure: '广州',
+          destination: '深圳',
+          money: '600',
+          state: '支付成功',
+        },
+        {
+          key: '3',
+          date: '2022-02-08 09:51:55',
+          unitPrice: '600',
+          num: '1',
+          departure: '东莞',
+          destination: '深圳',
+          money: '600',
+          state: '支付成功',
+        },
+      ],
+      // date unitPrice num departure destination money state operation
+      orderColumns: [
+        {
+          title: '购买日期',
+          dataIndex: 'date',
+          key: 'date',
           ellipsis: true,
           align: 'center',
-          scopedSlots: { customRender: 'operation' },
+          scopedSlots: { customRender: 'date' },
+          width: '15%',
+        },
+        // {
+        //   title: '机票价格',
+        //   dataIndex: 'unitPrice',
+        //   key: 'unitPrice',
+        //   align: 'center',
+        //   scopedSlots: { customRender: 'unitPrice' },
+        //   width: '10%',
+        // },
+        {
+          title: '购买数量',
+          dataIndex: 'num',
+          key: 'num',
+          align: 'center',
+          scopedSlots: { customRender: 'num' },
           width: '10%',
         },
+        {
+          title: '出发地',
+          dataIndex: 'departure',
+          key: 'departure',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'departure' },
+          width: '10%',
+        },
+        {
+          title: '目的地',
+          dataIndex: 'destination',
+          key: 'destination',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'destination' },
+          width: '10%',
+        },
+        {
+          title: '总金额',
+          dataIndex: 'money',
+          key: 'money',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'money' },
+          width: '10%',
+        },
+        // {
+        //   title: '订单状态',
+        //   dataIndex: 'state',
+        //   key: 'state',
+        //   ellipsis: true,
+        //   align: 'center',
+        //   scopedSlots: { customRender: 'state' },
+        //   width: '10%',
+        // },
+        // {
+        //   title: '操作',
+        //   dataIndex: 'operation',
+        //   key: 'operation',
+        //   ellipsis: true,
+        //   align: 'center',
+        //   scopedSlots: { customRender: 'operation' },
+        //   width: '15%',
+        // },
       ],
       user: JSON.parse(window.sessionStorage.getItem('user')),
     }
@@ -589,11 +672,6 @@ export default {
       window.sessionStorage.clear()
       this.$router.push('/')
     },
-    recharge () {
-      this.wallet += parseInt(this.payAmount)
-      this.payVisible = false
-      this.$message.success('充值成功')
-    },
     test (e) {
       console.log('[ e ] >', e)
     },
@@ -744,36 +822,5 @@ export default {
 .ant-upload-select-picture-card .ant-upload-text {
   margin-top: 8px;
   color: #666;
-}
-
-/**
-  我的余额相关css
-*/
-.my-balance-top {
-  height: 230px;
-  background-color: #00acff;
-  padding: 40px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-.my-balance-top p {
-  color: #ffffff;
-  font-size: 16px;
-}
-.my-balance-top p:last-child {
-  color: #ffffff;
-  font-size: 32px;
-  font-weight: bold;
-}
-.my-balance-bottom {
-  /* height: 230px; */
-  /* background-color: #00acff; */
-  padding: 20px;
-  border-radius: 10px;
-  border: 1px solid #cacaca;
-}
-.my-balance-bottom p {
-  /* color: #ffffff; */
-  font-size: 16px;
 }
 </style>

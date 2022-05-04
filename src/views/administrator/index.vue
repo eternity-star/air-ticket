@@ -82,34 +82,59 @@
           }">
           <div class="myCompanyInfo"
                v-if="currentIndex === 1">
-
+            <a-radio-group v-model="quanxian"
+                           @change="quanxianChange"
+                           class="marb10">
+              <a-radio :value="1">用户</a-radio>
+              <a-radio :value="2">航空公司</a-radio>
+            </a-radio-group>
+            <a-table :columns="quanxianColumns"
+                     :data-source="quanxianData"
+                     :pagination="pagination">
+              <span slot="name"
+                    slot-scope="text">
+                <a-icon type="user"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <span slot="state"
+                    slot-scope="text">
+                <a-icon type="laptop"
+                        style="margin-right: 10px" />{{filterState(text)}}
+              </span>
+              <span slot="operation"
+                    slot-scope="text, record">
+                <a-popconfirm title="确定启用吗？"
+                              ok-text="确定"
+                              cancel-text="取消"
+                              @confirm="qiyong(record)">
+                  <a-button type="primary"
+                            v-if="record.state === 0"
+                            style="margin-right: 5px">启用</a-button>
+                </a-popconfirm>
+                <a-popconfirm title="确定禁用吗？"
+                              ok-text="确定"
+                              cancel-text="取消"
+                              @confirm="jinyong(record)">
+                  <a-button type="danger"
+                            v-if="record.state === 1"
+                            style="margin-right: 5px">禁用</a-button>
+                </a-popconfirm>
+              </span>
+            </a-table>
           </div>
           <div class="myTripInfo"
                v-else-if="currentIndex === 2">
+            <airLineList v-if="currentIndex === 2" />
           </div>
           <div class="myBalance"
                v-else-if="currentIndex === 3">
             <div class="my-balance-bottom">
-              <a-table :columns="balanceColumns"
-                       :data-source="balanceData">
-                <span slot="date"
-                      slot-scope="text">
-                  <a-icon type="clock-circle"
-                          style="margin-right: 10px" />{{text}}
-                </span>
+              <a-table :columns="moneyColumns"
+                       :data-source="moneyData"
+                       :pagination="pagination">
                 <span slot="name"
                       slot-scope="text">
                   <a-icon type="user"
-                          style="margin-right: 10px" />{{text}}
-                </span>
-                <span slot="idCard"
-                      slot-scope="text">
-                  <a-icon type="key"
-                          style="margin-right: 10px" />{{text}}
-                </span>
-                <span slot="mobile"
-                      slot-scope="text">
-                  <a-icon type="phone"
                           style="margin-right: 10px" />{{text}}
                 </span>
                 <span slot="money"
@@ -117,16 +142,69 @@
                   <a-icon type="money-collect"
                           style="margin-right: 10px" />{{text}}
                 </span>
-                <span slot="operation"
-                      slot-scope="text">
-                  <a-icon type="laptop"
-                          style="margin-right: 10px" />{{text}}
-                </span>
               </a-table>
             </div>
           </div>
           <div class="myOrder"
                v-else-if="currentIndex === 4">
+            <a-table :columns="orderColumns"
+                     :data-source="orderData"
+                     :pagination="pagination">
+              <span slot="date"
+                    slot-scope="text">
+                <a-icon type="clock-circle"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <span slot="name"
+                    slot-scope="text">
+                <a-icon type="user"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <span slot="idCard"
+                    slot-scope="text">
+                <a-icon type="key"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <span slot="mobile"
+                    slot-scope="text">
+                <a-icon type="phone"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <span slot="money"
+                    slot-scope="text">
+                <a-icon type="money-collect"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <span slot="state"
+                    slot-scope="text">
+                <a-icon type="laptop"
+                        style="margin-right: 10px" />{{text}}
+              </span>
+              <!-- <template slot="operation"
+                        slot-scope="text, record">
+                <div>
+                  <a-popconfirm title="确定退票吗？"
+                                ok-text="确定"
+                                cancel-text="取消"
+                                @confirm="returnTicket">
+                    <a-button type="primary"
+                              v-if="record.departure_time > $moment().format('YYYY-MM-DD HH:mm:ss')"
+                              style="margin-right: 5px">退票</a-button>
+                  </a-popconfirm>
+                  <a-button type="danger"
+                            style="margin-left: 5px"
+                            @click="returnVisible = true">详情</a-button>
+                  <a-button type="danger"
+                            style="margin-left: 5px"
+                            @click="returnVisible = true">改签</a-button>
+                </div>
+              </template> -->
+            </a-table>
+            <!-- <a-modal title="机票信息"
+                     :visible="returnVisible"
+                     @ok="returnVisible = false"
+                     @cancel="returnVisible = false">
+            </a-modal> -->
           </div>
           <div class="addNotice"
                v-else-if="currentIndex === 5">
@@ -179,6 +257,7 @@
 </template>
 
 <script>
+import airLineList from './components/airLineList.vue'
 import suggestList from './components/suggestList.vue'
 import message from '../message/index.vue'
 export default {
@@ -192,6 +271,7 @@ export default {
   components: {
     message,
     suggestList,
+    airLineList,
   },
   data () {
     return {
@@ -204,6 +284,7 @@ export default {
       rules: {
 
       },
+      quanxian: 1,
       old_password: '', //原密码
       new_password: '', //新密码
       confirm_password: '', //确认密码
@@ -283,7 +364,127 @@ export default {
           width: '10%',
         },
       ],
+      quanxianData: [],
+      quanxianColumns: [
+        {
+          title: '用户名',
+          dataIndex: 'name',
+          key: 'name',
+          align: 'center',
+          scopedSlots: { customRender: 'name' },
+          width: '10%',
+        },
+        {
+          title: '状态',
+          dataIndex: 'state',
+          key: 'state',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'state' },
+          width: '10%',
+        },
+        {
+          title: '操作类型',
+          dataIndex: 'operation',
+          key: 'operation',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'operation' },
+          width: '10%',
+        },
+      ],
+      orderData: [],
+      orderColumns: [
+        {
+          title: '购买日期',
+          dataIndex: 'date',
+          key: 'date',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'date' },
+          width: '15%',
+        },
+        {
+          title: '购买数量',
+          dataIndex: 'num',
+          key: 'num',
+          align: 'center',
+          scopedSlots: { customRender: 'num' },
+          width: '10%',
+        },
+        {
+          title: '出发地',
+          dataIndex: 'departure',
+          key: 'departure',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'departure' },
+          width: '10%',
+        },
+        {
+          title: '目的地',
+          dataIndex: 'destination',
+          key: 'destination',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'destination' },
+          width: '10%',
+        },
+        {
+          title: '总金额',
+          dataIndex: 'money',
+          key: 'money',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'money' },
+          width: '10%',
+        },
+        {
+          title: '订单状态',
+          dataIndex: 'state',
+          key: 'state',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'state' },
+          width: '10%',
+        },
+        // {
+        //   title: '操作',
+        //   dataIndex: 'operation',
+        //   key: 'operation',
+        //   ellipsis: true,
+        //   align: 'center',
+        //   scopedSlots: { customRender: 'operation' },
+        //   width: '15%',
+        // },
+      ],
+      pagination: {
+        pageSize: 5,
+        hideOnSinglePage: true,
+      },
       user: JSON.parse(window.sessionStorage.getItem('user')),
+      userMoney: [],
+      companyMoney: [],
+      moneyData: [],
+      moneyColumns: [
+        {
+          title: '用户名',
+          dataIndex: 'name',
+          key: 'name',
+          align: 'center',
+          scopedSlots: { customRender: 'name' },
+          width: '10%',
+        },
+        {
+          title: '资金',
+          dataIndex: 'money',
+          key: 'money',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'money' },
+          width: '10%',
+        },
+      ],
     }
   },
 
@@ -323,13 +524,98 @@ export default {
       return this.form.ticket_count - this.form.business_cabin_count
     },
   },
-  mounted () {
+  async mounted () {
+    await this.selectAllUser()
+    await this.selectAllCompany()
+    this.moneyData = [...this.userMoney, ...this.companyMoney]
+    console.log('%c [ this.moneyData ]-404', 'font-size:13px; background:pink; color:#bf2c9f;', this.moneyData)
+    await this.getAllCity()
+    await this.selectAllOrder()
   },
   methods: {
+    quanxianChange (val) {
+      if (parseInt(val.target.value) === 1) {
+        this.selectAllUser()
+      } else {
+        this.selectAllCompany()
+      }
+    },
+    // 查询我的订单
+    async selectAllOrder () {
+      const { data } = await this.axios.post('/api/Air/selectAllOrder')
+      if (data.msg === '请求成功') {
+        this.orderData = data.data.map((it, index) => {
+          return {
+            key: it.order_id,
+            date: this.$moment(it.created_time).format("YYYY-MM-DD HH:mm:ss"),
+            // unitPrice: it.price,
+            num: it.count,
+            departure: this.filterCity(it.departure),
+            destination: this.filterCity(it.destination),
+            money: it.total_price,
+            state: this.filterOrderState(it.state),
+          }
+        })
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
     logout () {
       this.$message.error('退出登录')
       window.sessionStorage.clear()
       this.$router.push('/')
+    },
+    async selectAllUser () {
+      const { data } = await this.axios.post('/api/Air/selectAllUser')
+      if (data.msg === '请求成功') {
+        this.userMoney = data.data.map((it, index) => {
+          return {
+            key: index,
+            id: it.id,
+            name: it.name,
+            state: it.state,
+            money: it.money,
+          }
+        })
+        this.quanxianData = data.data.map((it, index) => {
+          return {
+            key: index,
+            id: it.id,
+            name: it.name,
+            state: it.state,
+            money: it.money,
+          }
+        })
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
+    },
+    async selectAllCompany () {
+      const { data } = await this.axios.post('/api/Air/selectAllCompany')
+      if (data.msg === '请求成功') {
+        this.companyMoney = data.data.map((it, index) => {
+          return {
+            key: index,
+            id: it.id,
+            name: it.name,
+            state: it.state,
+            money: it.money,
+          }
+        })
+        this.quanxianData = data.data.map((it, index) => {
+          return {
+            key: index,
+            id: it.company_id,
+            name: it.name,
+            state: it.state,
+            money: it.money,
+          }
+        })
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
     },
     async addNotice () {
       if (!this.notice.title) {
@@ -407,6 +693,82 @@ export default {
     },
     disabledDate (time) {
       return time < this.$moment().subtract(1, 'days')
+    },
+    async qiyong (item) {
+      const params = {
+        state: 1,
+        id: item.id
+      }
+      let url = '/api/Air/qupdateUser'
+      if (parseInt(this.quanxian) === 2) {
+        url = '/api/Air/qupdateCompany'
+      }
+      const { data } = await this.axios.post(url, params)
+      if (data.msg === '请求成功') {
+        this.$message.success('启用成功')
+        if (parseInt(this.quanxian) === 1) {
+          this.selectAllUser()
+        } else {
+          this.selectAllCompany()
+        }
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
+    },
+    async jinyong (item) {
+      const params = {
+        state: 0,
+        id: item.id
+      }
+      let url = '/api/Air/qupdateUser'
+      if (parseInt(this.quanxian) === 2) {
+        url = '/api/Air/qupdateCompany'
+      }
+      const { data } = await this.axios.post(url, params)
+      if (data.msg === '请求成功') {
+        this.$message.success('禁用成功')
+        if (parseInt(this.quanxian) === 1) {
+          this.selectAllUser()
+        } else {
+          this.selectAllCompany()
+        }
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
+    },
+    filterState (val) {
+      switch (parseInt(val)) {
+        case 1:
+          return '启用'
+        case 0:
+          return '禁用'
+      }
+    },
+    filterCity (val) {
+      let find = this.allCityList.find(it => it.city_id === val)
+      if (find) {
+        return find.city
+      }
+    },
+    async getAllCity (id) {
+      const { data } = await this.axios.post('/api/Air/getCity')
+      if (data.msg === '请求成功') {
+        this.allCityList = data.data
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
+    filterOrderState (val) {
+      switch (val) {
+        case 1:
+          return '订票';
+        case 2:
+          return '退票';
+        default:
+          return '订票';
+      }
     },
   },
 }

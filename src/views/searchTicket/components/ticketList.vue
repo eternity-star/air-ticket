@@ -23,7 +23,7 @@
         <div class="info-right">
           <span>￥
             <span style="font-size: 30px"
-                  v-if="cabin === 0 ? (item.cabin === 1) : cabin === 1">{{item.economy_cabin_price}}</span>
+                  v-if="parseInt(cabin) === 0 ? (parseInt(item.cabin) === 1) : parseInt(cabin) === 1">{{item.economy_cabin_price}}</span>
             <span style="font-size: 30px"
                   v-else>{{item.business_cabin_price}}</span></span>
           <span class="text-red">该价格剩余{{item.surplus}}个座位！</span>
@@ -127,11 +127,15 @@ export default {
           it.destination_time = this.$moment(it.destination_time).format("YYYY-MM-DD HH:mm")
           it.duration = this.$moment(it.destination_time).diff(this.$moment(it.departure_time), 'minutes')
           it.surplus = it.ticket_count - it.have_ticket_count //剩余数量
-          if (this.cabin === 1) {
+          console.log('[ this.cabin ] >', this.cabin)
+          if (parseInt(this.cabin) === 1) {
             it.totalMoney = it.economy_cabin_price * this.passengerNum
+            console.log('%c [ it.economy_cabin_price * this.passengerNum ]-132', 'font-size:13px; background:pink; color:#bf2c9f;', it.economy_cabin_price * this.passengerNum)
           } else {
             it.totalMoney = it.business_cabin_price * this.passengerNum
+            console.log('[ 111 ] >', 111)
           }
+
           // it.plane = it.plane_id
         })
         this.handleTicketList();
@@ -139,6 +143,8 @@ export default {
     },
   },
   mounted () {
+    console.log('[ this.infoData ] >', this.infoData)
+    console.log('[ this.passengerNum ] >', this.passengerNum)
   },
   methods: {
     handleTicketList () {
@@ -195,7 +201,7 @@ export default {
       return toHourMinute(val)
     },
     book (item) {
-      item.cabin = this.cabin
+      item.cabin = parseInt(this.cabin)
       this.$emit('prebook', item)
     },
     prebook () {

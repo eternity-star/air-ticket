@@ -247,7 +247,7 @@ export default {
       previewVisible: false,
       returnVisible: false,
       pagination: {
-        pageSize: 2,
+        pageSize: 5,
         hideOnSinglePage: true,
       },
       orderData: [
@@ -293,14 +293,14 @@ export default {
           scopedSlots: { customRender: 'date' },
           width: '15%',
         },
-        {
-          title: '机票价格',
-          dataIndex: 'unitPrice',
-          key: 'unitPrice',
-          align: 'center',
-          scopedSlots: { customRender: 'unitPrice' },
-          width: '10%',
-        },
+        // {
+        //   title: '机票价格',
+        //   dataIndex: 'unitPrice',
+        //   key: 'unitPrice',
+        //   align: 'center',
+        //   scopedSlots: { customRender: 'unitPrice' },
+        //   width: '10%',
+        // },
         {
           title: '购买数量',
           dataIndex: 'num',
@@ -582,7 +582,7 @@ export default {
           return {
             key: it.order_id,
             date: this.$moment(it.created_time).format("YYYY-MM-DD HH:mm:ss"),
-            unitPrice: it.price,
+            // unitPrice: it.price,
             num: it.count,
             departure: this.filterCity(it.departure),
             destination: this.filterCity(it.destination),

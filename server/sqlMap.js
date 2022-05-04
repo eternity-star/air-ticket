@@ -14,19 +14,22 @@ const sqlMap = {
     selectCity: 'SELECT * FROM air_location WHERE city_id = ?'  //查询城市
   },
   User: {
-    insertUser: 'insert into user(id, name, password, mobile, idCard, level, money) values(?,?,?,?,?,?,?)', //插入用户信息
-    login: 'SELECT id,name,mobile,idCard,level,sex,money FROM user where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
+    insertUser: 'insert into user(id, name, password, mobile, idCard, level, money, state) values(?,?,?,?,?,?,?,?)', //插入用户信息
+    selectLogin: 'SELECT id,name,idCard,mobile FROM user where state = 1',
+    login: 'SELECT id,name,mobile,idCard,level,sex,money,state FROM user where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
     updateUser: 'UPDATE user SET name = ?, sex = ?, idCard = ?, mobile = ? WHERE id = ?',
     selectUser: 'SELECT id,name,mobile,idCard,level,sex,money FROM user where id = ?',
     updateMoney: 'UPDATE user SET money = ? WHERE id = ?',
   },
   CompanyUser: {
-    login: 'SELECT company_id,name,mobile,idCard,level,address,own_plane,description,money FROM company where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
+    selectLogin: 'SELECT company_id,name,idCard,mobile FROM company where state = 1',
+    login: 'SELECT company_id,name,mobile,idCard,level,address,own_plane,description,money,state FROM company where (idCard = ? or mobile = ?) and password = ? and level = ?', //查询用户信息
     updateCompanyUser: 'UPDATE company SET name = ?, sex = ?, idCard = ?, mobile = ? WHERE company_id = ?',
     updatePassword: 'UPDATE company SET password = ? WHERE company_id = ?',
     selectUser: 'SELECT company_id,name,mobile,idCard,level,address,own_plane,description,money FROM company where company_id = ?',
     selectPassword: 'SELECT * FROM company where password = ?',
     updateMoney: 'UPDATE company SET money = ? WHERE company_id = ?',
+    addMoney: 'UPDATE company SET money = money + ? WHERE company_id = ?',
   },
   CompanyPlane: {
     select: 'SELECT * FROM plane WHERE plane_id IN (?)'
@@ -45,7 +48,7 @@ const sqlMap = {
     insertCapital: 'insert into air_capital(capital_id, user_id, user_name, created_time, money, control_type, order_id) values(?,?,?,?,?,?,?)',
   },
   PayTicket: {
-    insertOrder: 'insert into air_order(order_id, user_id, user_name, created_time, price, count, departure, destination, total_price, ticket_id, state) values(?,?,?,?,?,?,?,?,?,?,?)',
+    insertOrder: 'insert into air_order(order_id, user_id, user_name, created_time, count, departure, destination, total_price, ticket_id, state, line_id, company_id) values(?,?,?,?,?,?,?,?,?,?,?,?)',
     insertTicket: 'insert into air_ticket(ticket_id, company_id, plane_id, line_id, user_id, user_name, created_time, departure, destination, departure_time, destination_time, duration, price, cabin_type, passenger_information) values(?,?,?,?,?,?,?,?,?,?, ?, ?,?,?,?)',
     insertCapital: 'insert into air_capital(capital_id, user_id, user_name, created_time, money, control_type, order_id) values(?,?,?,?,?,?,?)',
     updateUser: 'UPDATE user SET money = money - ? WHERE id = ?',
@@ -54,10 +57,19 @@ const sqlMap = {
   },
   Order: {
     selectOwnOrder: 'SELECT * FROM air_order where user_id = ?',
+    selectOrder: 'SELECT * FROM air_order where company_id = ?'
   },
   Notice: {
     insertNotice: 'insert into air_notice(notice_id, user_id, user_name, title, description, created_time, type, state) values(?,?,?,?,?,?,?,?)',
     selectAllNotice: 'SELECT * FROM air_notice WHERE type = ?',
+  },
+  Quanxian: {
+    selectAllUser: 'SELECT * FROM user',
+    selectAllCompany: 'SELECT * FROM company',
+    updateUser: 'UPDATE user SET state = ? WHERE id = ?',
+    updateCompany: 'UPDATE company SET state = ? WHERE company_id = ?',
+    selectAirLine: 'SELECT * FROM air_line',
+    selectAllOrder: 'SELECT * FROM air_order',
   },
   // 测试
   // "SELECT * FROM `air_line` where departure_time  > '2022-05-02 00:00:00' and destination_time < '2022-05-02 23:59:59'"

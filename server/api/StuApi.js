@@ -31,7 +31,7 @@ router.post('/registerUser', (req, res) => {
   const sql = $sql.User.insertUser
   const params = req.body
   console.log('接口：注册用户', params)
-  conn.query(sql, [params.id, params.name, params.password, params.mobile, params.idCard, params.level, 0], function (err, result) {
+  conn.query(sql, [params.id, params.name, params.password, params.mobile, params.idCard, params.level, 0, params.state], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -154,6 +154,32 @@ router.post('/comLogin', (req, res) => {
     jsonWrite(res, returnData)
   })
 })
+// 校验是否被禁用
+router.post('/selectLogin', (req, res) => {
+  let sql = $sql.CompanyUser.selectLogin
+  const params = req.body
+  console.log('接口：登录', params)
+  if (params.type === 1) {
+    sql = $sql.User.selectLogin
+  }
+  conn.query(sql, function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
 
 // 接口：查询密码是否正确
 router.post('/judgeComPassword', (req, res) => {
@@ -260,9 +286,6 @@ router.post('/getPlaneList', (req, res) => {
       returnData = {
         data: result,
         msg: '请求成功'
-      }
-      if (result.length === 0) {
-        returnData.msg = '用户名或密码错误'
       }
     }
     jsonWrite(res, returnData)
@@ -375,15 +398,65 @@ router.post('/selectDateLine', (req, res) => {
   })
 })
 
+// 接口：查询所有航班
+router.post('/selectAirLine', (req, res) => {
+  let sql = $sql.Quanxian.selectAirLine
+  console.log('接口：查询所有航班')
+  conn.query(sql, function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
 
 /**
  * 余额相关
  */
 // 接口：余额充值
 router.post('/recharge', (req, res) => {
-  const sql = $sql.User.updateMoney
+  let sql = $sql.User.updateMoney
   const params = req.body
   console.log('接口：余额充值', params)
+  if (params.type === 2) {
+    sql = $sql.CompanyUser.updateMoney
+  }
+  conn.query(sql, [params.money, params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：加钱给航空公司
+router.post('/addMoney', (req, res) => {
+  const sql = $sql.CompanyUser.addMoney
+  const params = req.body
+  console.log('接口：加钱给航空公司', params)
   conn.query(sql, [params.money, params.id], function (err, result) {
     let returnData = {}
     if (err) {
@@ -460,8 +533,8 @@ router.post('/insertOrder', (req, res) => {
   const sql = $sql.PayTicket.insertOrder
   const params = req.body
   console.log('接口：向订单表中插入值', params)
-  // order_id, id, name, created_time, price, count, departure, destination, total_price, ticket_id, state
-  conn.query(sql, [params.order_id, params.id, params.name, params.created_time, params.price, params.count, params.departure, params.destination, params.total_price, params.ticket_id, params.state], function (err, result) {
+  // order_id, user_id, user_name, created_time, count, departure, destination, total_price, ticket_id, state, line_id, company_id
+  conn.query(sql, [params.order_id, params.id, params.name, params.created_time, params.count, params.departure, params.destination, params.total_price, params.ticket_id, params.state, params.line_id, params.company_id], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -564,6 +637,53 @@ router.post('/selectOwnOrder', (req, res) => {
   const params = req.body
   console.log('接口：查询用户订单记录', params)
   conn.query(sql, [params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：查询公司下用户订单记录
+router.post('/selectOrder', (req, res) => {
+  const sql = $sql.Order.selectOrder
+  const params = req.body
+  console.log('接口：查询用户订单记录', params)
+  conn.query(sql, [params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：查询所有订单记录
+router.post('/selectAllOrder', (req, res) => {
+  const sql = $sql.Quanxian.selectAllOrder
+  console.log('接口：查询所有订单记录')
+  conn.query(sql, function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -742,6 +862,100 @@ router.post('/showNotice', (req, res) => {
   const params = req.body
   console.log('接口：查看公告')
   conn.query(sql, [params.type], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：查看所有用户
+router.post('/selectAllUser', (req, res) => {
+  const sql = $sql.Quanxian.selectAllUser
+  console.log('接口：查看所有用户')
+  conn.query(sql, function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：查看所有公司
+router.post('/selectAllCompany', (req, res) => {
+  const sql = $sql.Quanxian.selectAllCompany
+  console.log('接口：查看所有公司')
+  conn.query(sql, function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：更新用户的权限
+router.post('/qupdateUser', (req, res) => {
+  let sql = $sql.Quanxian.updateUser
+  const params = req.body
+  console.log('接口：更新用户的权限')
+  conn.query(sql, [params.state, params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：更新航空公司的权限
+router.post('/qupdateCompany', (req, res) => {
+  let sql = $sql.Quanxian.updateCompany
+  const params = req.body
+  console.log('接口：更新航空公司的权限')
+  conn.query(sql, [params.state, params.id], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)

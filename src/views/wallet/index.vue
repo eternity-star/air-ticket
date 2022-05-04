@@ -209,6 +209,7 @@ export default {
             if (data.msg === '请求成功') {
               window.sessionStorage.setItem('user', JSON.stringify(data.data[0]))
               this.wallet = JSON.parse(window.sessionStorage.getItem('user')).money
+              this.user = JSON.parse(window.sessionStorage.getItem('user'))
               this.payVisible = false
             } else {
               this.$message.error(data.msg)
@@ -225,6 +226,7 @@ export default {
       const params = {
         money: this.payAmount + this.user.money,
         id: this.user.id,
+        type: 1
       }
       const { data } = await this.axios.post('/api/Air/recharge', params)
       console.log('[ data ] >', data)
