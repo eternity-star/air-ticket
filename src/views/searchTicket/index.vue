@@ -358,7 +358,7 @@ export default {
         this.haveChooseInfoData.splice(1, 1)
       }
     },
-    pay () {
+    async pay () {
       this.totalPrice = 0
       this.haveChooseInfoData.forEach(item => {
         let price = 0

@@ -186,7 +186,7 @@ export default {
   props: {
     currentClick: {
       type: Number,
-      default: 7,
+      default: 1,
     },
   },
   components: {

@@ -27,19 +27,21 @@
             <a-menu-item key="2"> 发布航班 </a-menu-item>
             <a-menu-item key="3"> 航班管理 </a-menu-item>
           </a-sub-menu>
-          <a-sub-menu key="sub2">
+          <a-menu-item key="4">
+            <a-icon type="wallet" />
+            <span>资金管理</span>
+          </a-menu-item>
+          <a-menu-item key="5">
+            <a-icon type="wallet" />
+            <span>订单管理</span>
+          </a-menu-item>
+          <!-- <a-sub-menu key="sub3">
             <span slot="title">
-              <a-icon type="wallet" /><span>资金管理</span>
-            </span>
-            <a-menu-item key="4"> 收益管理 </a-menu-item>
-          </a-sub-menu>
-          <a-sub-menu key="sub3">
-            <span slot="title">
-              <a-icon type="menu" /><span>乘客管理</span>
+              <a-icon type="menu" /><span>订单管理</span>
             </span>
             <a-menu-item key="5"> 发布航班 </a-menu-item>
             <a-menu-item key="6"> 航班管理 </a-menu-item>
-          </a-sub-menu>
+          </a-sub-menu> -->
           <a-menu-item key="7">
             <a-icon type="message" />
             <span>通知消息</span>
