@@ -63,20 +63,6 @@ export default {
       '[ window.sessionStorage.getItem("user") ] >',
       JSON.parse(window.sessionStorage.getItem('user'))
     )
-    // http://localhost:3000
-    const params = {
-      key: '1',
-    }
-    this.axios
-      .post('/api/Air/searchAir', {
-        id: '-1',
-      })
-      .then((res) => {
-        console.log('[ res222 ] >', res)
-      })
-      .catch((err) => {
-        console.log('[ err ] >', err)
-      })
   },
   watch: {},
   methods: {
@@ -98,7 +84,7 @@ export default {
       if (type === 1) {
         this.$message.loading('哈利波特骑着扫帚飞')
       } else if (type === 5) {
-        this.$message.error('你xx')
+        this.$message.error('退出登录')
         window.sessionStorage.clear()
         this.$router.push('/')
       } else {

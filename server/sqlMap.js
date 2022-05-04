@@ -37,20 +37,28 @@ const sqlMap = {
     selectCompanyAir: 'SELECT * FROM air_line where company_id = ?',
     selectAirLine: 'SELECT * FROM air_line where line_id = ?',
     updateAirLine: 'UPDATE air_line SET is_show = 0 WHERE line_id = ?',
-    selectLine: 'SELECT * from air_line WHERE destination_time < ? and ? < departure_time and (ticket_count -have_ticket_count) >= ? and departure = ? and destination = ?'
+    selectLine: 'SELECT * from air_line WHERE destination_time < ? and ? < departure_time and (ticket_count -have_ticket_count) >= ? and departure = ? and destination = ?',
+    selectDateLine: 'SELECT * FROM `air_line` WHERE destination_time < ? and departure_time > ? LIMIT ?',
   },
   Capital: {
     selectCapital: 'SELECT * FROM air_capital WHERE user_id = ?',
     insertCapital: 'insert into air_capital(capital_id, user_id, user_name, created_time, money, control_type, order_id) values(?,?,?,?,?,?,?)',
   },
   PayTicket: {
-    insertOrder: 'insert into air_order(order_id, created_time, price, count, departure, destination, total_price, ticket_id) values(?,?,?,?,?,?,?,?)',
+    insertOrder: 'insert into air_order(order_id, user_id, user_name, created_time, price, count, departure, destination, total_price, ticket_id, state) values(?,?,?,?,?,?,?,?,?,?,?)',
     insertTicket: 'insert into air_ticket(ticket_id, company_id, plane_id, line_id, user_id, user_name, created_time, departure, destination, departure_time, destination_time, duration, price, cabin_type, passenger_information) values(?,?,?,?,?,?,?,?,?,?, ?, ?,?,?,?)',
     insertCapital: 'insert into air_capital(capital_id, user_id, user_name, created_time, money, control_type, order_id) values(?,?,?,?,?,?,?)',
     updateUser: 'UPDATE user SET money = money - ? WHERE id = ?',
     updateBusiness: 'UPDATE air_line SET have_ticket_count = have_ticket_count + ?, have_business_cabin_count = ? WHERE line_id = ?',
     updateEconomy: 'UPDATE air_line SET have_ticket_count = have_ticket_count + ?, have_economy_cabin_count = ? WHERE line_id = ?',
-  }
+  },
+  Order: {
+    selectOwnOrder: 'SELECT * FROM air_order where user_id = ?',
+  },
+  Notice: {
+    insertNotice: 'insert into air_notice(notice_id, user_id, user_name, title, description, created_time, type, state) values(?,?,?,?,?,?,?,?)',
+    selectAllNotice: 'SELECT * FROM air_notice WHERE type = ?',
+  },
   // 测试
   // "SELECT * FROM `air_line` where departure_time  > '2022-05-02 00:00:00' and destination_time < '2022-05-02 23:59:59'"
 }

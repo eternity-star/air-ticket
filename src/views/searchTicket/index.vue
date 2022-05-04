@@ -201,9 +201,9 @@
         </div>
         <div class="mart10">
           <div class="textNext text-red">确认无误后，请点击支付</div>
-          <a-popconfirm title="Are you sure？"
-                        ok-text="Yes"
-                        cancel-text="No"
+          <a-popconfirm title="确定支付吗？"
+                        ok-text="是"
+                        cancel-text="否"
                         @confirm="pay">
             <div class="next">
               <span>支付</span>
@@ -349,6 +349,10 @@ export default {
     pay () {
       console.log('[ this.haveChooseInfoData ] >', this.haveChooseInfoData)
       console.log('[ 111 ] >', 111)
+      this.$message.success("支付成功")
+      setTimeout(() => {
+        this.$emit('update:searchShow', false)
+      }, 1000)
     },
     conditionChange (val) {
       console.log('[ val ] >', val)

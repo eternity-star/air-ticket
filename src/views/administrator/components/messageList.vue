@@ -13,11 +13,13 @@
          v-if="revokeShow"
          @click.stop="revoke(item)">撤销</a>
       <a-list-item-meta style="width:100%;">
-        <div slot="title">{{ item.title }}
+        <div slot="title">{{ item.user_name }}
           <span class="time">发布时间:{{$moment(item.sendTime).format("YYYY-MM-DD HH:mm:ss")}}</span>
         </div>
         <div slot="avatar"
-             class="avatar">{{ item.user_name ||'系统' }}</div>
+             class="avatar">
+          <a-icon type="user" />
+        </div>
         <div slot="description"
              class="content">
           {{item.content}}

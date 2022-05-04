@@ -6,24 +6,24 @@
       </a-col>
       <a-col :span="7">
         <!-- <img :src="infoData.imgUrl" alt="" width="100px" height="100px" /> -->
-        <img
-          src="../../../assets/image/test.jpg"
-          alt=""
-          width="100%"
-          height="100%"
-          style="border-radius: 6px"
-        />
+        <img src="../../../assets/image/test.jpg"
+             alt=""
+             width="100%"
+             height="100%"
+             style="border-radius: 6px" />
       </a-col>
       <a-col :span="9">
         <div class="toAddress">
-          <p>深圳<a-icon type="swap" />南京</p>
-          <p>02-25 去 02-28 回</p>
+          <p>{{infoData.departure}}
+            <a-icon type="swap" />{{infoData.destination}}
+          </p>
+          <p>{{infoData.departure_time}} 去 {{infoData.departure_time}} 回</p>
         </div>
       </a-col>
       <a-col :span="5">
         <div class="toMoney">
-          <p>￥<span>480</span>起</p>
-          <p>1.1折</p>
+          <p>￥<span>{{infoData.money}}</span>起</p>
+          <!-- <p>1.1折</p> -->
         </div>
       </a-col>
     </a-row>
@@ -36,15 +36,15 @@ export default {
   props: {
     infoData: {
       type: Object,
-      default: () => {},
+      default: () => { },
     },
   },
-  data() {
+  data () {
     return {
       isShow: true,
     }
   },
-  mounted() {
+  mounted () {
     if (!this?.infoData?.index) {
       this.isShow = false
     } else {
@@ -55,11 +55,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import url('../../current.less');
+@import url("../../current.less");
 .recommend-box {
   margin: 2px 0 2px 0;
   padding: 2px 10px 2px 10px;
-  background-color: white ;
+  background-color: white;
 }
 .recommend-box:hover {
   color: #0086f6;
@@ -95,7 +95,7 @@ export default {
 .toMoney span:first-child {
   font-size: 18px;
 }
-.toMoney p:last-child,
+// .toMoney p:last-child,
 .toAddress p:last-child {
   color: #c4a6a6;
   font-size: 12px;

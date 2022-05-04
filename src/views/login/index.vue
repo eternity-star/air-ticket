@@ -32,9 +32,10 @@
       </a-form-model-item>
       <a-form-model-item>
         <a-button type="primary"
-                  style="margin-left: 30%"
+                  :class="user === 1 ? 'marLeft30' : 'marLeft50'"
                   @click="loginClick">登录</a-button>
-        <a-button style="margin-left: 20%"
+        <a-button v-if="user === 1"
+                  style="margin-left: 20%"
                   @click="registerClick">注册</a-button>
       </a-form-model-item>
     </a-form-model>
@@ -219,5 +220,11 @@ export default {
   font-size: 32px;
   text-align: center;
   color: #498cff;
+}
+.marLeft30 {
+  margin-left: 30%;
+}
+.marLeft50 {
+  margin-left: 45%;
 }
 </style>

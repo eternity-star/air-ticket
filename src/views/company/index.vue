@@ -40,6 +40,14 @@
             <a-menu-item key="5"> 发布航班 </a-menu-item>
             <a-menu-item key="6"> 航班管理 </a-menu-item>
           </a-sub-menu>
+          <a-menu-item key="7">
+            <a-icon type="message" />
+            <span>通知消息</span>
+          </a-menu-item>
+          <a-menu-item key="8">
+            <a-icon type="form" />
+            <span>投诉与建议</span>
+          </a-menu-item>
         </a-menu>
       </a-layout-sider>
       <a-layout>
@@ -109,7 +117,6 @@
                 <a-input v-model="infoForm.mobile"
                          :disabled="disabled"
                          placeholder="请输入"
-                         type="number"
                          @change="test"
                          style="width: 75%" />
               </a-form-model-item>
@@ -126,7 +133,16 @@
                 <a-input v-model="infoForm.mobile"
                          :disabled="disabled"
                          placeholder="请输入"
-                         type="number"
+                         @change="test"
+                         style="width: 75%" />
+              </a-form-model-item>
+              <a-form-model-item prop="description"
+                                 label="描述">
+                <a-input v-model="infoForm.description"
+                         :disabled="disabled"
+                         placeholder="请输入"
+                         type="textarea"
+                         :auto-size="{ minRows: 5}"
                          @change="test"
                          style="width: 75%" />
               </a-form-model-item>
@@ -239,6 +255,14 @@
               </a-table>
             </div>
           </div>
+          <div class="myMessage"
+               v-else-if="currentIndex === 7">
+            <message :messageList="messageList" />
+          </div>
+          <div class="mySuggestion"
+               v-else-if="currentIndex === 8">
+            <suggestion @suggestEvent="suggestEvent" />
+          </div>
           <a-modal v-model="passwordVisible"
                    title="修改密码"
                    okText="保存"
@@ -296,6 +320,8 @@
 
 <script>
 import { randomWord } from '@/common/utils'
+import suggestion from '../suggestion/index.vue'
+import message from '../message/index.vue'
 import airLineCreate from './components/airLine/airLineCreate.vue'
 import airLineManage from './components/airLine/airLineManage.vue'
 function getBase64 (img, callback) {
@@ -308,12 +334,14 @@ export default {
   props: {
     currentClick: {
       type: Number,
-      default: 3,
+      default: 1,
     },
   },
   components: {
     airLineCreate,
     airLineManage,
+    message,
+    suggestion,
   },
   data () {
     return {
@@ -338,6 +366,8 @@ export default {
       imageUrl: '',
       payVisible: false,
       passwordVisible: false,
+      messageList: [],
+
       balanceData: [
         {
           key: '1',
@@ -404,21 +434,15 @@ export default {
       user: JSON.parse(window.sessionStorage.getItem('user')),
     }
   },
-
   created () {
-    console.log('[ this.nanoid() ] >', this.nanoid())
-    console.log('[ this.$moment() ] >', this.$moment().valueOf())
-    console.log('[ <= new Date().valueOf() ] >', new Date().valueOf())
-    console.log(
-      '[ String(Math.round(Math.random())) ] >',
-      String(Math.round(Math.random()))
-    )
-    console.log('[ new Date().getTime() ] >', new Date().getTime())
-    console.log('[ new Date().valueOf() ] >', new Date().valueOf())
-    console.log(
-      '[ String(Math.round(Math.random())) ] >',
-      Math.random() * 100000
-    )
+    this.infoForm = {
+      name: this.user.name,
+      id: this.user.company_id,
+      address: this.user.address,
+      mobile: this.user.mobile,
+      idCard: this.user.idCard,
+      description: this.user.description,
+    }
   },
   watch: {
     currentClick: {
@@ -581,9 +605,65 @@ export default {
         'font-size:13px; background:pink; color:#bf2c9f;',
         this.currentIndex
       )
+      if (this.currentIndex === 7) {
+        this.showNotice()
+      }
     },
     disabledDate (time) {
       return time < this.$moment().subtract(1, 'days')
+    },
+    /**
+     * 公告
+     */
+    // 提交投诉与建议
+    async suggestEvent (form) {
+      console.log('%c [ form ]-425', 'font-size:13px; background:pink; color:#bf2c9f;', form)
+      /**
+       * 监听到子组件传来的事件后，加一个state来判断是用户发出的还是航空公司发出的，state 1用户 2航空公司
+       */
+      const params = {
+        // notice_id, user_id, user_name, title, description, created_time, type, state
+        notice_id: 'NO' + new Date().getTime() + String(Math.round(Math.random() * 10000)),
+        user_id: this.user.company_id,
+        user_name: this.user.name,
+        title: '',
+        created_time: this.$moment().format("YYYY-MM-DD HH:mm:ss"),
+        state: 2,
+      }
+      if (form.type === 1) {
+        params.type = 4
+        params.description = form.suggest
+      } else if (form.type === 2) {
+        params.type = 3
+        params.description = form.complaint
+      }
+      const { data } = await this.axios.post('/api/Air/addNotice', params)
+      if (data.msg === '请求成功') {
+        this.$message.success('提交成功')
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
+    },
+    async showNotice () {
+      const params = {
+        type: 1,
+      }
+      const { data } = await this.axios.post('/api/Air/showNotice', params)
+      if (data.msg === '请求成功') {
+        console.log('[ data.data ] >', data.data)
+        this.messageList = data.data.map((it, index) => {
+          return {
+            title: it.title,
+            sendTime: this.$moment(it.created_time).format("YYYY-MM-DD HH:mm:ss"),
+            content: it.description,
+            user_name: it.user_name
+          }
+        })
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
     },
     /**
      * 图片相关函数

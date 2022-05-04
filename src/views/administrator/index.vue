@@ -38,11 +38,15 @@
             </span>
             <a-menu-item key="4">查看订单</a-menu-item>
           </a-sub-menu>
-          <a-menu-item key="5">
-            <a-icon type="home" />
-            <span>公告发布</span>
-          </a-menu-item>
-          <a-menu-item key="6">
+          <a-sub-menu key="sub4">
+            <span slot="title">
+              <a-icon type="home" />
+              <span>公告管理</span>
+            </span>
+            <a-menu-item key="5">发布公告</a-menu-item>
+            <a-menu-item key="6">查看公告</a-menu-item>
+          </a-sub-menu>
+          <a-menu-item key="7">
             <a-icon type="home" />
             <span>投诉与建议</span>
           </a-menu-item>
@@ -124,6 +128,50 @@
           <div class="myOrder"
                v-else-if="currentIndex === 4">
           </div>
+          <div class="addNotice"
+               v-else-if="currentIndex === 5">
+            <span style="font-size: 24px">发布公告</span>
+            <a-row :gutter="[16, 24]">
+              <a-col>公告标题：</a-col>
+              </a-col>
+            </a-row>
+            <a-row :gutter="[16, 8]">
+              <a-col>
+                <a-input v-model="notice.title"
+                         allowClear
+                         placeholder="请输入公告标题"
+                         style="width: 50%" />
+              </a-col>
+            </a-row>
+            <a-row :gutter="[16, 24]">
+              <a-col>公告内容：</a-col>
+              </a-col>
+            </a-row>
+            <a-row :gutter="[16, 8]">
+              <a-col>
+                <a-input v-model="notice.description"
+                         :auto-size="{ minRows: 5}"
+                         type="textarea"
+                         placeholder="请输入公告内容"
+                         style="width: 50%" />
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col>
+                <a-button class="mart10"
+                          type="primary"
+                          @click="addNotice">发布</a-button>
+              </a-col>
+            </a-row>
+          </div>
+          <div class="showNotice"
+               v-else-if="currentIndex === 6">
+            <message :messageList="messageList" />
+          </div>
+          <div class="showSuggestion"
+               v-else-if="currentIndex === 7">
+            <suggestList />
+          </div>
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -131,15 +179,19 @@
 </template>
 
 <script>
+import suggestList from './components/suggestList.vue'
+import message from '../message/index.vue'
 export default {
   name: 'admin',
   props: {
     currentClick: {
       type: Number,
-      default: 3,
+      default: 7,
     },
   },
   components: {
+    message,
+    suggestList,
   },
   data () {
     return {
@@ -163,6 +215,11 @@ export default {
       loading: false,
       imageUrl: '',
       payVisible: false,
+      messageList: [],
+      notice: {
+        title: '',
+        description: '',
+      },
       balanceData: [
         {
           key: '1',
@@ -274,6 +331,58 @@ export default {
       window.sessionStorage.clear()
       this.$router.push('/')
     },
+    async addNotice () {
+      if (!this.notice.title) {
+        this.$message.error('请填写公告标题')
+        return
+      }
+      if (!this.notice.description) {
+        this.$message.error('请填写公告内容')
+        return
+      }
+      const params = {
+        // notice_id, user_id, user_name, title, description, created_time, type
+        notice_id: 'NO' + new Date().getTime() + String(Math.round(Math.random() * 10000)),
+        user_id: this.user.id,
+        user_name: this.user.name,
+        title: this.notice.title,
+        description: this.notice.description,
+        created_time: this.$moment().format("YYYY-MM-DD HH:mm:ss"),
+        type: 1,
+        state: '',
+      }
+      const { data } = await this.axios.post('/api/Air/addNotice', params)
+      if (data.msg === '请求成功') {
+        this.$message.success('发布成功')
+        setTimeout(() => {
+          this.currentIndex = 6
+          this.showNotice(1)
+        }, 1000)
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
+    },
+    async showNotice (type) {
+      const params = {
+        type,
+      }
+      const { data } = await this.axios.post('/api/Air/showNotice', params)
+      if (data.msg === '请求成功') {
+        console.log('[ data.data ] >', data.data)
+        this.messageList = data.data.map((it, index) => {
+          return {
+            title: it.title,
+            sendTime: this.$moment(it.created_time).format("YYYY-MM-DD HH:mm:ss"),
+            content: it.description,
+            user_name: it.user_name
+          }
+        })
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
+    },
     recharge () {
       this.wallet += parseInt(this.payAmount)
       this.payVisible = false
@@ -289,6 +398,12 @@ export default {
         'font-size:13px; background:pink; color:#bf2c9f;',
         this.currentIndex
       )
+      if (this.currentIndex === 6) {
+        this.showNotice(1)
+      }
+      if (this.currentIndex === 7) {
+        this.showNotice(3)
+      }
     },
     disabledDate (time) {
       return time < this.$moment().subtract(1, 'days')
@@ -321,5 +436,8 @@ export default {
   font-size: 24px;
   /* background: rgba(255, 255, 255, 0.2); */
   margin: 16px;
+}
+.addNotice {
+  margin-left: 25%;
 }
 </style>

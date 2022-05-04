@@ -374,7 +374,7 @@
     <div class="user-bottom">
       <!-- 搜索记录：后期基于数据库在实现 -->
       <!-- 搜索规则：只展示今天搜索的记录；支持清空 -->
-      <div style="text-align: center">
+      <!-- <div style="text-align: center">
         <a-row>
           <a-col :span="24"
                  style="margin-top: 32px">
@@ -383,7 +383,7 @@
                                    format="D 天 H 时 m 分 s 秒 SSS 毫秒" />
           </a-col>
         </a-row>
-      </div>
+      </div> -->
       <div class="user-bottom-self">
         <div class="self">
           <div class="title">航班速报</div>
@@ -396,7 +396,7 @@
                         style="margin-left: 2px" />
               </div>
               <div class="recommend-center">
-                <recommend-box v-for="(item, index) in recommendData"
+                <recommend-box v-for="(item, index) in toDayRecommendData"
                                :key="index"
                                :infoData="item"
                                @click.native="recommendTicketClick(item)" />
@@ -404,26 +404,26 @@
             </div>
             <div class="recommend-self recommend-second">
               <div class="recommend-header">
-                今日推荐航班
+                明日推荐航班
                 <a-icon type="right-circle"
                         theme="filled"
                         style="margin-left: 2px" />
               </div>
               <div class="recommend-center">
-                <recommend-box v-for="(item, index) in recommendData"
+                <recommend-box v-for="(item, index) in tomorrowRecommendData"
                                :key="index"
                                :infoData="item" />
               </div>
             </div>
             <div class="recommend-self recommend-third">
               <div class="recommend-header">
-                今日推荐航班
+                后日推荐航班
                 <a-icon type="right-circle"
                         theme="filled"
                         style="margin-left: 2px" />
               </div>
               <div class="recommend-center">
-                <recommend-box v-for="(item, index) in recommendData"
+                <recommend-box v-for="(item, index) in afterTomorrowRecommendData"
                                :key="index"
                                :infoData="item" />
               </div>
@@ -537,6 +537,9 @@ export default {
       ], //乘客类型
       cabinTypeList: ['经济舱', '商务/头等舱'],
       deadline: 1651224600000,
+      toDayRecommendData: [],
+      tomorrowRecommendData: [],
+      afterTomorrowRecommendData: [],
       recommendData: [
         {
           id: 0,
@@ -558,6 +561,16 @@ export default {
           index: 3,
           title: 'Ant Design Title 4',
         },
+        {
+          id: 4,
+          index: 4,
+          title: 'Ant Design Title 5',
+        },
+        // {
+        //   id: 5,
+        //   index: 5,
+        //   title: 'Ant Design Title 6',
+        // },
       ], //推荐航班
       companyList: [
         {
@@ -592,15 +605,20 @@ export default {
       passengerLength: 0, //乘客人数
       // numPeople: [],
       oldPassengers: [],
+      allCityList: [],
     }
   },
   components: {
     recommendBox,
   },
-  mounted () {
+  async mounted () {
     console.log('[ this.$moment("2022-04-22") ===  ] >', this.$moment("2022-04-22").startOf("day").valueOf() === this.$moment().startOf("day").valueOf())
     this.companyDescription = this.companyList[0].description
-    this.getProvince()
+    this.getProvince();
+    await this.getAllCity();
+    this.getRecommendData(1);
+    this.getRecommendData(2);
+    this.getRecommendData(3);
     // this.getCity('1')
   },
   watch: {
@@ -611,6 +629,63 @@ export default {
     // },
   },
   methods: {
+    async getRecommendData (type = 1, limit = 5) {
+      /**
+       * type 1 为今日
+       * 2 为明日
+       * 3 为后日
+       * 只查5条出来
+       */
+      const params = {
+        departure_time: this.$moment().format("YYYY-MM-DD") + ' ' + '00:00:00',
+        destination_time: this.$moment().format("YYYY-MM-DD") + ' ' + '23:59:59',
+        limit,
+      }
+      if (type === 2) {
+        params.departure_time = this.$moment().add(1, 'day').format("YYYY-MM-DD") + ' ' + '00:00:00'
+        params.destination_time = this.$moment().add(1, 'day').format("YYYY-MM-DD") + ' ' + '23:59:59'
+      } else if (type === 3) {
+        params.departure_time = this.$moment().add(2, 'day').format("YYYY-MM-DD") + ' ' + '00:00:00'
+        params.destination_time = this.$moment().add(2, 'day').format("YYYY-MM-DD") + ' ' + '23:59:59'
+      }
+      const { data } = await this.axios.post('/api/Air/selectDateLine', params)
+      if (data.msg === '请求成功') {
+        console.log('[ data.data ] >', data.data)
+        let infoData = data.data.map((it, index) => {
+          return {
+            index: index + 1,
+            departure: this.filterCity(it.departure),
+            destination: this.filterCity(it.destination),
+            money: it.economy_cabin_price,
+            departure_time: this.$moment(it.departure_time0).format("MM-DD"),
+            destination_time: this.$moment(it.destination_time).format("MM-DD"),
+          }
+        })
+        if (type === 1) {
+          this.toDayRecommendData = infoData
+        } else if (type === 2) {
+          this.tomorrowRecommendData = infoData
+        } else if (type === 3) {
+          this.afterTomorrowRecommendData = infoData
+        }
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
+    filterCity (val) {
+      let find = this.allCityList.find(it => it.city_id === val)
+      if (find) {
+        return find.city
+      }
+    },
+    async getAllCity (id) {
+      const { data } = await this.axios.post('/api/Air/getCity')
+      if (data.msg === '请求成功') {
+        this.allCityList = data.data
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
     getProvince () {
       this.axios.get('/api/Air/getProvince').then(({ data }) => {
         if (data.msg === '请求成功') {
@@ -932,7 +1007,9 @@ export default {
   padding: 10px 0;
 }
 .recommend-center {
-  height: 500px;
+  display: flex;
+  flex-direction: column;
+  // height: 500px;
   border-radius: 10px;
   background-color: #ffffff;
 }

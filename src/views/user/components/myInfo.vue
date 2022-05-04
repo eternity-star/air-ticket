@@ -61,7 +61,7 @@
                     <a-icon v-else
                             type="user"
                             class="iconClass" />
-                    <div :class="{
+                    <!-- <div :class="{
                         edit: true,
                         visible: !isVisible,
                         grey: isVisible,
@@ -74,9 +74,9 @@
                               @click="preview" />
                       <div class="uploadDiv"
                            v-if="uploadVisible">
-                        <!-- :action="`${$globalPath}/hospitalUpload/file`" -->
                         <a-upload name="avatar"
                                   class="avatar-uploader"
+                                  :action="`${$globalPath}/hospitalUpload/file`"
                                   :show-upload-list="false"
                                   :before-upload="beforeUpload"
                                   @change="handleChange">
@@ -85,7 +85,7 @@
                                   class="icon" />
                         </a-upload>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                   <a-modal :visible="previewVisible"
                            :footer="null"
@@ -141,44 +141,32 @@
               <span slot="date"
                     slot-scope="text">
                 <a-icon type="clock-circle"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
+                        style="margin-right: 10px" />{{text}}
               </span>
               <span slot="name"
                     slot-scope="text">
                 <a-icon type="user"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
+                        style="margin-right: 10px" />{{text}}
               </span>
               <span slot="idCard"
                     slot-scope="text">
                 <a-icon type="key"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
+                        style="margin-right: 10px" />{{text}}
               </span>
               <span slot="mobile"
                     slot-scope="text">
                 <a-icon type="phone"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
+                        style="margin-right: 10px" />{{text}}
               </span>
               <span slot="money"
                     slot-scope="text">
                 <a-icon type="money-collect"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
+                        style="margin-right: 10px" />{{text}}
               </span>
               <span slot="state"
                     slot-scope="text">
                 <a-icon type="laptop"
-                        style="margin-right: 10px" />{{
-                  text
-                }}
+                        style="margin-right: 10px" />{{text}}
               </span>
               <template slot="operation"
                         slot-scope="text, record">
@@ -188,11 +176,15 @@
                                 cancel-text="取消"
                                 @confirm="returnTicket">
                     <a-button type="primary"
+                              v-if="record.departure_time > $moment().format('YYYY-MM-DD HH:mm:ss')"
                               style="margin-right: 5px">退票</a-button>
                   </a-popconfirm>
                   <a-button type="danger"
                             style="margin-left: 5px"
-                            @click="returnVisible = true">改签</a-button>
+                            @click="returnVisible = true">详情</a-button>
+                  <!-- <a-button type="danger"
+                            style="margin-left: 5px"
+                            @click="returnVisible = true">改签</a-button> -->
                 </div>
               </template>
             </a-table>
@@ -204,12 +196,10 @@
           </div>
           <div class="myMessage"
                v-else-if="currentIndex === 4">
-            <span>通知消息</span>
-            <message />
+            <message :messageList="messageList" />
           </div>
           <div class="mySuggestion"
                v-else-if="currentIndex === 5">
-            <span>投诉与建议</span>
             <suggestion @suggestEvent="suggestEvent" />
           </div>
         </a-layout-content>
@@ -365,6 +355,30 @@ export default {
           width: '15%',
         },
       ],
+      messageList: [
+        // {
+        //   title: '标题啦啦啦',
+        //   userName: 'fu大帅哥',
+        //   content: '叮叮当叮叮当',
+        // },
+        // {
+        //   title: '标题啦啦啦',
+        //   userName: 'fu大帅哥',
+        //   content: '叮叮当叮叮当',
+        // },
+        // {
+        //   title: '标题啦啦啦',
+        //   userName: 'fu大帅哥',
+        //   content: '叮叮当叮叮当',
+        // },
+        // {
+        //   title: '标题啦啦啦',
+        //   userName: 'fu大帅哥',
+        //   content: '叮叮当叮叮当',
+        // },
+      ],
+      user: JSON.parse(window.sessionStorage.getItem('user')),
+      allCityList: [],
     }
   },
   components: {
@@ -397,29 +411,48 @@ export default {
   methods: {
     // 初始化个人信息
     async init () {
-      let infoData = JSON.parse(window.sessionStorage.getItem('user'))
       this.form = {
-        name: infoData.name, //姓名
-        sex: infoData?.sex, //性别
-        idCard: infoData.idCard, //身份证
-        mobile: infoData.mobile, //手机号
+        name: this.user.name, //姓名
+        sex: this.user?.sex, //性别
+        idCard: this.user.idCard, //身份证
+        mobile: this.user.mobile, //手机号
       }
+      await this.getAllCity()
+      this.selectOwnOrder()
     },
     // 提交投诉与建议
-    suggestEvent (params) {
-      console.log('[ params ] >', params)
+    async suggestEvent (form) {
+      console.log('%c [ form ]-425', 'font-size:13px; background:pink; color:#bf2c9f;', form)
       /**
        * 监听到子组件传来的事件后，加一个state来判断是用户发出的还是航空公司发出的，state 1用户 2航空公司
        */
-      this.$message.success('提交成功')
+      const params = {
+        // notice_id, user_id, user_name, title, description, created_time, type, state
+        notice_id: 'NO' + new Date().getTime() + String(Math.round(Math.random() * 10000)),
+        user_id: this.user.id,
+        user_name: this.user.name,
+        title: '',
+        created_time: this.$moment().format("YYYY-MM-DD HH:mm:ss"),
+        state: 1,
+      }
+      if (form.type === 1) {
+        params.type = 4
+        params.description = form.suggest
+      } else if (form.type === 2) {
+        params.type = 3
+        params.description = form.complaint
+      }
+      const { data } = await this.axios.post('/api/Air/addNotice', params)
+      if (data.msg === '请求成功') {
+        this.$message.success('提交成功')
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
     },
     // 更新信息
     updateInfo () {
-      console.log(
-        '[ JSON.parse(window.sessionStorage.getItem("user")).id ] >',
-        JSON.parse(window.sessionStorage.getItem('user')).id
-      )
-      let id = JSON.parse(window.sessionStorage.getItem('user')).id
+      let id = this.user.id
       const params = {
         name: this.form.name, //姓名
         sex: this.form?.sex, //性别
@@ -468,6 +501,9 @@ export default {
         'font-size:13px; background:pink; color:#bf2c9f;',
         this.currentIndex
       )
+      if (this.currentIndex === 4) {
+        this.showNotice()
+      }
     },
     /**
      * 个人中心相关函数
@@ -535,8 +571,78 @@ export default {
     /**
      * 我的订单相关函数
      */
+    // 查询我的订单
+    async selectOwnOrder () {
+      const params = {
+        id: this.user.id
+      }
+      const { data } = await this.axios.post('/api/Air/selectOwnOrder', params)
+      if (data.msg === '请求成功') {
+        this.orderData = data.data.map((it, index) => {
+          return {
+            key: it.order_id,
+            date: this.$moment(it.created_time).format("YYYY-MM-DD HH:mm:ss"),
+            unitPrice: it.price,
+            num: it.count,
+            departure: this.filterCity(it.departure),
+            destination: this.filterCity(it.destination),
+            money: it.total_price,
+            state: this.filterState(it.state),
+          }
+        })
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
     returnTicket () {
       this.$message.success('退票成功')
+    },
+    filterState (val) {
+      switch (val) {
+        case 1:
+          return '订票';
+        case 2:
+          return '退票';
+        default:
+          return '订票';
+      }
+    },
+    filterCity (val) {
+      let find = this.allCityList.find(it => it.city_id === val)
+      if (find) {
+        return find.city
+      }
+    },
+    async getAllCity (id) {
+      const { data } = await this.axios.post('/api/Air/getCity')
+      if (data.msg === '请求成功') {
+        this.allCityList = data.data
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
+    /**
+     * 公告
+     */
+    async showNotice () {
+      const params = {
+        type: 1,
+      }
+      const { data } = await this.axios.post('/api/Air/showNotice', params)
+      if (data.msg === '请求成功') {
+        console.log('[ data.data ] >', data.data)
+        this.messageList = data.data.map((it, index) => {
+          return {
+            title: it.title,
+            sendTime: this.$moment(it.created_time).format("YYYY-MM-DD HH:mm:ss"),
+            content: it.description,
+            user_name: it.user_name
+          }
+        })
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
     },
   },
 }

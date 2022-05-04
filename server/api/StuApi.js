@@ -31,7 +31,7 @@ router.post('/registerUser', (req, res) => {
   const sql = $sql.User.insertUser
   const params = req.body
   console.log('接口：注册用户', params)
-  conn.query(sql, [params.id, params.name, params.password, params.mobile, params.idCard, params.level], function (err, result) {
+  conn.query(sql, [params.id, params.name, params.password, params.mobile, params.idCard, params.level, 0], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -332,8 +332,31 @@ router.post('/searchAirLine', (req, res) => {
     args = params.line_id
     sql = $sql.AirLine.selectAirLine
   }
-  // params.line_id, params.company_id, params.plane_id, params.departure, params.destination, params.departure_time, params.destination_time, params.ticket_count, params.business_cabin_count, params.economy_cabin_count, params.business_cabin_price, params.economy_cabin_price, params.have_ticket_count, params.have_business_cabin_count, params.have_economy_cabin_count
   conn.query(sql, [args], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：查询航班（查询今日、明日、后日的航班）
+router.post('/selectDateLine', (req, res) => {
+  let sql = $sql.AirLine.selectDateLine
+  const params = req.body
+  console.log('接口：查询航班（查询今日、明日、后日的航班）', params)
+  conn.query(sql, [params.destination_time, params.departure_time, params.limit], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -437,8 +460,8 @@ router.post('/insertOrder', (req, res) => {
   const sql = $sql.PayTicket.insertOrder
   const params = req.body
   console.log('接口：向订单表中插入值', params)
-  // order_id, created_time, price, count, departure, destination, total_price, ticket_id
-  conn.query(sql, [params.order_id, params.created_time, params.price, params.count, params.departure, params.destination, params.total_price, params.ticket_id], function (err, result) {
+  // order_id, id, name, created_time, price, count, departure, destination, total_price, ticket_id, state
+  conn.query(sql, [params.order_id, params.id, params.name, params.created_time, params.price, params.count, params.departure, params.destination, params.total_price, params.ticket_id, params.state], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -517,6 +540,30 @@ router.post('/updateTicketUser', (req, res) => {
   console.log('接口：更新用户钱包值', params)
   // money - ? WHERE id
   conn.query(sql, [params.payAmount, params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：查询用户订单记录
+router.post('/selectOwnOrder', (req, res) => {
+  const sql = $sql.Order.selectOwnOrder
+  const params = req.body
+  console.log('接口：查询用户订单记录', params)
+  conn.query(sql, [params.id], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -661,10 +708,57 @@ router.post('/getAirLine', (req, res) => {
 
 
 
+//
+/**
+ * 公告相关接口
+ */
+// 接口：发布公告
+router.post('/addNotice', (req, res) => {
+  const sql = $sql.Notice.insertNotice
+  const params = req.body
+  console.log('接口：发布公告', params)
+  conn.query(sql, [params.notice_id, params.user_id, params.user_name, params.title, params.description, params.created_time, params.type, params.state], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
 
-
-
-
+// 接口：查看公告
+router.post('/showNotice', (req, res) => {
+  const sql = $sql.Notice.selectAllNotice
+  const params = req.body
+  console.log('接口：查看公告')
+  conn.query(sql, [params.type], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
 
 
 

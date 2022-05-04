@@ -1,29 +1,29 @@
 <template>
   <div class="message">
-    <a-tabs default-active-key="notice"
+    <a-tabs default-active-key="personal"
             @change="tabChange">
-      <!-- <a-tab-pane key="personal">
+      <a-tab-pane key="personal">
         <span slot="tab">
           <a-icon type="bell" />
-          通知
+          投诉
         </span>
         <a-spin :spinning="loading"
                 tip="加载中...">
-          <message-list :messageList="messageList"
+          <message-list :messageList="complaintList"
                         :pageSize="pageSize"
                         :total="total"
                         @pageChange="pageChange"
                         @showDetail="showDetail"></message-list>
         </a-spin>
-      </a-tab-pane> -->
+      </a-tab-pane>
       <a-tab-pane key="notice">
         <span slot="tab">
           <a-icon type="notification" />
-          公告
+          建议
         </span>
         <a-spin :spinning="loading"
                 tip="加载中...">
-          <message-list :messageList="messageList"
+          <message-list :messageList="suggestList"
                         :pageSize="pageSize"
                         :revokeShow="revokeShow"
                         :total="total"
@@ -34,21 +34,15 @@
     </a-tabs>
     <a-modal v-model="detailVisible"
              :footer="null">
-      <div slot="title">{{ currentItem.title }}</div>
+      <div slot="title">{{ currentItem.user_name }}</div>
       <div class="detail-contet">{{ currentItem.content }}</div>
     </a-modal>
   </div>
 </template>
 
 <script>
-import messageList from './components/messageList.vue'
+import messageList from './messageList.vue'
 export default {
-  props: {
-    messageList: {
-      type: Array,
-      default: () => []
-    },
-  },
   data () {
     return {
       labelCol: { span: 8 },
@@ -62,23 +56,58 @@ export default {
         complaint: '', // 投诉
       },
       currentItem: {},
+      complaintList: [],
+      suggestList: [],
       pageSize: 15,
       currentPage: 1,
       total: 1,
       detailVisible: false,
       loading: false,
       revokeShow: false,
+      current: 'personal'
     }
   },
   components: {
     messageList,
   },
   mounted () {
+    this.showNotice(3)
     console.log('[ this.$moment() ] >', this.$moment())
   },
   methods: {
     tabChange (val) {
+      this.current = val
       console.log('[ val ] >', val)
+      if (val === 'personal') {
+        this.showNotice(3)
+      } else if (val === 'notice') {
+        this.showNotice(4)
+      }
+    },
+    async showNotice (type) {
+      const params = {
+        type,
+      }
+      const { data } = await this.axios.post('/api/Air/showNotice', params)
+      if (data.msg === '请求成功') {
+        console.log('[ data.data ] >', data.data)
+        let messageList = data.data.map((it, index) => {
+          return {
+            title: it.title,
+            sendTime: this.$moment(it.created_time).format("YYYY-MM-DD HH:mm:ss"),
+            content: it.description,
+            user_name: it.user_name
+          }
+        })
+        if (this.current === 'personal') {
+          this.complaintList = messageList;
+        } else if (this.current === 'notice') {
+          this.suggestList = messageList;
+        }
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
     },
     pageChange (page) {
       this.currentPage = page
@@ -97,5 +126,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import url("../current.less");
+@import url("../../current.less");
 </style>
