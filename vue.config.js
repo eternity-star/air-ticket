@@ -1,18 +1,22 @@
 const path = require("path");
 
 module.exports = {
+  lintOnSave: undefined,
+  outputDir: undefined,
+  assetsDir: undefined,
+  parallel: undefined,
   publicPath: "./",
   productionSourceMap: true,
   runtimeCompiler: true,
   css: {
     loaderOptions: {
       less: {
-          lessOptions:{
-              javascriptEnabled: true,
-          }
+        lessOptions: {
+          javascriptEnabled: true,
+        }
       }
     }
-    
+
   },
   // devServer: {
   //   host: "localhost",
