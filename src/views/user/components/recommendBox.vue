@@ -1,5 +1,6 @@
 <template>
-  <div class="recommend-box">
+  <div class="recommend-box"
+       @click="recommendSearch">
     <a-row>
       <a-col :span="3">
         <div class="index">{{ infoData.index }}</div>
@@ -50,6 +51,11 @@ export default {
     } else {
       this.isShow = true
     }
+  },
+  methods: {
+    recommendSearch () {
+      this.$emit('recommendSearch', this.infoData)
+    },
   },
 }
 </script>

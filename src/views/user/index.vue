@@ -57,8 +57,6 @@ export default {
     searchTicket,
   },
   mounted () {
-    console.log('[ 222 ] >', 222)
-    console.log('[ 111 ] >', 111)
     console.log(
       '[ window.sessionStorage.getItem("user") ] >',
       JSON.parse(window.sessionStorage.getItem('user'))

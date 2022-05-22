@@ -106,25 +106,57 @@
 
       <!-- 返程航班 -->
       <div v-else-if="!detailShow && roundShow && currentIndex === 2">
-        <span>
-          时间：
-          <a-date-picker :allowClear="false"
-                         inputReadOnly
-                         show-time
-                         :disabled-date="disabledDate"
-                         format="YYYY-MM-DD HH:mm:ss"
-                         placeholder="请选择" />
-        </span>
-        <div>
-          <span>筛选条件</span>
+        <div class="mart10">
+          <span style="font-size: 20px; font-weight: bold">筛选条件: </span>
+          <span class="marl10"
+                style="font-size: 16px">
+            时间：
+            <a-date-picker :allowClear="false"
+                           inputReadOnly
+                           show-time
+                           :disabled-date="disabledDate"
+                           format="YYYY-MM-DD HH:mm:ss"
+                           placeholder="请选择" />
+          </span>
+          <span class="marl10">
+            <a-select @change="conditionChange"
+                      :defaultValue="{ key: 0, label: '起飞早-晚' }"
+                      :show-arrow="true"
+                      :dropdownMatchSelectWidth="false"
+                      style="width: 10%"
+                      :default-active-first-option="true"
+                      :not-found-content="null"
+                      labelInValue>
+              <a-select-option v-for="(item, index) in conditionList"
+                               :key="index"
+                               :value="index">
+                {{ item }}
+              </a-select-option>
+            </a-select>
+          </span>
+          <span class="marl10">
+            <a-radio-group v-model="cabin">
+              <a-radio :value="1">经济舱</a-radio>
+              <a-radio :value="2">商务舱</a-radio>
+            </a-radio-group>
+          </span>
+        </div>
+        <div class="mart10">
+          <span style="font-size: 20px">航班({{ infoData.length }})</span>
+          <div v-if="infoData.length">
+            <ticket-list @prebook="prebook"
+                         :cabin="cabin"
+                         :infoData="infoData" />
+          </div>
+          <div v-else
+               style="margin-top: 100px">
+            <a-empty />
+          </div>
         </div>
       </div>
 
       <!-- 确认机票详情 -->
-      <div v-else-if="
-          detailShow &&
-          (currentIndex === 1 || (roundShow && currentIndex === 2))
-        ">
+      <div v-else-if=" detailShow && (currentIndex === 1 || (roundShow && currentIndex === 2)) ">
         <ticket-list :changeShow="true"
                      @change="changeBack"
                      :infoData="haveChooseInfoData" />
@@ -280,9 +312,13 @@ export default {
       capital_id: '',//订票时创建的资金id
       order_id: '',// 订单id
       ticket_id: [],// 机票id
+      companyList: [],
+      goodmsg: true,
+      user: JSON.parse(window.sessionStorage.getItem('user')),
     }
   },
   mounted () {
+    console.log('[ this.user ] >', this.user)
     console.log('[ this.roundShow ] >', this.roundShow)
     this.passengerList = []
     for (let i = 0; i < this.passengerNum; i++) {
@@ -339,6 +375,8 @@ export default {
       if (this.haveCurrentIndex < this.currentIndex) {
         this.haveCurrentIndex = this.currentIndex
       }
+      console.log('[ this.haveChooseInfoData ] >', this.haveChooseInfoData)
+
     },
     onChange (current) {
       console.log('[ current ] >', current)
@@ -389,13 +427,19 @@ export default {
         let CaId1 = 'CA' + new Date().getTime() + index + String(Math.round(Math.random() * 10000))
         let CaId2 = 'CA' + new Date().getTime() + index + "1" + String(Math.round(Math.random() * 10000))
         this.ticket_id.push(id)
-        this.insertTicket(id)
+        this.insertTicket(id, it)
         this.insertCapital(it, CaId1, 1);
         this.insertCapital(it, CaId2, 2);
         this.addMoney(it)
         this.updateLineCount(it.cabin, it)
       })
-      this.insertOrder();
+      await this.insertOrder(this.haveChooseInfoData[0]);
+      if (this.goodmsg) {
+        this.$message.success("订票成功")
+        setTimeout(() => {
+          this.$emit('update:searchShow', false)
+        }, 500)
+      }
     },
     // addMoney
     async addMoney (item) {
@@ -405,8 +449,10 @@ export default {
       }
       const { data } = await this.axios.post('api/Air/addMoney', params)
       if (data.msg === '请求成功') {
+        this.goodmsg = true
         console.log('[ data.data ] >', data.data)
       } else {
+        this.goodmsg = false
         return this.$message.error(data.msg)
       }
     },
@@ -422,19 +468,25 @@ export default {
         order_id: this.order_id,
       }
       if (type === 2) {
-        let name = this.getCompanyUser(item.company_id)
+        await this.getCompanyUser(item.company_id)
         params.user_id = item.company_id
-        params.user_name = name
+        params.user_name = this.companyList[this.companyList.length - 1].name
         params.control_type = 4
       }
       const { data } = await this.axios.post('api/Air/insertCapital', params)
       if (data.msg === '请求成功') {
+        this.goodmsg = true
         console.log('[ data.data ] >', data.data)
       } else {
+        this.goodmsg = false
         return this.$message.error(data.msg)
       }
     },
-    async insertOrder () {
+    async insertOrder (item) {
+      console.log('[ this.user ] >', this.user)
+      console.log('[ this.user ] >', this.user.id)
+      console.log('[ this.user ] >', this.user.name)
+      console.log('[ this.ticket_id ] >', this.ticket_id)
       const params = {
         // order_id, user_id, user_name, created_time, count, departure, destination, total_price, ticket_id, state, line_id, company_id
         order_id: this.order_id,
@@ -446,17 +498,23 @@ export default {
         destination: this.haveChooseInfoData[0].destination,
         total_price: this.totalPrice,
         ticket_id: this.ticket_id.join(','),
+        state: 1,
         line_id: item.line_id,
         company_id: item.company_id
       }
       const { data } = await this.axios.post('api/Air/insertOrder', params)
       if (data.msg === '请求成功') {
+        this.goodmsg = true
         console.log('[ data.data ] >', data.data)
       } else {
+        this.goodmsg = false
         return this.$message.error(data.msg)
       }
     },
     async insertTicket (id, item) {
+      console.log('[ item ] >', item)
+      console.log('[ item ] >', item.totalMoney)
+      console.log('[ this.passengerList ] >', this.passengerList)
       const params = {
         // ticket_id, company_id, plane_id, line_id, user_id, user_name, created_time, departure, destination, departure_time, destination_time, duration, price, cabin_type, passenger_information
         ticket_id: id,
@@ -471,14 +529,17 @@ export default {
         departure_time: item.departure_time,
         destination_time: item.destination_time,
         duration: item.duration,
-        price: item.price,
-        cabin_type: item.cabin_type,
-        passenger_information: item.passenger_information,
+        price: item.totalMoney,
+        cabin_type: item.cabin,
+        passenger_information: JSON.stringify(this.passengerList),
       }
+      console.log('[ params ] >', params)
       const { data } = await this.axios.post('api/Air/insertTicket', params)
       if (data.msg === '请求成功') {
+        this.goodmsg = true
         console.log('[ data.data ] >', data.data)
       } else {
+        this.goodmsg = false
         return this.$message.error(data.msg)
       }
     },
@@ -491,7 +552,9 @@ export default {
       const { data } = await this.axios.post('api/Air/updateTicketUser', params)
       if (data.msg === '请求成功') {
         console.log('[ data.data ] >', data.data)
+        this.goodmsg = true
       } else {
+        this.goodmsg = false
         return this.$message.error(data.msg)
       }
     },
@@ -504,8 +567,10 @@ export default {
       }
       const { data } = await this.axios.post('api/Air/updateLineCount', params)
       if (data.msg === '请求成功') {
+        this.goodmsg = true
         console.log('[ data.data ] >', data.data)
       } else {
+        this.goodmsg = false
         return this.$message.error(data.msg)
       }
     },

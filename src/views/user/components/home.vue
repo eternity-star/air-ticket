@@ -399,6 +399,7 @@
                 <recommend-box v-for="(item, index) in toDayRecommendData"
                                :key="index"
                                :infoData="item"
+                               @recommendSearch="recommendSearch"
                                @click.native="recommendTicketClick(item)" />
               </div>
             </div>
@@ -412,6 +413,7 @@
               <div class="recommend-center">
                 <recommend-box v-for="(item, index) in tomorrowRecommendData"
                                :key="index"
+                               @recommendSearch="recommendSearch"
                                :infoData="item" />
               </div>
             </div>
@@ -425,6 +427,7 @@
               <div class="recommend-center">
                 <recommend-box v-for="(item, index) in afterTomorrowRecommendData"
                                :key="index"
+                               @recommendSearch="recommendSearch"
                                :infoData="item" />
               </div>
             </div>
@@ -463,24 +466,25 @@
                 </div>
               </div>
             </div>
-            <div class="discount-bottom">
+            <div class="discount-bottom"
+                 v-if="list.length">
               <!-- <recommend-box style="width: 35%; height: 30%"/> -->
               <div class="plane-ticket"
                    v-for="(item, index) in list"
                    :key="index">
-                <a-row>
+                <a-row @click.native="recommendSearch(item)">
                   <a-col :span="16">
                     <div class="toAddress">
-                      <p>深圳
-                        <a-icon type="swap-right" />广州
+                      <p>{{item.departure}}
+                        <a-icon type="swap-right" />{{item.destination}}
                       </p>
-                      <p style="#999999">2022-02-03 周四</p>
+                      <p style="#999999">{{item.departure_time}}</p>
                     </div>
                   </a-col>
                   <a-col :span="8">
                     <div class="toMoney">
-                      <p>￥<span>74.5</span>起</p>
-                      <p style="#999999">1.8折</p>
+                      <p>￥<span>{{item.money}}</span>起</p>
+                      <!-- <p style="#999999">1.8折</p> -->
                     </div>
                   </a-col>
                 </a-row>
@@ -574,24 +578,28 @@ export default {
       ], //推荐航班
       companyList: [
         {
+          company_id: "CO001",
           title: '南方航空',
           imgUrl: require('@/assets/image/南方航空.png'),
           description:
             '中国南方航空股份有限公司是中国运输飞机最多、航线网络最发达、年客运量最大的航空公司。目前，南航经营包括波音787、777、747等，空客380、330、320等在内的客货运输机500架，机队规模跃居亚洲第一，在IATA全球240个成员航空公司中排名第三。形成了以广州、北京为中心枢纽，密集覆盖国内150多个通航点，全面辐射亚洲、链接欧洲、美洲和大洋洲，每天有1930个航班飞至全球35个国家和地区，193个目的地，航线网络通达全球1000个目的地，连接187个国家和地区，到达全球各主要城市。2011年，南航被国际航空服务认证权威机构Skytrax 授予“Skytrax四星级航空公司”称号，2012年9月28日，南航荣获中国民航局颁发的飞行安全最高奖“飞行安全钻石奖”，成为国内安全星级最高、安全业绩最好的航空公司。',
         },
         {
+          company_id: "CO002",
           title: '东方航空',
           imgUrl: require('@/assets/image/东方航空.png'),
           description:
             '中国东方航空股份有限公司（以下简称东航）总部位于上海，是中国三大航空公司之一，前身可追溯到1957年1月原民航上海管理处成立的第一支飞行中队，1997年在纽约、香港、上海三地挂牌上市，运营着超过700架客货运飞机组成的现代化机队，是全球最年轻的机队之一，并拥有中国规模最大的空中Wi-Fi机队，在国内率先推行手机等便携式设备的机上使用。作为天合联盟成员，东航的航线网络通达全球175个国家、1150个目的地，每年为全球超过1.2亿旅客提供服务，旅客运输量位列全球前十。“东方万里行”常旅客可享受联盟19家航空公司的会员权益及全球超过760间机场贵宾室。近年来，东航提出“打造世界一流，建设幸福东航”目标，相继荣获中国民航飞行安全最高奖——“飞行安全钻石奖”，连续8年被世界著名品牌评级机构（WPP）评为中国品牌前50强，蝉联BrandFinance全球品牌价值500强，还先后被多个权威机构评选为上市公司最高奖项“金鼎奖”、“中国证券金紫荆奖”、“世界进步最快航空公司奖”、“亚洲最受欢迎航空公司”等奖项，并在社会责任领域获得一系列重要荣誉。“世界品位，东方魅力”，东航以“精准、精致、精细”的服务为全球旅客不断创造精彩旅行体验。',
         },
         {
+          company_id: "CO003",
           title: '深圳航空',
           imgUrl: require('@/assets/image/深圳航空.png'),
           description:
             '深圳航空有限责任公司于1992年11月成立，1993年9月17日正式开航。股东为中国国际航空股份有限公司、深国际全程物流(深圳)有限公司，主要经营航空客、货、邮运输业务。截止2012年11月,深航共拥有波音747、737，空客320、319等各类型客货机逾百架，经营国内国际航线135条。2010年8月，深航成为第２６届世界大学生夏季运动会航空客运类唯一全球合作伙伴。作为深圳大运会全球唯一航空承运企业，深航为本届大运会量身打造的四架“大运号”飞机将承载着大运精神，为大运会提供“火炬传递”和人员运输等优质航空服务，将大运精神带至每一位关注它的宾客心中。',
         },
         {
+          company_id: "CO004",
           title: '西部航空',
           imgUrl: require('@/assets/image/西部航空.png'),
           description:
@@ -616,6 +624,7 @@ export default {
     this.companyDescription = this.companyList[0].description
     this.getProvince();
     await this.getAllCity();
+    this.selectRecommendAir(this.companyList[0].company_id)
     this.getRecommendData(1);
     this.getRecommendData(2);
     this.getRecommendData(3);
@@ -656,8 +665,12 @@ export default {
             index: index + 1,
             departure: this.filterCity(it.departure),
             destination: this.filterCity(it.destination),
+            departure_id: it.departure,
+            destination_id: it.destination,
+            departure_time_true: it.departure_time,
+            destination_time_true: it.destination_time,
             money: it.economy_cabin_price,
-            departure_time: this.$moment(it.departure_time0).format("MM-DD"),
+            departure_time: this.$moment(it.departure_time).format("MM-DD"),
             destination_time: this.$moment(it.destination_time).format("MM-DD"),
           }
         })
@@ -822,6 +835,25 @@ export default {
         return
       }
     },
+    async recommendSearch (info) {
+      // params.destination_time, params.departure_time, params.passengerNum, params.departure, params.destination,
+      const params = {
+        passengerNum: 1,
+        departure: info.departure_id,
+        destination: info.destination_id,
+        departure_time: this.$moment(info.departure_time_true).format("YYYY-MM-DD HH:mm:ss"),
+        destination_time: this.$moment(info.destination_time_true).format("YYYY-MM-DD HH:mm:ss")
+      }
+      const { data } = await this.axios.post('/api/Air/getAirLine', params)
+      console.log('%c [ data ]-633', 'font-size:13px; background:pink; color:#bf2c9f;', data)
+      if (data.msg === '请求成功') {
+        this.$emit("sendAirLine", data.data);
+        this.$emit('ticketSearch', 1, 1)
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
+    },
     getCurrentStyle (current, today) {
       const style = {}
       if (current.date() === 1) {
@@ -868,10 +900,42 @@ export default {
       this.oldPassengers = this.form.passengers
       this.passengersVisible = true
     },
+    async selectRecommendAir (id) {
+      const params = {
+        company_id: id,
+        departure_time: this.$moment().format("YYYY-MM-DD HH:mm:ss"),
+      }
+      const { data } = await this.axios.post('/api/Air/selectRecommendAir', params)
+      console.log('%c [ data ]-633', 'font-size:13px; background:pink; color:#bf2c9f;', data)
+      if (data.msg === '请求成功') {
+        console.log('[ data.data ] >', data.data)
+        let infoData = data.data.map((it, index) => {
+          return {
+            index: index + 1,
+            departure: this.filterCity(it.departure),
+            destination: this.filterCity(it.destination),
+            departure_id: it.departure,
+            destination_id: it.destination,
+            departure_time_true: it.departure_time,
+            destination_time_true: it.destination_time,
+            money: it.economy_cabin_price,
+            departure_time: this.$moment(it.departure_time).format("YYYY-MM-DD"),
+            destination_time: this.$moment(it.destination_time).format("YYYY-MM-DD"),
+          }
+        })
+        infoData = infoData.slice(0, 8)
+        this.list = infoData
+        console.log('[ infoData ] >', infoData)
+      } else {
+        this.$message.error(data.msg)
+        return
+      }
+    },
     companyClick (item, index) {
       console.log('[ item ] >', item)
       this.isCurrent = index
       this.companyDescription = item.description
+      this.selectRecommendAir(item.company_id)
     },
 
     /**

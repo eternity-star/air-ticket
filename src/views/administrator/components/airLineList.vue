@@ -26,7 +26,8 @@
              destroyOnClose
              @ok="returnVisible = false"
              @cancel="returnVisible = false">
-      <airLineCreate :id="currentId" />
+      <airLineCreate :id="currentId"
+                     :isAdmin="true" />
     </a-modal>
   </div>
 </template>

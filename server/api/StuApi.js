@@ -253,6 +253,30 @@ router.post('/getCompanyUser', (req, res) => {
   })
 })
 
+// 接口：更新航空公司信息
+router.post('/updateCompanyUser', (req, res) => {
+  const sql = $sql.CompanyUser.updateCompanyUser
+  const params = req.body
+  console.log('接口：更新航空公司信息', params)
+  // UPDATE company SET name = ?, address = ?, idCard = ?, mobile = ?, description = ? WHERE company_id = ?
+  conn.query(sql, [params.name, params.address, params.idCard, params.mobile, params.description, params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
 
 
 // 接口：查询航空公司所属飞机
@@ -356,6 +380,30 @@ router.post('/searchAirLine', (req, res) => {
     sql = $sql.AirLine.selectAirLine
   }
   conn.query(sql, [args], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：查询航班
+router.post('/selectRecommendAir', (req, res) => {
+  let sql = $sql.AirLine.selectRecommendAir
+  const params = req.body
+  console.log('接口：查询航班', params)
+  conn.query(sql, [params.company_id, params.departure_time], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -534,7 +582,7 @@ router.post('/insertOrder', (req, res) => {
   const params = req.body
   console.log('接口：向订单表中插入值', params)
   // order_id, user_id, user_name, created_time, count, departure, destination, total_price, ticket_id, state, line_id, company_id
-  conn.query(sql, [params.order_id, params.id, params.name, params.created_time, params.count, params.departure, params.destination, params.total_price, params.ticket_id, params.state, params.line_id, params.company_id], function (err, result) {
+  conn.query(sql, [params.order_id, params.user_id, params.user_name, params.created_time, params.count, params.departure, params.destination, params.total_price, params.ticket_id, params.state, params.line_id, params.company_id], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -559,7 +607,7 @@ router.post('/insertTicket', (req, res) => {
   const params = req.body
   console.log('接口：向机票表中插入值', params)
   // ticket_id, company_id, plane_id, line_id, user_id, user_name, created_time, departure, destination, departure_time, destination_time, duration, price, cabin_type, passenger_information
-  conn.query(sql, [params.ticket_id, params.company_id, params.plane_id, params.line_id, params.user_id, params.user_name, params.created_time, params.departure, params.destination, params.departure_time, params.destination_time, params.duration, , params.price, params.cabin_type, params.passenger_information], function (err, result) {
+  conn.query(sql, [params.ticket_id, params.company_id, params.plane_id, params.line_id, params.user_id, params.user_name, params.created_time, params.departure, params.destination, params.departure_time, params.destination_time, params.duration, params.passenger_information, params.price, params.cabin_type], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)
@@ -658,6 +706,54 @@ router.post('/selectOwnOrder', (req, res) => {
 // 接口：查询公司下用户订单记录
 router.post('/selectOrder', (req, res) => {
   const sql = $sql.Order.selectOrder
+  const params = req.body
+  console.log('接口：查询用户订单记录', params)
+  conn.query(sql, [params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：查询用户订单记录
+router.post('/selectOwnTicket', (req, res) => {
+  const sql = $sql.Order.selectOwnTicket
+  const params = req.body
+  console.log('接口：查询用户订单记录', params)
+  conn.query(sql, [params.id], function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
+// 接口：查询公司下用户订单记录
+router.post('/selectTicket', (req, res) => {
+  const sql = $sql.Order.selectTicket
   const params = req.body
   console.log('接口：查询用户订单记录', params)
   conn.query(sql, [params.id], function (err, result) {

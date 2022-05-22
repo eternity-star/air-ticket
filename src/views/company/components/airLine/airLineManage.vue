@@ -6,14 +6,14 @@
       <template slot="operation"
                 slot-scope="text, record">
         <div>
-          <a-popconfirm title="确定取消航班吗？"
+          <!-- <a-popconfirm title="确定取消航班吗？"
                         ok-text="确定"
                         cancel-text="取消"
                         @confirm="contorlAction(record, 1)">
             <a-button v-if="$moment() < $moment(record.departure_time)"
                       type="danger"
                       style="margin-right: 5px">取消</a-button>
-          </a-popconfirm>
+          </a-popconfirm> -->
           <a-button type="primary"
                     style="margin-left: 5px"
                     @click="contorlAction(record, 2)">详情</a-button>

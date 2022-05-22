@@ -197,6 +197,7 @@ export default {
             operation: this.filterType(parseInt(it.control_type))
           }
         })
+        this.balanceData.reverse()
       } else {
         this.$message.error(data.msg)
       }

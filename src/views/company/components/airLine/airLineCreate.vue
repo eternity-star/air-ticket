@@ -324,6 +324,10 @@ export default {
     id: {
       type: String,
       default: ''
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -411,7 +415,9 @@ export default {
     console.log('[ this.$moment().subtract(1, "days") ] >', this.$moment().subtract(1, 'days').endOf('day'))
   },
   mounted () {
-    this.getPlaneList()
+    if (!this.isAdmin) {
+      this.getPlaneList(this.user.own_plane)
+    }
     this.getProvince()
     if (this.id) {
       this.initForm()
@@ -423,9 +429,9 @@ export default {
       console.log('[ val ] >', val)
       console.log('[ typeof(val) ] >', typeof (val))
     },
-    async getPlaneList () {
+    async getPlaneList (ids) {
       const params = {
-        ids: this.user.own_plane
+        ids
       }
       console.log('[ this.user.own_plane ] >', this.user.own_plane)
       this.axios.post('/api/Air/getPlaneList', params).then(({ data }) => {
@@ -696,6 +702,9 @@ export default {
           have_ticket_count: infoData.have_ticket_count,//已订机票总数量
           have_business_cabin_count: infoData.have_business_cabin_count,//已订商务舱数量
           have_economy_cabin_count: infoData.have_economy_cabin_count,//已订经济舱数量
+        }
+        if (this.isAdmin) {
+          this.getPlaneList(infoData.plane_id)
         }
       } else {
         this.$message.error(data.msg)

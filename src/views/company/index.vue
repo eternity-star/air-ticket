@@ -114,14 +114,14 @@
                          placeholder="请输入"
                          style="width: 75%" />
               </a-form-model-item>
-              <a-form-model-item prop="mobile"
+              <!-- <a-form-model-item prop="mobile"
                                  label="法定责任人">
-                <a-input v-model="infoForm.mobile"
+                <a-input v-model="infoForm.legalPerson"
                          :disabled="disabled"
                          placeholder="请输入"
                          @change="test"
                          style="width: 75%" />
-              </a-form-model-item>
+              </a-form-model-item> -->
               <a-form-model-item prop="mobile"
                                  label="法定责任人身份证号">
                 <a-input v-model="infoForm.idCard"
@@ -158,10 +158,7 @@
               <a-button type="primary"
                         shape="round"
                         style="margin-left: 36%"
-                        @click="
-                  disabled = true
-                  $message.success('修改成功')
-                ">保存</a-button>
+                        @click="updateInfo">保存</a-button>
               <a-button type="primary"
                         shape="round"
                         style="margin-left: 5%"
@@ -216,19 +213,99 @@
                 <a-icon type="laptop"
                         style="margin-right: 10px" />{{text}}
               </span> -->
-              <!-- <template slot="operation"
+              <template slot="operation"
                         slot-scope="text, record">
                 <div>
                   <a-button type="danger"
                             style="margin-left: 5px"
-                            @click="returnVisible = true">详情</a-button>
+                            @click="returnVisible = true; currentRecord = record">详情</a-button>
                 </div>
-              </template> -->
+              </template>
             </a-table>
             <a-modal title="机票信息"
                      :visible="returnVisible"
                      @ok="returnVisible = false"
+                     width="80%"
+                     destroyOnClose
                      @cancel="returnVisible = false">
+              <a-form-model ref="ticketForm"
+                            :label-col="labelCol"
+                            :wrapper-col="wrapperCol">
+                <a-row :gutter="10">
+                  <a-col :span="12">
+                    <a-form-model-item label="航班编号">
+                      <span class="spanClass">{{currentRecord.line_id}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-form-model-item label="订票时间">
+                      <span class="spanClass">{{currentRecord.date}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="12">
+                    <a-form-model-item label="操作人">
+                      <span class="spanClass">{{currentRecord.user_name}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="12">
+                    <a-form-model-item label="舱位等级">
+                      <span class="spanClass">{{currentRecord.cabin_type}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="12">
+                    <a-form-model-item label="出发地">
+                      <span class="spanClass">{{currentRecord.departure}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-form-model-item label="目的地">
+                      <span class="spanClass">{{currentRecord.destination}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="12">
+                    <a-form-model-item label="订票数">
+                      <span class="spanClass">{{currentRecord.num}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-form-model-item label="总金额">
+                      <span class="spanClass">{{currentRecord.money}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="24"
+                         :push="1">
+                    <p style="font-size: 16px">乘客信息:</p>
+                    <a-row v-for="(item, index) in currentRecord.passenger_information"
+                           :key="index">
+                      <a-col :span="6">
+                        <a-form-model-item label="姓名">
+                          <span class="spanClass">{{item.name}}</span>
+                        </a-form-model-item>
+                      </a-col>
+                      <a-col :span="6">
+                        <a-form-model-item label="身份证">
+                          <span class="spanClass">{{item.idCard}}</span>
+                        </a-form-model-item>
+                      </a-col>
+                      <a-col :span="6">
+                        <a-form-model-item label="手机号">
+                          <span class="spanClass">{{item.mobile}}</span>
+                        </a-form-model-item>
+                      </a-col>
+                    </a-row>
+                  </a-col>
+                </a-row>
+              </a-form-model>
             </a-modal>
           </div>
           <div class="myMessage"
@@ -349,6 +426,7 @@ export default {
       payVisible: false,
       passwordVisible: false,
       messageList: [],
+      currentRecord: {},
       balanceData: [
         {
           key: '1',
@@ -497,6 +575,15 @@ export default {
           scopedSlots: { customRender: 'money' },
           width: '10%',
         },
+        {
+          title: '购买人',
+          dataIndex: 'user_name',
+          key: 'user_name',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'user_name' },
+          width: '10%',
+        },
         // {
         //   title: '订单状态',
         //   dataIndex: 'state',
@@ -506,16 +593,17 @@ export default {
         //   scopedSlots: { customRender: 'state' },
         //   width: '10%',
         // },
-        // {
-        //   title: '操作',
-        //   dataIndex: 'operation',
-        //   key: 'operation',
-        //   ellipsis: true,
-        //   align: 'center',
-        //   scopedSlots: { customRender: 'operation' },
-        //   width: '15%',
-        // },
+        {
+          title: '操作',
+          dataIndex: 'operation',
+          key: 'operation',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'operation' },
+          width: '15%',
+        },
       ],
+      returnVisible: false,
       user: JSON.parse(window.sessionStorage.getItem('user')),
     }
   },
@@ -564,7 +652,8 @@ export default {
       return this.form.ticket_count - this.form.business_cabin_count
     },
   },
-  mounted () {
+  async mounted () {
+    await this.getAllCity()
     console.log('[ randomWord ] >', randomWord(true, 8, 8))
     console.log(
       '[ new Date().getTime() + String(Math.round(Math.random() * 10000)) ] >',
@@ -648,15 +737,94 @@ export default {
       this.new_password = this.new_password.trim() //新密码
       this.confirm_password = this.confirm_password.trim() //确认密码
     },
+    // 更新航空公司信息
+    // params.name, params.address, params.idCard, params.mobile, params.description, params.id
+    // 更新信息
+    updateInfo () {
+      let type = true
+      if (!this.infoForm.name) {
+        type = false
+      } else if (!this.infoForm.address) {
+        type = false
+      } else if (!this.infoForm.idCard) {
+        type = false
+      } else if (!this.infoForm.mobile) {
+        type = false
+      } else if (!this.infoForm.description) {
+        type = false
+      }
+      console.log('[ type ] >', type)
+      if (!type) {
+        this.$message.error('请填写完整')
+        return
+      }
+      let id = this.user.company_id
+      const params = {
+        name: this.infoForm.name, //姓名
+        address: this.infoForm.address, //性别
+        idCard: this.infoForm.idCard, //身份证
+        mobile: this.infoForm.mobile, //手机号
+        description: this.infoForm.description, //描述
+        id,
+      }
+      this.axios.post('/api/Air/updateCompanyUser', params).then(({ data }) => {
+        console.log('[ data ] >', data)
+        if (data.msg === '请求成功') {
+          this.axios.post('/api/Air/getCompanyUser', { id: this.user.company_id }).then(({ data }) => {
+            if (data.msg === '请求成功') {
+              window.sessionStorage.setItem(
+                'user',
+                JSON.stringify(data.data[0])
+              )
+              window.sessionStorage.setItem('user', JSON.stringify(data.data[0]))
+              this.user = JSON.parse(window.sessionStorage.getItem('user'))
+              this.disabled = true;
+              this.$message.success('更新成功')
+            } else {
+              this.$message.error('已被使用，请重新填写')
+            }
+          })
+          // this.$message.success('更新成功')
+        } else {
+          this.$message.error(data.msg)
+        }
+      })
+    },
+    async selectOwnOrder () {
+      const params = {
+        id: this.user.company_id
+      }
+      const { data } = await this.axios.post('/api/Air/selectTicket', params)
+      if (data.msg === '请求成功') {
+        this.orderData = data.data.map((it, index) => {
+          return {
+            key: it.ticket_id,
+            date: this.$moment(it.created_time).format("YYYY-MM-DD HH:mm:ss"),
+            // unitPrice: it.price,
+            company_id: it.company_id,
+            plane_id: it.plane_id,
+            line_id: it.line_id,
+            user_id: it.user_id,
+            user_name: it.user_name,
+            num: JSON.parse(it.passenger_information).length,
+            passenger_information: JSON.parse(it.passenger_information),
+            cabin_type: parseInt(it.cabin_type) === 1 ? '经济舱' : '商务舱',
+            departure: this.filterCity(it.departure),
+            destination: this.filterCity(it.destination),
+            money: it.price,
+          }
+        })
+        this.orderData.reverse()
+      } else {
+        this.$message.error(data.msg)
+      }
+    },
     changeCurrentIndex (val) {
       this.currentIndex = val
       this.defaultIndex = [`${val}`]
     },
     passwordBlur (val) {
       console.log('[ val ] >', val)
-    },
-    updateInfo () {
-      console.log('[ this.infoForm ] >', this.infoForm)
     },
     tripChange (val) {
       console.log('[ val ] >', val)
@@ -688,9 +856,26 @@ export default {
       if (this.currentIndex === 7) {
         this.showNotice()
       }
+      if (this.currentIndex === 5) {
+        this.selectOwnOrder()
+      }
     },
     disabledDate (time) {
       return time < this.$moment().subtract(1, 'days')
+    },
+    filterCity (val) {
+      let find = this.allCityList.find(it => it.city_id === val)
+      if (find) {
+        return find.city
+      }
+    },
+    async getAllCity (id) {
+      const { data } = await this.axios.post('/api/Air/getCity')
+      if (data.msg === '请求成功') {
+        this.allCityList = data.data
+      } else {
+        this.$message.error(data.msg)
+      }
     },
     /**
      * 公告
@@ -740,6 +925,7 @@ export default {
             user_name: it.user_name
           }
         })
+        this.messageList.reverse()
       } else {
         this.$message.error(data.msg)
         return

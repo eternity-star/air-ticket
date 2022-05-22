@@ -199,6 +199,7 @@ export default {
             operation: this.filterType(parseInt(it.control_type))
           }
         })
+        this.balanceData.reverse()
       } else {
         this.$message.error(data.msg)
       }
@@ -206,6 +207,10 @@ export default {
     async recharge () {
       if (this.payAmount > this.user.money) {
         this.$message.error("提现金额大于用户的余额，请重新输入")
+        return
+      }
+      if (this.payAmount === 0) {
+        this.$message.error("提现金额不能为0")
         return
       }
       Promise.all([this.doRecharge(), this.doInsertCapital()])

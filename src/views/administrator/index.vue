@@ -526,7 +526,7 @@ export default {
   },
   async mounted () {
     await this.selectAllUser()
-    await this.selectAllCompany()
+    // await this.selectAllCompany()
     this.moneyData = [...this.userMoney, ...this.companyMoney]
     console.log('%c [ this.moneyData ]-404', 'font-size:13px; background:pink; color:#bf2c9f;', this.moneyData)
     await this.getAllCity()
@@ -556,6 +556,7 @@ export default {
             state: this.filterOrderState(it.state),
           }
         })
+        this.orderData.reverse()
       } else {
         this.$message.error(data.msg)
       }
@@ -664,6 +665,7 @@ export default {
             user_name: it.user_name
           }
         })
+        this.messageList.reverse()
       } else {
         this.$message.error(data.msg)
         return

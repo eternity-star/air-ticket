@@ -99,6 +99,7 @@ export default {
             user_name: it.user_name
           }
         })
+        messageList.reverse()
         if (this.current === 'personal') {
           this.complaintList = messageList;
         } else if (this.current === 'notice') {
