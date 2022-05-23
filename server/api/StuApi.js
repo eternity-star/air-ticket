@@ -427,7 +427,7 @@ router.post('/selectDateLine', (req, res) => {
   let sql = $sql.AirLine.selectDateLine
   const params = req.body
   console.log('接口：查询航班（查询今日、明日、后日的航班）', params)
-  conn.query(sql, [params.destination_time, params.departure_time, params.limit], function (err, result) {
+  conn.query(sql, [params.destination_time, params.departure_time], function (err, result) {
     let returnData = {}
     if (err) {
       console.log(err)

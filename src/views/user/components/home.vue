@@ -648,7 +648,7 @@ export default {
       const params = {
         departure_time: this.$moment().format("YYYY-MM-DD HH:mm:ss"),
         destination_time: this.$moment().format("YYYY-MM-DD") + ' ' + '23:59:59',
-        limit,
+        // limit,
       }
       if (type === 2) {
         params.departure_time = this.$moment().add(1, 'day').format("YYYY-MM-DD") + ' ' + '00:00:00'
@@ -678,8 +678,10 @@ export default {
         })
         infoData = infoData.filter(it => {
           let shengyu = parseInt(it.ticket_count) - parseInt(it.have_ticket_count)
-          return this.form.passengerNum <= shengyu
+          console.log('%c [ shengyu ]-681', 'font-size:13px; background:pink; color:#bf2c9f;', shengyu)
+          return 1 <= shengyu
         })
+        infoData = infoData.slice(0, 5)
         if (type === 1) {
           this.toDayRecommendData = infoData
         } else if (type === 2) {

@@ -42,7 +42,7 @@ const sqlMap = {
     selectAirLine: 'SELECT * FROM air_line where line_id = ?',
     updateAirLine: 'UPDATE air_line SET is_show = 0 WHERE line_id = ?',
     selectLine: 'SELECT * from air_line WHERE destination_time <= ? and ? <= departure_time and (ticket_count -have_ticket_count) >= ? and departure = ? and destination = ?',
-    selectDateLine: 'SELECT * FROM `air_line` WHERE destination_time < ? and departure_time > ? LIMIT ?',
+    selectDateLine: 'SELECT * FROM `air_line` WHERE destination_time < ? and departure_time > ?',
   },
   Capital: {
     selectCapital: 'SELECT * FROM air_capital WHERE user_id = ?',
