@@ -57,7 +57,7 @@
       <div v-if="!detailShow && currentIndex === 1">
         <div class="mart10">
           <span style="font-size: 20px; font-weight: bold">筛选条件: </span>
-          <span class="marl10"
+          <!-- <span class="marl10"
                 style="font-size: 16px">
             时间：
             <a-date-picker :allowClear="false"
@@ -82,7 +82,7 @@
                 {{ item }}
               </a-select-option>
             </a-select>
-          </span>
+          </span> -->
           <span class="marl10">
             <a-radio-group v-model="cabin">
               <a-radio :value="1">经济舱</a-radio>
@@ -419,7 +419,10 @@ export default {
         this.totalPrice += price
       })
       console.log('[ this.haveChooseInfoData ] >', this.haveChooseInfoData)
-
+      if (this.user.money < this.totalPrice) {
+        this.$message.error("您的余额不足，请及时充值")
+        return
+      }
       this.updateTicketUser();
       this.ticket_id = []
       await this.haveChooseInfoData.forEach((it, index) => {
@@ -434,12 +437,21 @@ export default {
         this.updateLineCount(it.cabin, it)
       })
       await this.insertOrder(this.haveChooseInfoData[0]);
-      if (this.goodmsg) {
-        this.$message.success("订票成功")
-        setTimeout(() => {
-          this.$emit('update:searchShow', false)
-        }, 500)
-      }
+      this.axios.post('/api/Air/getUser', { id: this.user.id }).then(({ data }) => {
+        if (data.msg === '请求成功') {
+          window.sessionStorage.setItem('user', JSON.stringify(data.data[0]))
+          this.user = JSON.parse(window.sessionStorage.getItem('user'))
+
+          if (this.goodmsg) {
+            this.$message.success("订票成功")
+            setTimeout(() => {
+              this.$emit('update:searchShow', false)
+            }, 500)
+          }
+        } else {
+          this.$message.error(data.msg)
+        }
+      })
     },
     // addMoney
     async addMoney (item) {

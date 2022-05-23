@@ -51,10 +51,10 @@
                                  @change="tripChange">
                     <a-radio :value="1"
                              style="font-size: 14px">单程</a-radio>
-                    <a-radio :value="2"
+                    <!-- <a-radio :value="2"
                              style="font-size: 14px">往返</a-radio>
                     <a-radio :value="3"
-                             style="font-size: 14px">多行程</a-radio>
+                             style="font-size: 14px">多行程</a-radio> -->
                   </a-radio-group>
                 </a-form-model-item>
               </a-col>
@@ -399,8 +399,8 @@
                 <recommend-box v-for="(item, index) in toDayRecommendData"
                                :key="index"
                                :infoData="item"
-                               @recommendSearch="recommendSearch"
-                               @click.native="recommendTicketClick(item)" />
+                               @recommendSearch="recommendSearch" />
+                <!-- @click.native="recommendTicketClick(item)"  -->
               </div>
             </div>
             <div class="recommend-self recommend-second">
@@ -646,7 +646,7 @@ export default {
        * 只查5条出来
        */
       const params = {
-        departure_time: this.$moment().format("YYYY-MM-DD") + ' ' + '00:00:00',
+        departure_time: this.$moment().format("YYYY-MM-DD HH:mm:ss"),
         destination_time: this.$moment().format("YYYY-MM-DD") + ' ' + '23:59:59',
         limit,
       }
@@ -672,7 +672,13 @@ export default {
             money: it.economy_cabin_price,
             departure_time: this.$moment(it.departure_time).format("MM-DD"),
             destination_time: this.$moment(it.destination_time).format("MM-DD"),
+            ticket_count: it.ticket_count,
+            have_ticket_count: it.have_ticket_count,
           }
+        })
+        infoData = infoData.filter(it => {
+          let shengyu = parseInt(it.ticket_count) - parseInt(it.have_ticket_count)
+          return this.form.passengerNum <= shengyu
         })
         if (type === 1) {
           this.toDayRecommendData = infoData
@@ -822,12 +828,16 @@ export default {
         destination: this.form.trip_end[1],
       }
       if (this.form.trip === 1) {
-        params.departure_time = this.$moment(this.form.plan_time).format("YYYY-MM-DD") + ' ' + '00:00:00'
+        params.departure_time = this.$moment(this.form.plan_time).format("YYYY-MM-DD HH:mm:ss")
         params.destination_time = this.$moment(this.form.plan_time).format("YYYY-MM-DD") + ' ' + '23:59:59'
       }
       const { data } = await this.axios.post('/api/Air/getAirLine', params)
       console.log('%c [ data ]-633', 'font-size:13px; background:pink; color:#bf2c9f;', data)
       if (data.msg === '请求成功') {
+        data.data = data.data.filter(it => {
+          let shengyu = it.ticket_count - it.have_ticket_count
+          return this.form.passengerNum <= shengyu
+        })
         this.$emit("sendAirLine", data.data);
         this.$emit('ticketSearch', this.form.trip, this.form.passengerNum)
       } else {

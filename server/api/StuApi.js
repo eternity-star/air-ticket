@@ -775,6 +775,30 @@ router.post('/selectTicket', (req, res) => {
   })
 })
 
+// 接口：查询全部订单记录
+router.post('/selectAllTicket', (req, res) => {
+  const sql = $sql.Order.selectAllTicket
+  const params = req.body
+  console.log('接口：查询全部订单记录', params)
+  conn.query(sql, function (err, result) {
+    let returnData = {}
+    if (err) {
+      console.log(err)
+      returnData = {
+        data: err,
+        msg: '请求错误'
+      }
+    }
+    if (result) {
+      returnData = {
+        data: result,
+        msg: '请求成功'
+      }
+    }
+    jsonWrite(res, returnData)
+  })
+})
+
 // 接口：查询所有订单记录
 router.post('/selectAllOrder', (req, res) => {
   const sql = $sql.Quanxian.selectAllOrder

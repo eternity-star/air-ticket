@@ -80,7 +80,7 @@ export default {
       this.currentIndex = type
       this.searchShow = false
       if (type === 1) {
-        this.$message.loading('哈利波特骑着扫帚飞')
+        // this.$message.loading('哈利波特骑着扫帚飞')
       } else if (type === 5) {
         this.$message.error('退出登录')
         window.sessionStorage.clear()
@@ -91,13 +91,13 @@ export default {
         this.$nextTick(() => {
           this.hackReset = true
         })
-        if (type === 2) {
-          this.$message.info('唱日落')
-        } else if (type === 3) {
-          this.$message.success('冲哈哈')
-        } else {
-          this.$message.warning('唱日出')
-        }
+        // if (type === 2) {
+        //   this.$message.info('唱日落')
+        // } else if (type === 3) {
+        //   this.$message.success('冲哈哈')
+        // } else {
+        //   this.$message.warning('唱日出')
+        // }
       }
     },
     // 首页

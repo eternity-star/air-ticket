@@ -225,6 +225,18 @@
                 </a-row>
                 <a-row :gutter="10">
                   <a-col :span="12">
+                    <a-form-model-item label="出发时间">
+                      <span class="spanClass">{{currentRecord.departure_time}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-form-model-item label="到达时间">
+                      <span class="spanClass">{{currentRecord.destination_time}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="12">
                     <a-form-model-item label="出发地">
                       <span class="spanClass">{{currentRecord.departure}}</span>
                     </a-form-model-item>
@@ -674,6 +686,8 @@ export default {
             cabin_type: parseInt(it.cabin_type) === 1 ? '经济舱' : '商务舱',
             departure: this.filterCity(it.departure),
             destination: this.filterCity(it.destination),
+            departure_time: this.$moment(it.departure_time).format("YYYY-MM-DD HH:mm:ss"),
+            destination_time: this.$moment(it.destination_time).format("YYYY-MM-DD HH:mm:ss"),
             money: it.price,
             state: this.filterState(1),
           }

@@ -128,6 +128,12 @@
           </div>
           <div class="myBalance"
                v-else-if="currentIndex === 3">
+            <a-radio-group v-model="weizhi"
+                           @change="weizhiChange"
+                           class="marb10">
+              <a-radio :value="1">用户</a-radio>
+              <a-radio :value="2">航空公司</a-radio>
+            </a-radio-group>
             <div class="my-balance-bottom">
               <a-table :columns="moneyColumns"
                        :data-source="moneyData"
@@ -180,31 +186,123 @@
                 <a-icon type="laptop"
                         style="margin-right: 10px" />{{text}}
               </span>
-              <!-- <template slot="operation"
+              <template slot="operation"
                         slot-scope="text, record">
                 <div>
-                  <a-popconfirm title="确定退票吗？"
+                  <!-- <a-popconfirm title="确定退票吗？"
                                 ok-text="确定"
                                 cancel-text="取消"
                                 @confirm="returnTicket">
                     <a-button type="primary"
                               v-if="record.departure_time > $moment().format('YYYY-MM-DD HH:mm:ss')"
                               style="margin-right: 5px">退票</a-button>
-                  </a-popconfirm>
+                  </a-popconfirm> -->
                   <a-button type="danger"
                             style="margin-left: 5px"
-                            @click="returnVisible = true">详情</a-button>
-                  <a-button type="danger"
+                            @click="returnVisible = true; currentRecord = record">详情</a-button>
+                  <!-- <a-button type="danger"
                             style="margin-left: 5px"
-                            @click="returnVisible = true">改签</a-button>
+                            @click="returnVisible = true">改签</a-button> -->
                 </div>
-              </template> -->
+              </template>
             </a-table>
-            <!-- <a-modal title="机票信息"
+            <a-modal title="机票信息"
                      :visible="returnVisible"
                      @ok="returnVisible = false"
+                     width="80%"
+                     destroyOnClose
                      @cancel="returnVisible = false">
-            </a-modal> -->
+              <a-form-model ref="ticketForm"
+                            :label-col="labelCol"
+                            :wrapper-col="wrapperCol">
+                <a-row :gutter="10">
+                  <a-col :span="12">
+                    <a-form-model-item label="航班编号">
+                      <span class="spanClass">{{currentRecord.line_id}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-form-model-item label="订票时间">
+                      <span class="spanClass">{{currentRecord.date}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="12">
+                    <a-form-model-item label="操作人">
+                      <span class="spanClass">{{currentRecord.user_name}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="12">
+                    <a-form-model-item label="舱位等级">
+                      <span class="spanClass">{{currentRecord.cabin_type}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="12">
+                    <a-form-model-item label="出发时间">
+                      <span class="spanClass">{{currentRecord.departure_time}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-form-model-item label="到达时间">
+                      <span class="spanClass">{{currentRecord.destination_time}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="12">
+                    <a-form-model-item label="出发地">
+                      <span class="spanClass">{{currentRecord.departure}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-form-model-item label="目的地">
+                      <span class="spanClass">{{currentRecord.destination}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="12">
+                    <a-form-model-item label="订票数">
+                      <span class="spanClass">{{currentRecord.num}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col :span="12">
+                    <a-form-model-item label="总金额">
+                      <span class="spanClass">{{currentRecord.money}}</span>
+                    </a-form-model-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="10">
+                  <a-col :span="24"
+                         :push="1">
+                    <p style="font-size: 16px">乘客信息:</p>
+                    <a-row v-for="(item, index) in currentRecord.passenger_information"
+                           :key="index">
+                      <a-col :span="6">
+                        <a-form-model-item label="姓名">
+                          <span class="spanClass">{{item.name}}</span>
+                        </a-form-model-item>
+                      </a-col>
+                      <a-col :span="6">
+                        <a-form-model-item label="身份证">
+                          <span class="spanClass">{{item.idCard}}</span>
+                        </a-form-model-item>
+                      </a-col>
+                      <a-col :span="6">
+                        <a-form-model-item label="手机号">
+                          <span class="spanClass">{{item.mobile}}</span>
+                        </a-form-model-item>
+                      </a-col>
+                    </a-row>
+                  </a-col>
+                </a-row>
+              </a-form-model>
+            </a-modal>
           </div>
           <div class="addNotice"
                v-else-if="currentIndex === 5">
@@ -285,6 +383,7 @@ export default {
 
       },
       quanxian: 1,
+      weizhi: 1,
       old_password: '', //原密码
       new_password: '', //新密码
       confirm_password: '', //确认密码
@@ -301,6 +400,8 @@ export default {
         title: '',
         description: '',
       },
+      currentRecord: {},
+      returnVisible: false,
       balanceData: [
         {
           key: '1',
@@ -404,6 +505,14 @@ export default {
           scopedSlots: { customRender: 'date' },
           width: '15%',
         },
+        // {
+        //   title: '机票价格',
+        //   dataIndex: 'unitPrice',
+        //   key: 'unitPrice',
+        //   align: 'center',
+        //   scopedSlots: { customRender: 'unitPrice' },
+        //   width: '10%',
+        // },
         {
           title: '购买数量',
           dataIndex: 'num',
@@ -440,23 +549,32 @@ export default {
           width: '10%',
         },
         {
-          title: '订单状态',
-          dataIndex: 'state',
-          key: 'state',
+          title: '购买人',
+          dataIndex: 'user_name',
+          key: 'user_name',
           ellipsis: true,
           align: 'center',
-          scopedSlots: { customRender: 'state' },
+          scopedSlots: { customRender: 'user_name' },
           width: '10%',
         },
         // {
-        //   title: '操作',
-        //   dataIndex: 'operation',
-        //   key: 'operation',
+        //   title: '订单状态',
+        //   dataIndex: 'state',
+        //   key: 'state',
         //   ellipsis: true,
         //   align: 'center',
-        //   scopedSlots: { customRender: 'operation' },
-        //   width: '15%',
+        //   scopedSlots: { customRender: 'state' },
+        //   width: '10%',
         // },
+        {
+          title: '操作',
+          dataIndex: 'operation',
+          key: 'operation',
+          ellipsis: true,
+          align: 'center',
+          scopedSlots: { customRender: 'operation' },
+          width: '15%',
+        },
       ],
       pagination: {
         pageSize: 5,
@@ -527,10 +645,10 @@ export default {
   async mounted () {
     await this.selectAllUser()
     // await this.selectAllCompany()
-    this.moneyData = [...this.userMoney, ...this.companyMoney]
+    await this.selectAllUser(2)
     console.log('%c [ this.moneyData ]-404', 'font-size:13px; background:pink; color:#bf2c9f;', this.moneyData)
     await this.getAllCity()
-    await this.selectAllOrder()
+    await this.selectAllTicket()
   },
   methods: {
     quanxianChange (val) {
@@ -540,20 +658,35 @@ export default {
         this.selectAllCompany()
       }
     },
+    weizhiChange (val) {
+      if (parseInt(val.target.value) === 1) {
+        this.selectAllUser(2)
+      } else {
+        this.selectAllCompany(2)
+      }
+    },
     // 查询我的订单
-    async selectAllOrder () {
-      const { data } = await this.axios.post('/api/Air/selectAllOrder')
+    async selectAllTicket () {
+      const { data } = await this.axios.post('/api/Air/selectAllTicket')
       if (data.msg === '请求成功') {
         this.orderData = data.data.map((it, index) => {
           return {
-            key: it.order_id,
+            key: it.ticket_id,
             date: this.$moment(it.created_time).format("YYYY-MM-DD HH:mm:ss"),
             // unitPrice: it.price,
-            num: it.count,
+            company_id: it.company_id,
+            plane_id: it.plane_id,
+            line_id: it.line_id,
+            user_id: it.user_id,
+            user_name: it.user_name,
+            num: JSON.parse(it.passenger_information).length,
+            passenger_information: JSON.parse(it.passenger_information),
+            cabin_type: parseInt(it.cabin_type) === 1 ? '经济舱' : '商务舱',
             departure: this.filterCity(it.departure),
             destination: this.filterCity(it.destination),
-            money: it.total_price,
-            state: this.filterOrderState(it.state),
+            departure_time: this.$moment(it.departure_time).format("YYYY-MM-DD HH:mm:ss"),
+            destination_time: this.$moment(it.destination_time).format("YYYY-MM-DD HH:mm:ss"),
+            money: it.price,
           }
         })
         this.orderData.reverse()
@@ -566,53 +699,61 @@ export default {
       window.sessionStorage.clear()
       this.$router.push('/')
     },
-    async selectAllUser () {
+    async selectAllUser (type = 1) {
       const { data } = await this.axios.post('/api/Air/selectAllUser')
       if (data.msg === '请求成功') {
-        this.userMoney = data.data.map((it, index) => {
-          return {
-            key: index,
-            id: it.id,
-            name: it.name,
-            state: it.state,
-            money: it.money,
-          }
-        })
-        this.quanxianData = data.data.map((it, index) => {
-          return {
-            key: index,
-            id: it.id,
-            name: it.name,
-            state: it.state,
-            money: it.money,
-          }
-        })
+        if (type !== 1) {
+          this.userMoney = data.data.map((it, index) => {
+            return {
+              key: index,
+              id: it.id,
+              name: it.name,
+              state: it.state,
+              money: it.money,
+            }
+          })
+          this.moneyData = [...this.userMoney]
+        } else {
+          this.quanxianData = data.data.map((it, index) => {
+            return {
+              key: index,
+              id: it.id,
+              name: it.name,
+              state: it.state,
+              money: it.money,
+            }
+          })
+        }
       } else {
         this.$message.error(data.msg)
         return
       }
     },
-    async selectAllCompany () {
+    async selectAllCompany (type = 1) {
       const { data } = await this.axios.post('/api/Air/selectAllCompany')
       if (data.msg === '请求成功') {
-        this.companyMoney = data.data.map((it, index) => {
-          return {
-            key: index,
-            id: it.id,
-            name: it.name,
-            state: it.state,
-            money: it.money,
-          }
-        })
-        this.quanxianData = data.data.map((it, index) => {
-          return {
-            key: index,
-            id: it.company_id,
-            name: it.name,
-            state: it.state,
-            money: it.money,
-          }
-        })
+        if (type !== 1) {
+          this.companyMoney = data.data.map((it, index) => {
+            return {
+              key: index,
+              id: it.id,
+              name: it.name,
+              state: it.state,
+              money: it.money,
+            }
+          })
+          this.moneyData = [...this.companyMoney]
+        } else {
+          this.quanxianData = data.data.map((it, index) => {
+            return {
+              key: index,
+              id: it.company_id,
+              name: it.name,
+              state: it.state,
+              money: it.money,
+            }
+          })
+        }
       } else {
         this.$message.error(data.msg)
         return
@@ -803,5 +944,9 @@ export default {
 }
 .addNotice {
   margin-left: 25%;
+}
+.spanClass {
+  font-size: 18px;
+  font-weight: bold;
 }
 </style>

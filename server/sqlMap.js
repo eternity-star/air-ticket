@@ -61,6 +61,7 @@ const sqlMap = {
     selectOrder: 'SELECT * FROM air_order where company_id = ?',
     selectOwnTicket: 'SELECT * FROM air_ticket where user_id = ?',
     selectTicket: 'SELECT * FROM air_ticket where company_id = ?',
+    selectAllTicket: 'SELECT * FROM air_ticket',
   },
   Notice: {
     insertNotice: 'insert into air_notice(notice_id, user_id, user_name, title, description, created_time, type, state) values(?,?,?,?,?,?,?,?)',

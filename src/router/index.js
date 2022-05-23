@@ -9,7 +9,7 @@ const routes = [
     name: 'login',
     component: () => import("@/views/login/index.vue"),
     meta: {
-      title: '机票售票系统'
+      title: '飞机售票系统'
     }
   },
   {
@@ -17,7 +17,7 @@ const routes = [
     name: 'user',
     component: () => import("@/views/user/index.vue"),
     meta: {
-      title: '机票售票系统-用户'
+      title: '飞机售票系统-用户'
     }
   },
   {
@@ -25,7 +25,7 @@ const routes = [
     name: 'company',
     component: () => import("@/views/company/index.vue"),
     meta: {
-      title: '机票售票系统-航空公司'
+      title: '飞机售票系统-航空公司'
     }
   },
   {
@@ -33,7 +33,7 @@ const routes = [
     name: 'admin',
     component: () => import("@/views/administrator/index.vue"),
     meta: {
-      title: '机票售票系统-管理员'
+      title: '飞机售票系统-管理员'
     }
   },
   {
@@ -41,7 +41,7 @@ const routes = [
     name: 'searchTicket',
     component: () => import("@/views/searchTicket/index.vue"),
     meta: {
-      title: '机票售票系统'
+      title: '飞机售票系统'
     }
   },
 ]
