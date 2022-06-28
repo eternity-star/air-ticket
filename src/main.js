@@ -7,7 +7,10 @@ import VueAxios from "vue-axios";
 import qs from 'qs';
 import { nanoid } from 'nanoid';
 import moment from 'moment'
+import utils from "@/common/utils";
 import less from 'less'
+import XEUtils from "xe-utils";
+import VXEUtils from "vxe-utils";
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 
@@ -19,6 +22,8 @@ Vue.config.productionTip = false
 Vue.use(less);
 Vue.use(Antd);
 Vue.use(VueAxios, axios);
+Vue.use(VXEUtils, XEUtils);
+XEUtils.mixin(utils);
 
 Vue.prototype.$moment = moment;
 Vue.prototype.$qs = qs;

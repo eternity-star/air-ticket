@@ -198,7 +198,7 @@ export default {
       }
     },
     changeTime (val) {
-      return toHourMinute(val)
+      return this.$utils.toHourMinute(val)
     },
     book (item) {
       item.cabin = parseInt(this.cabin)

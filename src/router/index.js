@@ -6,6 +6,14 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    name: 'lowCode',
+    component: () => import("@/views/lowCode/index.vue"),
+    meta: {
+      title: '测试拖拽功能'
+    }
+  },
+  {
+    path: '/login',
     name: 'login',
     component: () => import("@/views/login/index.vue"),
     meta: {

@@ -384,7 +384,6 @@
 </template>
 
 <script>
-import { randomWord } from '@/common/utils'
 import suggestion from '../suggestion/index.vue'
 import message from '../message/index.vue'
 import airLineCreate from './components/airLine/airLineCreate.vue'
@@ -666,7 +665,6 @@ export default {
   },
   async mounted () {
     await this.getAllCity()
-    console.log('[ randomWord ] >', randomWord(true, 8, 8))
     console.log(
       '[ new Date().getTime() + String(Math.round(Math.random() * 10000)) ] >',
       new Date().getTime() + String(Math.round(Math.random() * 10000))

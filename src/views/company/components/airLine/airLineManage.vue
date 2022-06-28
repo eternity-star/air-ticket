@@ -49,7 +49,7 @@ export default {
       orderData: [
         {
           key: '1',
-          no: randomWord(true, 8, 8),
+          no: this.$utils.randomWord(true, 8, 8),
           departure: '北京', //出发地
           destination: '深圳', //目的地
           departure_time: '2022-02-08 09:51:55', //出发时间
@@ -61,7 +61,7 @@ export default {
         },
         {
           key: '2',
-          no: randomWord(true, 8, 8),
+          no: this.$utils.randomWord(true, 8, 8),
           departure: '东莞', //出发地
           destination: '深圳', //目的地
           departure_time: '2022-02-28 15:56:55', //出发时间
@@ -73,7 +73,7 @@ export default {
         },
         {
           key: '3',
-          no: randomWord(true, 8, 8),
+          no: this.$utils.randomWord(true, 8, 8),
           departure: '中山', //出发地
           destination: '广州', //目的地
           departure_time: '2022-03-01 22:51:55', //出发时间

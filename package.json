@@ -17,10 +17,14 @@
     "mysql": "^2.18.1",
     "nanoid": "^3.3.2",
     "qs": "^6.9.4",
+    "sortablejs": "^1.15.0",
     "vue": "^2.6.11",
     "vue-axios": "^2.1.5",
     "vue-router": "^3.2.0",
-    "vuex": "^3.1.2"
+    "vuedraggable": "^2.24.3",
+    "vuex": "^3.1.2",
+    "vxe-utils": "^1.9.3",
+    "xe-utils": "^3.4.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
